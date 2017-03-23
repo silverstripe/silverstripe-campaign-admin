@@ -1,0 +1,4 @@
+mappings:
+  AddToCampaignHandler: SilverStripe\CampaignAdmin\AddToCampaignHandler
+  AddToCampaignHandler_FormAction: SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction
+  CampaignAdmin: SilverStripe\CampaignAdmin\CampaignAdmin
