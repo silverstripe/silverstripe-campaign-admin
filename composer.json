@@ -1,0 +1,47 @@
+{
+  "name": "silverstripe/campaign-admin",
+  "description": "SilverStripe campaign admin interface",
+  "type": "silverstripe-module",
+  "homepage": "http://silverstripe.org",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "silverstripe",
+    "campaign",
+    "versioned",
+    "admin"
+  ],
+  "authors": [
+    {
+      "name": "SilverStripe",
+      "homepage": "http://silverstripe.com"
+    },
+    {
+      "name": "The SilverStripe Community",
+      "homepage": "http://silverstripe.org"
+    }
+  ],
+  "require": {
+    "silverstripe/admin": "^1@dev",
+    "silverstripe/framework": "^4@dev",
+    "silverstripe/versioned": "^1@dev"
+  },
+  "require-dev": {
+    "phpunit/PHPUnit": "~4.8"
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0.x-dev"
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "SilverStripe\\CampaignAdmin\\": "src/",
+      "SilverStripe\\CampaignAdmin\\Tests\\": "tests/php/"
+    }
+  },
+  "scripts": {
+    "lint": "phpcs src/ tests/php/"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}

@@ -1,0 +1,8 @@
+// See includePaths in webpack.config.js
+@import "variables";
+
+// Thirdparty
+@import "../../../node_modules/bootstrap/scss/mixins";
+
+// Layout and sections
+@import "../containers/CampaignAdmin/CampaignAdmin";
