@@ -207,7 +207,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         // synchronise it with new changes.
         try {
             $changeSet->sync();
-            $hal['Description'] = $changeSet->getDescription();
+            $hal['Details'] = $changeSet->getDetails();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
 
             foreach ($changeSet->Changes() as $changeSetItem) {
@@ -223,7 +223,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
         // An unexpected data exception means that the database is corrupt
         } catch (UnexpectedDataException $e) {
-            $hal['Description'] = 'Corrupt database! ' . $e->getMessage();
+            $hal['Details'] = 'Corrupt database! ' . $e->getMessage();
             $hal['ChangesCount'] = '-';
         }
         return $hal;
