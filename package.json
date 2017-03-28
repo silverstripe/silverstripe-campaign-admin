@@ -14,7 +14,7 @@
     "css": "WEBPACK_CHILD=css webpack",
     "test": "jest",
     "coverage": "NODE_PATH=\"./client/src\" jest --coverage",
-    "lint": "eslint client/src && sass-lint -v"
+    "lint": "eslint client/src && sass-lint -v client/src"
   },
   "repository": {
     "type": "git",
