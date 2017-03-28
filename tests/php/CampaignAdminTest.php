@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Admin\Tests;
+namespace SilverStripe\CampaignAdmin\Tests;
 
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\CampaignAdmin\CampaignAdmin;
