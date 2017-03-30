@@ -11,6 +11,7 @@ use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Object;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\ORM\ArrayList;
@@ -171,21 +172,40 @@ class AddToCampaignHandler
      */
     public function Form($object)
     {
-        $inChangeSets = array_unique(ChangeSetItem::get_for_object($object)->column('ChangeSetID'));
+        $inChangeSetIDs = array_unique(ChangeSetItem::get_for_object($object)->column('ChangeSetID'));
+        $inChangeSets = ChangeSet::get() ->filter(['ID' => $inChangeSetIDs, 'State' => ChangeSet::STATE_OPEN]);
         $changeSets = $this->getAvailableChangeSets()->map();
 
-        $campaignDropdown = DropdownField::create('Campaign', '', $changeSets);
+        $inChangeSetsText = "";
+        if ($inChangeSets->count() > 0) {
+            $inChangeSetNames = implode(', ', $inChangeSets->column('Name'));
+            $inChageSetsLabel = _t(
+                'Campaign.AddToCampaignInChangsetLabel',
+                'Heads up, this item is already in campaign(s):'
+            );
+            $inChangeSetsText = sprintf(
+                '<div class="alert alert-info"><p><strong>%s</strong></p> <p>%s</p></div>',
+                $inChageSetsLabel,
+                $inChangeSetNames
+            );
+        }
+
+        $campaignDropdown = DropdownField::create(
+            'Campaign',
+            _t('Campaigns.AddToCampaignAvailableLabel', 'Available campaigns'),
+            $changeSets
+        );
         $campaignDropdown->setEmptyString(_t('Campaigns.AddToCampaignFormFieldLabel', 'Select a Campaign'));
         $campaignDropdown->addExtraClass('noborder');
         $campaignDropdown->addExtraClass('no-chosen');
-        $campaignDropdown->setDisabledItems($inChangeSets);
+        $campaignDropdown->setDisabledItems($inChangeSetIDs);
 
         $fields = new FieldList([
+            LiteralField::create("InChangeSetsText", $inChangeSetsText),
             $campaignDropdown,
             HiddenField::create('ID', null, $this->data['ID']),
             HiddenField::create('ClassName', null, $this->data['ClassName'])
         ]);
-
 
         $form = new Form(
             $this->controller,
@@ -193,6 +213,7 @@ class AddToCampaignHandler
             $fields,
             new FieldList(
                 $action = AddToCampaignHandler_FormAction::create()
+                    ->setTitle(_t(Campaigns.AddToCampaignAddAction, 'Add'))
             )
         );
 
@@ -245,7 +266,7 @@ class AddToCampaignHandler
         $request = $this->controller->getRequest();
         $message = _t(
             'AddToCampaign.Success',
-            'Successfully added {ObjectTitle} to {CampaignTitle}',
+            'Successfully added <strong>{ObjectTitle}</strong> to <strong>{CampaignTitle}</strong>',
             '',
             ['ObjectTitle' => $object->Title, 'CampaignTitle' => $changeSet->Title]
         );
