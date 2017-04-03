@@ -39,8 +39,8 @@ class CampaignAdminListTest extends SapphireTest
                 'name' => 'Changes',
             ],
             [
-                'field' => 'Description',
-                'name' => 'Description',
+                'field' => 'Details',
+                'name' => 'Details',
             ]
         ], $schema['data']['columns']);
     }

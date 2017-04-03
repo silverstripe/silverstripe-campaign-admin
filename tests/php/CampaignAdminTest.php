@@ -34,6 +34,6 @@ class CampaignAdminTest extends SapphireTest
         $admin = new CampaignAdmin();
 
         $result = $this->callProtectedMethod($admin, 'getChangeSetResource', [$changeset]);
-        $this->assertEquals('Corrupt database! bad data', $result['Description']);
+        $this->assertEquals('Corrupt database! bad data', $result['Details']);
     }
 }
