@@ -163,8 +163,8 @@ case"deleted":n.className="label label-error list-group-item__status",n.Title=f.
 break
 case"none":default:n.className="label label-success list-group-item__status",n.Title=f.default._t("CampaignItem.NO_CHANGES","No changes")}var i=u.default.createElement("span",{className:"list-group-item__info campaign-admin__item-links--has-links font-icon-link"
 },"3 linked items")
-return a.Thumbnail&&(t=u.default.createElement("span",{className:"list-group-item__thumbnail"},u.default.createElement("img",{alt:a.Title,src:a.Thumbnail}))),u.default.createElement("div",{className:"fill-height"
-},t,u.default.createElement("h4",{className:"list-group-item-heading"},a.Title),u.default.createElement("span",{className:"list-group-item__info campaign-admin__item-links--is-linked font-icon-link"}),i,n.className&&n.Title&&u.default.createElement("span",{
+return a.Thumbnail&&(t=u.default.createElement("span",{className:"list-group-item__thumbnail"},u.default.createElement("img",{alt:a.Title,src:a.Thumbnail}))),u.default.createElement("div",null,t,u.default.createElement("h4",{
+className:"list-group-item-heading"},a.Title),u.default.createElement("span",{className:"list-group-item__info campaign-admin__item-links--is-linked font-icon-link"}),i,n.className&&n.Title&&u.default.createElement("span",{
 className:n.className},n.Title))}}]),t}(p.default)
 m.propTypes={campaign:u.default.PropTypes.object.isRequired,item:u.default.PropTypes.object.isRequired},t.default=m},function(e,t){e.exports=Preview},function(e,t,n){"use strict"
 function a(e){return e&&e.__esModule?e:{default:e}}function r(){var e=arguments.length>0&&void 0!==arguments[0]?arguments[0]:c,t=arguments[1]
