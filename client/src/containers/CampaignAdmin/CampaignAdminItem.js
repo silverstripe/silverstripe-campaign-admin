@@ -56,16 +56,18 @@ class CampaignAdminItem extends SilverStripeComponent {
     }
 
     return (
-      <div className="fill-height">
+      <div className="fill-width">
         {thumbnail}
-        <h4 className="list-group-item-heading">{item.Title}</h4>
-        <span
-          className="list-group-item__info campaign-admin__item-links--is-linked font-icon-link"
-        ></span>
-        {links}
-        {badge.className && badge.Title &&
-          <span className={badge.className}>{badge.Title}</span>
-        }
+        <div className="list-group-item__details">
+          <h4 className="list-group-item__heading">{item.Title}</h4>
+          <span
+            className="list-group-item__info campaign-admin__item-links--is-linked font-icon-link"
+          ></span>
+          {links}
+          {badge.className && badge.Title &&
+            <span className={badge.className}>{badge.Title}</span>
+          }
+        </div>
       </div>
     );
   }
