@@ -12,6 +12,8 @@ import Toolbar from 'components/Toolbar/Toolbar';
 import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import CampaignAdminList from './CampaignAdminList';
 
+const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
+
 class CampaignAdmin extends SilverStripeComponent {
 
   constructor(props) {
@@ -379,7 +381,7 @@ function mapStateToProps(state) {
     campaignId: state.campaign.campaignId,
     view: state.campaign.view,
     breadcrumbs: state.breadcrumbs,
-    sectionConfig: state.config.sections['SilverStripe\\CampaignAdmin\\CampaignAdmin'],
+    sectionConfig: state.config.sections.find((section) => section.name === sectionConfigKey),
     securityId: state.config.SecurityID,
   };
 }
