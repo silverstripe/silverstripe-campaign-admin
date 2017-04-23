@@ -153,7 +153,7 @@ class AddToCampaignHandler
 
         if (!$class || !is_subclass_of($class, DataObject::class) || !Object::has_extension($class, Versioned::class)) {
             $this->controller->httpError(400, _t(
-                'AddToCampaign.ErrorGeneral',
+                __CLASS__.'.ErrorGeneral',
                 'We apologise, but there was an error'
             ));
             return null;
@@ -163,7 +163,7 @@ class AddToCampaignHandler
 
         if (!$object) {
             $this->controller->httpError(404, _t(
-                'AddToCampaign.ErrorNotFound',
+                __CLASS__.'.ErrorNotFound',
                 'That {Type} couldn\'t be found',
                 '',
                 ['Type' => $class]
@@ -173,7 +173,7 @@ class AddToCampaignHandler
 
         if (!$object->canView()) {
             $this->controller->httpError(403, _t(
-                'AddToCampaign.ErrorItemPermissionDenied',
+                __CLASS__.'.ErrorItemPermissionDenied',
                 'It seems you don\'t have the necessary permissions to add {ObjectTitle} to a campaign',
                 '',
                 ['ObjectTitle' => $object->Title]
@@ -204,7 +204,7 @@ class AddToCampaignHandler
         if ($inChangeSets->count() > 0) {
             $inChangeSetNames = implode(', ', $inChangeSets->column('Name'));
             $inChageSetsLabel = _t(
-                'Campaign.AddToCampaignInChangsetLabel',
+                __CLASS__.'.AddToCampaignInChangsetLabel',
                 'Heads up, this item is already in campaign(s):'
             );
             $inChangeSetsText = sprintf(
@@ -216,10 +216,10 @@ class AddToCampaignHandler
 
         $campaignDropdown = DropdownField::create(
             'Campaign',
-            _t('Campaigns.AddToCampaignAvailableLabel', 'Available campaigns'),
+            _t(__CLASS__.'.AddToCampaignAvailableLabel', 'Available campaigns'),
             $changeSets
         );
-        $campaignDropdown->setEmptyString(_t('Campaigns.AddToCampaignFormFieldLabel', 'Select a Campaign'));
+        $campaignDropdown->setEmptyString(_t(__CLASS__.'.AddToCampaignFormFieldLabel', 'Select a Campaign'));
         $campaignDropdown->addExtraClass('noborder');
         $campaignDropdown->addExtraClass('no-chosen');
 
@@ -236,7 +236,7 @@ class AddToCampaignHandler
             $fields,
             new FieldList(
                 $action = AddToCampaignHandler_FormAction::create()
-                    ->setTitle(_t('Campaigns.AddToCampaignAddAction', 'Add'))
+                    ->setTitle(_t(__CLASS__.'.AddToCampaignAddAction', 'Add'))
             )
         );
 
@@ -246,7 +246,7 @@ class AddToCampaignHandler
             $campaignAdminUrl = CampaignAdmin::singleton()->config()->get('url_segment');
             $link = Controller::join_links('admin', $campaignAdminUrl);
             $noCampaingsText = _t(
-                'Campaigns.AddToCampaignNoCampaignsToAdd',
+                __CLASS__.'.AddToCampaignNoCampaignsToAdd',
                 '<p class="lead text-xs-center">This item has been added to all available campaigns.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Create a new campaign?</a></p>',
                 null,
                 [ 'campaignSectionLink' => $link ]
@@ -282,7 +282,7 @@ class AddToCampaignHandler
 
         if (!$changeSet) {
             $this->controller->httpError(404, _t(
-                'AddToCampaign.ErrorNotFound',
+                __CLASS__.'.ErrorNotFound',
                 'That {Type} couldn\'t be found',
                 '',
                 ['Type' => 'Campaign']
@@ -292,7 +292,7 @@ class AddToCampaignHandler
 
         if (!$changeSet->canEdit()) {
             $this->controller->httpError(403, _t(
-                'AddToCampaign.ErrorCampaignPermissionDenied',
+                __CLASS__.'.ErrorCampaignPermissionDenied',
                 'It seems you don\'t have the necessary permissions to add {ObjectTitle} to {CampaignTitle}',
                 '',
                 ['ObjectTitle' => $object->Title, 'CampaignTitle' => $changeSet->Title]
@@ -304,7 +304,7 @@ class AddToCampaignHandler
 
         $request = $this->controller->getRequest();
         $message = _t(
-            'AddToCampaign.Success',
+            __CLASS__.'.Success',
             'Successfully added <strong>{ObjectTitle}</strong> to <strong>{CampaignTitle}</strong>',
             '',
             [

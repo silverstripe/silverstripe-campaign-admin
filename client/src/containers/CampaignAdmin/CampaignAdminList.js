@@ -54,7 +54,7 @@ class CampaignAdminList extends SilverStripeComponent {
 
     // Push breadcrumb
     const breadcrumbs = [{
-      text: i18n._t('Campaigns.CAMPAIGN', 'Campaigns'),
+      text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
       href: this.props.sectionConfig.url,
     }];
     breadcrumbs.push({
@@ -194,8 +194,8 @@ class CampaignAdminList extends SilverStripeComponent {
 
     // let itemSummaryLabel = i18n.sprintf(
     //   items.length === 1
-    //     ? i18n._t('Campaigns.ITEM_SUMMARY_SINGULAR')
-    //     : i18n._t('Campaigns.ITEM_SUMMARY_PLURAL'),
+    //     ? i18n._t('CampaignAdmin.ITEM_SUMMARY_SINGULAR')
+    //     : i18n._t('CampaignAdmin.ITEM_SUMMARY_PLURAL'),
     //   items.length
     // );
 
@@ -203,7 +203,7 @@ class CampaignAdminList extends SilverStripeComponent {
 
     if (this.props.record.State === 'open') {
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('Campaigns.PUBLISHCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN'),
         buttonStyle: 'primary',
         loading: this.props.campaign.isPublishing,
         handleClick: this.handlePublish,
@@ -212,7 +212,7 @@ class CampaignAdminList extends SilverStripeComponent {
     } else if (this.props.record.State === 'published') {
       // TODO Implement "revert" feature
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('Campaigns.REVERTCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.REVERTCAMPAIGN'),
         buttonStyle: 'secondary-outline',
         icon: 'back-in-time',
         disabled: true,
