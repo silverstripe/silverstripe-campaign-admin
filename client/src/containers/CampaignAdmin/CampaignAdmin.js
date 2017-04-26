@@ -25,7 +25,11 @@ class CampaignAdmin extends SilverStripeComponent {
         id: { urlReplacement: ':id', remove: true },
       },
     });
+
+    // Bind
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
+    this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
+    this.handleFormAction = this.handleFormAction.bind(this);
   }
 
   componentWillMount() {
@@ -84,6 +88,42 @@ class CampaignAdmin extends SilverStripeComponent {
         event.preventDefault();
         this.props.router.push(last.href);
       }
+    }
+  }
+
+
+  /**
+   * Handler for creating campaign, will redirect to edit form
+   *
+   * @param {object} data
+   * @param {string} action
+   * @param {function} submitFn
+   * @returns {Promise}
+   */
+  handleCreateCampaignSubmit(data, action, submitFn) {
+    const promise = submitFn();
+    if (!promise) {
+      throw new Error('Promise was not returned for submitting');
+    }
+    return promise
+      .then((response) => {
+        if (action === 'action_save') {
+          // open the new folder in edit mode after save completes
+          const sectionUrl = this.props.sectionConfig.url;
+          const id = response.record.id;
+          this.props.router.push(`${sectionUrl}/set/${id}/edit`);
+        }
+        return response;
+      });
+  }
+
+  handleFormAction(event) {
+    const name = event.currentTarget.name;
+    // intercept the Add to Campaign submit and open the modal dialog instead
+    if (name === 'action_cancel') {
+      const url = this.props.sectionConfig.url;
+      this.props.router.push(url);
+      event.preventDefault();
     }
   }
 
@@ -164,15 +204,11 @@ class CampaignAdmin extends SilverStripeComponent {
    * Renders the Detail Edit Form for a Campaign.
    */
   renderDetailEditView() {
-    const baseSchemaUrl = this.props.sectionConfig.form.DetailEditForm.schemaUrl;
-    let schemaUrl = baseSchemaUrl;
-    if (this.props.params.id > 0) {
-      schemaUrl = `${baseSchemaUrl}/${this.props.params.id}`;
+    if (this.props.params.id <= 0) {
+      return this.renderCreateView();
     }
-    const formBuilderProps = {
-      createFn: this.campaignEditCreateFn.bind(this),
-      schemaUrl,
-    };
+    const baseSchemaUrl = this.props.sectionConfig.form.campaignEditForm.schemaUrl;
+    const schemaUrl = `${baseSchemaUrl}/${this.props.params.id}`;
 
     return (
       <div className="fill-height">
@@ -181,7 +217,10 @@ class CampaignAdmin extends SilverStripeComponent {
         </Toolbar>
 
         <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
-          <FormBuilderLoader {...formBuilderProps} />
+          <FormBuilderLoader
+            handleAction={this.handleFormAction}
+            schemaUrl={schemaUrl}
+          />
         </div>
       </div>
     );
@@ -191,23 +230,18 @@ class CampaignAdmin extends SilverStripeComponent {
    * Render the view for creating a new Campaign.
    */
   renderCreateView() {
-    const baseSchemaUrl = this.props.sectionConfig.form.DetailEditForm.schemaUrl;
-    let schemaUrl = baseSchemaUrl;
-    if (this.props.params.id > 0) {
-      schemaUrl = `${baseSchemaUrl}/${this.props.params.id}`;
-    }
-    const formBuilderProps = {
-      createFn: this.campaignAddCreateFn.bind(this),
-      schemaUrl,
-    };
-
+    const schemaUrl = this.props.sectionConfig.form.campaignCreateForm.schemaUrl;
     return (
       <div className="fill-height">
         <Toolbar showBackButton handleBackButtonClick={this.handleBackButtonClick}>
           <Breadcrumb multiline />
         </Toolbar>
         <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
-          <FormBuilderLoader {...formBuilderProps} />
+          <FormBuilderLoader
+            handleSubmit={this.handleCreateCampaignSubmit}
+            handleAction={this.handleFormAction}
+            schemaUrl={schemaUrl}
+          />
         </div>
       </div>
     );
@@ -271,8 +305,8 @@ class CampaignAdmin extends SilverStripeComponent {
    * Hook to allow customisation of components being constructed
    * by the Campaign list FormBuilderLoader.
    *
-   * @param object Component - Component constructor.
-   * @param object props - Props passed from FormBuilderLoader.
+   * @param {Object} Component - Component constructor.
+   * @param {Object} props - Props passed from FormBuilderLoader.
    *
    * @return object - Instanciated React component
    */
@@ -305,8 +339,10 @@ class CampaignAdmin extends SilverStripeComponent {
 
   /**
    * Generate route with the given id and view
-   * @param {numeric} id
-   * @param {string} view
+   *
+   * @param {Number} id
+   * @param {String} view
+   * @return {String}
    */
   getActionRoute(id, view) {
     return `${this.props.sectionConfig.url}/set/${id}/${view}`;
@@ -316,7 +352,23 @@ class CampaignAdmin extends SilverStripeComponent {
 CampaignAdmin.propTypes = {
   breadcrumbsActions: React.PropTypes.object.isRequired,
   campaignId: React.PropTypes.string,
-  sectionConfig: React.PropTypes.object.isRequired,
+  sectionConfig: React.PropTypes.shape({
+    publishEndpoint: React.PropTypes.shape({
+      url: React.PropTypes.string,
+      method: React.PropTypes.string,
+    }),
+    form: React.PropTypes.shape({
+      EditForm: React.PropTypes.shape({
+        schemaUrl: React.PropTypes.string,
+      }),
+      campaignEditForm: React.PropTypes.shape({
+        schemaUrl: React.PropTypes.string,
+      }),
+      campaignCreateForm: React.PropTypes.shape({
+        schemaUrl: React.PropTypes.string,
+      }),
+    }),
+  }),
   securityId: React.PropTypes.string.isRequired,
   view: React.PropTypes.string,
 };

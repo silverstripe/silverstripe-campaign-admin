@@ -3,6 +3,7 @@
 namespace SilverStripe\CampaignAdmin;
 
 use SilverStripe\Admin\LeftAndMain;
+use SilverStripe\Admin\LeftAndMainFormRequestHandler;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPRequest;
@@ -15,6 +16,7 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\SS_List;
 use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\Security;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
 use SilverStripe\ORM\DataObject;
@@ -33,8 +35,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     private static $allowed_actions = [
         'set',
         'sets',
-        'schema',
-        'DetailEditForm',
+        'EditForm',
+        'campaignEditForm',
+        'campaignCreateForm',
         'readCampaigns',
         'readCampaign',
         'deleteCampaign',
@@ -54,6 +57,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         'POST set/$ID/publish' => 'publishCampaign',
         'GET set/$ID/$Name' => 'readCampaign',
         'DELETE set/$ID' => 'deleteCampaign',
+        'campaignEditForm/$ID' => 'campaignEditForm',
+        'campaignCreateForm' => 'campaignCreateForm',
     ];
 
     private static $url_segment = 'campaigns';
@@ -85,8 +90,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'EditForm' => [
                     'schemaUrl' => $this->Link('schema/EditForm')
                 ],
-                'DetailEditForm' => [
-                    'schemaUrl' => $this->Link('schema/DetailEditForm')
+                'campaignEditForm' => [
+                    'schemaUrl' => $this->Link('schema/campaignEditForm')
+                ],
+                'campaignCreateForm' => [
+                    'schemaUrl' => $this->Link('schema/campaignCreateForm')
                 ],
             ],
             'itemListViewEndpoint' => [
@@ -129,10 +137,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
     public function EditForm($request = null)
     {
-        // Get ID either from posted back value, or url parameter
-        $request = $request ?: $this->getRequest();
-        $id = $request->param('ID') ?: $request->postVar('ID');
-        return $this->getEditForm($id);
+        // Note: Edit form doesn't have ID, and simply populates a top level gridfield
+        return $this->getEditForm();
     }
 
     /**
@@ -424,32 +430,39 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      * @param HTTPRequest $request
      * @return Form
      */
-    public function DetailEditForm($request)
+    public function campaignEditForm($request)
     {
         // Get ID either from posted back value, or url parameter
-        $id = $request->param('ID') ?: $request->postVar('ID');
-        return $this->getDetailEditForm($id);
+        if (!$request) {
+            $this->httpError(400);
+            return null;
+        }
+        $id = $request->param('ID');
+        if (!$id) {
+            $this->httpError(400);
+            return null;
+        }
+        return $this->getCampaignEditForm($id);
     }
 
     /**
      * @todo Use GridFieldDetailForm once it can handle structured data and form schemas
+     * @todo move to FormBuilder
      *
      * @param int $id
      * @return Form
      */
-    public function getDetailEditForm($id = null)
+    public function getCampaignEditForm($id)
     {
         // Get record-specific fields
-        $record = null;
-        if ($id) {
-            $record = ChangeSet::get()->byID($id);
-            if (!$record || !$record->canView()) {
-                return null;
-            }
-        }
-
+        $record = ChangeSet::get()->byID($id);
         if (!$record) {
-            $record = ChangeSet::singleton();
+            $this->httpError(404);
+            return null;
+        }
+        if (!$record->canView()) {
+            $this->httpError(403);
+            return null;
         }
 
         $fields = $record->getCMSFields();
@@ -458,7 +471,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $fields->push(HiddenField::create('ID'));
         $form = Form::create(
             $this,
-            'DetailEditForm',
+            'campaignEditForm',
             $fields,
             FieldList::create(
                 FormAction::create('save', _t('CMSMain.SAVE', 'Save'))
@@ -470,20 +483,131 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         );
 
         // Load into form
-        if ($id && $record) {
-            $form->loadDataFrom($record);
-        }
+        $form->loadDataFrom($record);
+
+        // Set form action handler with ID included
+        $form->setRequestHandler(
+            LeftAndMainFormRequestHandler::create($form, [ $id ])
+        );
+
         // Configure form to respond to validation errors with form schema
         // if requested via react.
-        $form->setValidationResponseCallback(function (ValidationResult $errors) use ($form, $record) {
+        $form->setValidationResponseCallback(function (ValidationResult $errors) use ($form, $id, $record) {
             $schemaId = Controller::join_links(
-                $this->Link('schema/DetailEditForm'),
-                $record->isInDB() ? $record->ID : ''
+                $this->Link('schema'),
+                'campaignEditForm',
+                $id
             );
             return $this->getSchemaResponse($schemaId, $form, $errors);
         });
 
         return $form;
+    }
+
+    /**
+     * Url handler for create form
+     *
+     * @param HTTPRequest $request
+     * @return Form
+     */
+    public function campaignCreateForm($request)
+    {
+        return $this->getCampaignCreateForm();
+    }
+
+    /**
+     * Build create form
+     * @todo Move to form builder
+     *
+     * @return Form
+     */
+    public function getCampaignCreateForm()
+    {
+        $record = ChangeSet::singleton();
+        if (!$record->canCreate()) {
+            $this->httpError(403);
+            return null;
+        }
+        $fields = $record->getCMSFields();
+
+        // Add standard fields
+        $fields->push(HiddenField::create('ID'));
+        $form = Form::create(
+            $this,
+            'campaignCreateForm',
+            $fields,
+            FieldList::create(
+                FormAction::create('save', _t('CMSMain.SAVE', 'Save'))
+                    ->setIcon('save'),
+                FormAction::create('cancel', _t('LeftAndMain.CANCEL', 'Cancel'))
+                    ->setUseButtonTag(true)
+            ),
+            new RequiredFields('Name')
+        );
+
+        // Custom form handler
+        $form->setRequestHandler(
+            LeftAndMainFormRequestHandler::create($form)
+        );
+
+        // Configure form to respond to validation errors with form schema
+        // if requested via react.
+        $form->setValidationResponseCallback(function (ValidationResult $errors) use ($form, $record) {
+            $schemaId = $this->Link('schema/campaignCreateForm');
+            return $this->getSchemaResponse($schemaId, $form, $errors);
+        });
+
+        return $form;
+    }
+
+    /**
+     * Save  handler
+     *
+     * @param array $data
+     * @param Form $form
+     * @return HTTPResponse
+     */
+    public function save($data, $form)
+    {
+        $request = $this->getRequest();
+
+        // Existing or new record?
+        $id = empty($data['ID']) ? 0 : $data['ID'];
+        if ($id) {
+            $record = ChangeSet::get()->byID($id);
+            if ($record && !$record->canEdit()) {
+                return Security::permissionFailure($this);
+            }
+            if (!$record || !$record->ID) {
+                $this->httpError(404, "Bad record ID #" . (int)$id);
+            }
+        } else {
+            if (!ChangeSet::singleton()->canCreate()) {
+                return Security::permissionFailure($this);
+            }
+            $record = ChangeSet::create();
+        }
+
+        // save form data into record
+        $form->saveInto($record, true);
+        $record->write();
+        $this->extend('onAfterSave', $record);
+
+        $message = _t('LeftAndMain.SAVEDUP', 'Saved.');
+
+        if ($id) {
+            $schemaId = Controller::join_links($this->Link('schema'), 'campaignEditForm', $id);
+        } else {
+            $schemaId = Controller::join_links($this->Link('schema'), 'campaignCreateForm');
+        }
+
+        // Ensure that newly created records have all their data loaded back into the form.
+        $form->loadDataFrom($record);
+        $form->setMessage($message, 'good');
+        $extra = ['record' => ['id' => $record->ID]];
+        $response = $this->getSchemaResponse($schemaId, $form, null, $extra);
+        $response->addHeader('X-Status', rawurlencode($message));
+        return $response;
     }
 
     /**
