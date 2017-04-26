@@ -20,44 +20,46 @@ campaignId:e.campaign.campaignId,view:e.campaign.view,breadcrumbs:e.breadcrumbs,
 return{breadcrumbsActions:(0,h.bindActionCreators)(v,e)}}Object.defineProperty(t,"__esModule",{value:!0})
 var c=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var a=arguments[t]
 for(var n in a)Object.prototype.hasOwnProperty.call(a,n)&&(e[n]=a[n])}return e},p=function(){function e(e,t){for(var a=0;a<t.length;a++){var n=t[a]
-n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,a,n){return a&&e(t.prototype,a),n&&e(t,n),t}}(),d=a(7),f=r(d),m=a(8),h=a(9),b=a(2),g=a(10),y=r(g),_=a(11),v=n(_),C=a(12),E=r(C),I=a(13),A=r(I),P=a(14),S=r(P),k=a(15),w=r(k),T=a(16),N=r(T),B=a(17),O=r(B),M=a(18),j=r(M),R=function(e){
+n.enumerable=n.enumerable||!1,n.configurable=!0,"value"in n&&(n.writable=!0),Object.defineProperty(e,n.key,n)}}return function(t,a,n){return a&&e(t.prototype,a),n&&e(t,n),t}}(),d=a(7),f=r(d),m=a(8),h=a(9),g=a(2),b=a(10),y=r(b),C=a(11),v=n(C),_=a(12),E=r(_),A=a(13),I=r(A),P=a(14),S=r(P),k=a(15),T=r(k),w=a(16),N=r(w),B=a(17),O=r(B),M=a(18),j=r(M),R=function(e){
 function t(e){i(this,t)
 var a=o(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e))
 return a.publishApi=y.default.createEndpointFetcher({url:a.props.sectionConfig.publishEndpoint.url,method:a.props.sectionConfig.publishEndpoint.method,defaultData:{SecurityID:a.props.securityId},payloadSchema:{
-id:{urlReplacement:":id",remove:!0}}}),a.handleBackButtonClick=a.handleBackButtonClick.bind(a),a}return l(t,e),p(t,[{key:"componentWillMount",value:function e(){0===this.props.breadcrumbs.length&&this.setBreadcrumbs(this.props.params.view,this.props.params.id)
-
-}},{key:"componentWillReceiveProps",value:function e(t){var a=this.props.params.id!==t.params.id||this.props.params.view!==t.params.view
-a&&this.setBreadcrumbs(t.params.view,t.params.id)}},{key:"setBreadcrumbs",value:function e(t,a){var n=[{text:w.default._t("Campaigns.CAMPAIGN","Campaigns"),href:this.props.sectionConfig.url}]
+id:{urlReplacement:":id",remove:!0}}}),a.handleBackButtonClick=a.handleBackButtonClick.bind(a),a.handleCreateCampaignSubmit=a.handleCreateCampaignSubmit.bind(a),a.handleFormAction=a.handleFormAction.bind(a),
+a}return l(t,e),p(t,[{key:"componentWillMount",value:function e(){0===this.props.breadcrumbs.length&&this.setBreadcrumbs(this.props.params.view,this.props.params.id)}},{key:"componentWillReceiveProps",
+value:function e(t){var a=this.props.params.id!==t.params.id||this.props.params.view!==t.params.view
+a&&this.setBreadcrumbs(t.params.view,t.params.id)}},{key:"setBreadcrumbs",value:function e(t,a){var n=[{text:T.default._t("Campaigns.CAMPAIGN","Campaigns"),href:this.props.sectionConfig.url}]
 switch(t){case"show":break
-case"edit":n.push({text:w.default._t("Campaigns.EDIT_CAMPAIGN","Editing Campaign"),href:this.getActionRoute(a,t)})
+case"edit":n.push({text:T.default._t("Campaigns.EDIT_CAMPAIGN","Editing Campaign"),href:this.getActionRoute(a,t)})
 break
-case"create":n.push({text:w.default._t("Campaigns.ADD_CAMPAIGN","Add Campaign"),href:this.getActionRoute(a,t)})}this.props.breadcrumbsActions.setBreadcrumbs(n)}},{key:"handleBackButtonClick",value:function e(t){
+case"create":n.push({text:T.default._t("Campaigns.ADD_CAMPAIGN","Add Campaign"),href:this.getActionRoute(a,t)})}this.props.breadcrumbsActions.setBreadcrumbs(n)}},{key:"handleBackButtonClick",value:function e(t){
 if(this.props.breadcrumbs.length>1){var a=this.props.breadcrumbs[this.props.breadcrumbs.length-2]
-a&&a.href&&(t.preventDefault(),this.props.router.push(a.href))}}},{key:"render",value:function e(){var t=null
+a&&a.href&&(t.preventDefault(),this.props.router.push(a.href))}}},{key:"handleCreateCampaignSubmit",value:function e(t,a,n){var r=this,i=n()
+if(!i)throw new Error("Promise was not returned for submitting")
+return i.then(function(e){if("action_save"===a){var t=r.props.sectionConfig.url,n=e.record.id
+r.props.router.push(t+"/set/"+n+"/edit")}return e})}},{key:"handleFormAction",value:function e(t){var a=t.currentTarget.name
+if("action_cancel"===a){var n=this.props.sectionConfig.url
+this.props.router.push(n),t.preventDefault()}}},{key:"render",value:function e(){var t=null
 switch(this.props.params.view){case"show":t=this.renderItemListView()
 break
 case"edit":t=this.renderDetailEditView()
 break
 case"create":t=this.renderCreateView()
 break
-default:t=this.renderIndexView()}return t}},{key:"renderIndexView",value:function e(){var t=this.props.sectionConfig.form.EditForm.schemaUrl,a={title:w.default._t("Campaigns.ADDCAMPAIGN"),icon:"plus",handleClick:this.addCampaign.bind(this)
+default:t=this.renderIndexView()}return t}},{key:"renderIndexView",value:function e(){var t=this.props.sectionConfig.form.EditForm.schemaUrl,a={title:T.default._t("Campaigns.ADDCAMPAIGN"),icon:"plus",handleClick:this.addCampaign.bind(this)
 },n={createFn:this.campaignListCreateFn.bind(this),schemaUrl:t}
 return f.default.createElement("div",{className:"fill-height","aria-expanded":"true"},f.default.createElement(N.default,null,f.default.createElement(E.default,{multiline:!0})),f.default.createElement("div",{
 className:"panel panel--padded panel--scrollable flexbox-area-grow"},f.default.createElement("div",{className:"toolbar toolbar--content"},f.default.createElement("div",{className:"btn-toolbar"},f.default.createElement(S.default,a))),f.default.createElement(O.default,n)))
 
 }},{key:"renderItemListView",value:function e(){var t={sectionConfig:this.props.sectionConfig,campaignId:this.props.params.id,itemListViewEndpoint:this.props.sectionConfig.itemListViewEndpoint,publishApi:this.publishApi,
 handleBackButtonClick:this.handleBackButtonClick.bind(this)}
-return f.default.createElement(j.default,t)}},{key:"renderDetailEditView",value:function e(){var t=this.props.sectionConfig.form.DetailEditForm.schemaUrl,a=t
-this.props.params.id>0&&(a=t+"/"+this.props.params.id)
-var n={createFn:this.campaignEditCreateFn.bind(this),schemaUrl:a}
+return f.default.createElement(j.default,t)}},{key:"renderDetailEditView",value:function e(){if(this.props.params.id<=0)return this.renderCreateView()
+var t=this.props.sectionConfig.form.campaignEditForm.schemaUrl,a=t+"/"+this.props.params.id
 return f.default.createElement("div",{className:"fill-height"},f.default.createElement(N.default,{showBackButton:!0,handleBackButtonClick:this.handleBackButtonClick},f.default.createElement(E.default,{
-multiline:!0})),f.default.createElement("div",{className:"panel panel--padded panel--scrollable flexbox-area-grow form--inline"},f.default.createElement(O.default,n)))}},{key:"renderCreateView",value:function e(){
-var t=this.props.sectionConfig.form.DetailEditForm.schemaUrl,a=t
-this.props.params.id>0&&(a=t+"/"+this.props.params.id)
-var n={createFn:this.campaignAddCreateFn.bind(this),schemaUrl:a}
+multiline:!0})),f.default.createElement("div",{className:"panel panel--padded panel--scrollable flexbox-area-grow form--inline"},f.default.createElement(O.default,{handleAction:this.handleFormAction,schemaUrl:a
+})))}},{key:"renderCreateView",value:function e(){var t=this.props.sectionConfig.form.campaignCreateForm.schemaUrl
 return f.default.createElement("div",{className:"fill-height"},f.default.createElement(N.default,{showBackButton:!0,handleBackButtonClick:this.handleBackButtonClick},f.default.createElement(E.default,{
-multiline:!0})),f.default.createElement("div",{className:"panel panel--padded panel--scrollable flexbox-area-grow form--inline"},f.default.createElement(O.default,n)))}},{key:"campaignEditCreateFn",value:function e(t,a){
-var n=this,r=this.props.sectionConfig.url
+multiline:!0})),f.default.createElement("div",{className:"panel panel--padded panel--scrollable flexbox-area-grow form--inline"},f.default.createElement(O.default,{handleSubmit:this.handleCreateCampaignSubmit,
+handleAction:this.handleFormAction,schemaUrl:t})))}},{key:"campaignEditCreateFn",value:function e(t,a){var n=this,r=this.props.sectionConfig.url
 if("action_cancel"===a.name){var i=c({},a,{handleClick:function e(t){t.preventDefault(),n.props.router.push(r)}})
 return f.default.createElement(t,c({key:a.id},i))}return f.default.createElement(t,c({key:a.id},a))}},{key:"campaignAddCreateFn",value:function e(t,a){var n=this,r=this.props.sectionConfig.url
 if("action_cancel"===a.name){var i=c({},a,{handleClick:function e(t){t.preventDefault(),n.props.router.push(r)}})
@@ -68,12 +70,14 @@ if("GridField"===a.schemaComponent){var o=c({},a,{data:c({},a.data,{handleDrillD
 
 }})})
 return f.default.createElement(t,c({key:o.name},o))}return f.default.createElement(t,c({key:a.name},a))}},{key:"addCampaign",value:function e(){var t=this.getActionRoute(0,"create")
-this.props.router.push(t)}},{key:"getActionRoute",value:function e(t,a){return this.props.sectionConfig.url+"/set/"+t+"/"+a}}]),t}(A.default)
-R.propTypes={breadcrumbsActions:f.default.PropTypes.object.isRequired,campaignId:f.default.PropTypes.string,sectionConfig:f.default.PropTypes.object.isRequired,securityId:f.default.PropTypes.string.isRequired,
-view:f.default.PropTypes.string},t.default=(0,b.withRouter)((0,m.connect)(s,u)(R))},function(e,t){e.exports=React},function(e,t){e.exports=ReactRedux},function(e,t){e.exports=Redux},function(e,t){e.exports=Backend
+this.props.router.push(t)}},{key:"getActionRoute",value:function e(t,a){return this.props.sectionConfig.url+"/set/"+t+"/"+a}}]),t}(I.default)
+R.propTypes={breadcrumbsActions:f.default.PropTypes.object.isRequired,campaignId:f.default.PropTypes.string,sectionConfig:f.default.PropTypes.shape({publishEndpoint:f.default.PropTypes.shape({url:f.default.PropTypes.string,
+method:f.default.PropTypes.string}),form:f.default.PropTypes.shape({EditForm:f.default.PropTypes.shape({schemaUrl:f.default.PropTypes.string}),campaignEditForm:f.default.PropTypes.shape({schemaUrl:f.default.PropTypes.string
+}),campaignCreateForm:f.default.PropTypes.shape({schemaUrl:f.default.PropTypes.string})})}),securityId:f.default.PropTypes.string.isRequired,view:f.default.PropTypes.string},t.default=(0,g.withRouter)((0,
+m.connect)(s,u)(R))},function(e,t){e.exports=React},function(e,t){e.exports=ReactRedux},function(e,t){e.exports=Redux},function(e,t){e.exports=Backend},function(e,t){e.exports=BreadcrumbsActions},function(e,t){
+e.exports=Breadcrumb},function(e,t){e.exports=SilverStripeComponent},function(e,t){e.exports=FormAction},function(e,t){e.exports=i18n},function(e,t){e.exports=Toolbar},function(e,t){e.exports=FormBuilderLoader
 
-},function(e,t){e.exports=BreadcrumbsActions},function(e,t){e.exports=Breadcrumb},function(e,t){e.exports=SilverStripeComponent},function(e,t){e.exports=FormAction},function(e,t){e.exports=i18n},function(e,t){
-e.exports=Toolbar},function(e,t){e.exports=FormBuilderLoader},function(e,t,a){"use strict"
+},function(e,t,a){"use strict"
 function n(e){if(e&&e.__esModule)return e
 var t={}
 if(null!=e)for(var a in e)Object.prototype.hasOwnProperty.call(e,a)&&(t[a]=e[a])
@@ -95,7 +99,7 @@ var r=Object.getOwnPropertyDescriptor(t,a)
 if(void 0===r){var i=Object.getPrototypeOf(t)
 return null===i?void 0:e(i,a,n)}if("value"in r)return r.value
 var o=r.get
-if(void 0!==o)return o.call(n)},f=a(7),m=r(f),h=a(9),b=a(8),g=a(11),y=n(g),_=a(19),v=n(_),C=a(20),E=n(C),I=a(13),A=r(I),P=a(23),S=r(P),k=a(24),w=r(k),T=a(25),N=r(T),B=a(16),O=r(B),M=a(14),j=r(M),R=a(26),x=r(R),G=a(12),D=r(G),L=a(27),U=r(L),F=a(15),H=r(F),V=function(e){
+if(void 0!==o)return o.call(n)},f=a(7),m=r(f),h=a(9),g=a(8),b=a(11),y=n(b),C=a(19),v=n(C),_=a(20),E=n(_),A=a(13),I=r(A),P=a(23),S=r(P),k=a(24),T=r(k),w=a(25),N=r(w),B=a(16),O=r(B),M=a(14),j=r(M),R=a(26),x=r(R),G=a(12),D=r(G),U=a(27),L=r(U),F=a(15),H=r(F),V=function(e){
 function t(e){i(this,t)
 var a=o(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e))
 return a.handlePublish=a.handlePublish.bind(a),a.handleItemSelected=a.handleItemSelected.bind(a),a.setBreadcrumbs=a.setBreadcrumbs.bind(a),a.handleCloseItem=a.handleCloseItem.bind(a),a}return l(t,e),p(t,[{
@@ -112,13 +116,13 @@ var r=a===e.ID
 r&&e._links&&(n=e._links)
 var i=[]
 "none"!==e.ChangeType&&"published"!==o.State||i.push("list-group-item--inactive"),r&&i.push("active"),c.push(m.default.createElement(N.default,{key:e.ID,className:i.join(" "),handleClick:t.handleItemSelected,
-handleClickArg:e.ID},m.default.createElement(x.default,{item:e,campaign:t.props.record})))}),s.push(m.default.createElement(w.default,{key:d,groupid:d,title:p},c))})
+handleClickArg:e.ID},m.default.createElement(x.default,{item:e,campaign:t.props.record})))}),s.push(m.default.createElement(T.default,{key:d,groupid:d,title:p},c))})
 var u=[this.props.config.absoluteBaseUrl,this.props.config.sections["SilverStripe\\CMS\\Controllers\\CMSPagesController"].url].join(""),c=s.length?m.default.createElement(S.default,null,s):m.default.createElement("div",{
 className:"alert alert-warning",role:"alert"},m.default.createElement("strong",null,"This campaign is empty.")," You can add items to a campaign by selecting ",m.default.createElement("em",null,"Add to campaign")," from within the ",m.default.createElement("em",null,"More Options "),"popup on ",m.default.createElement("a",{
 href:u},"pages")," and files."),p=["panel","panel--padded","panel--scrollable","flexbox-area-grow"]
 return m.default.createElement("div",{className:"fill-width campaign-admin__campaign "+r},m.default.createElement("div",{className:"fill-height campaign-admin__campaign-items","aria-expanded":"true"},m.default.createElement(O.default,{
 showBackButton:!0,handleBackButtonClick:this.props.handleBackButtonClick},m.default.createElement(D.default,{multiline:!0})),m.default.createElement("div",{className:p.join(" ")},c),m.default.createElement("div",{
-className:"toolbar toolbar--south"},this.renderButtonToolbar())),m.default.createElement(U.default,{itemLinks:n,itemId:a,onBack:this.handleCloseItem}))}},{key:"handleItemSelected",value:function e(t,a){
+className:"toolbar toolbar--south"},this.renderButtonToolbar())),m.default.createElement(L.default,{itemLinks:n,itemId:a,onBack:this.handleCloseItem}))}},{key:"handleItemSelected",value:function e(t,a){
 this.props.campaignActions.selectChangeSetItem(a)}},{key:"handleCloseItem",value:function e(){this.props.campaignActions.selectChangeSetItem(null)}},{key:"renderButtonToolbar",value:function e(){var t=this.getItems()
 
 
@@ -131,10 +135,10 @@ var t={},a=this.getItems()
 return a?(a.forEach(function(e){var a=e.BaseClass
 t[a]||(t[a]={singular:e.Singular,plural:e.Plural,items:[]}),t[a].items.push(e)}),t):t}},{key:"handlePublish",value:function e(t){t.preventDefault(),this.props.campaignActions.publishCampaign(this.props.publishApi,this.props.treeClass,this.props.campaignId)
 
-}}]),t}(A.default)
+}}]),t}(I.default)
 V.propTypes={campaign:m.default.PropTypes.shape({isPublishing:m.default.PropTypes.bool.isRequired,changeSetItemId:m.default.PropTypes.number}),breadcrumbsActions:m.default.PropTypes.object.isRequired,campaignActions:m.default.PropTypes.object.isRequired,
 publishApi:m.default.PropTypes.func.isRequired,record:m.default.PropTypes.object.isRequired,recordActions:m.default.PropTypes.object.isRequired,sectionConfig:m.default.PropTypes.object.isRequired,handleBackButtonClick:m.default.PropTypes.func
-},t.default=(0,b.connect)(s,u)(V)},function(e,t){e.exports=RecordsActions},function(e,t,a){"use strict"
+},t.default=(0,g.connect)(s,u)(V)},function(e,t){e.exports=RecordsActions},function(e,t,a){"use strict"
 function n(e){return e&&e.__esModule?e:{default:e}}function r(e){return{type:s.default.SET_CAMPAIGN_SELECTED_CHANGESETITEM,payload:{changeSetItemId:e}}}function i(e,t){return function(a){a({type:s.default.SET_CAMPAIGN_ACTIVE_CHANGESET,
 payload:{campaignId:e,view:t}})}}function o(e,t,a){return function(n){n({type:s.default.PUBLISH_CAMPAIGN_REQUEST,payload:{campaignId:a}}),e({id:a}).then(function(e){n({type:s.default.PUBLISH_CAMPAIGN_SUCCESS,
 payload:{campaignId:a}}),n({type:c.default.FETCH_RECORD_SUCCESS,payload:{recordType:t,data:e}})}).catch(function(e){n({type:s.default.PUBLISH_CAMPAIGN_FAILURE,payload:{error:e}})})}}Object.defineProperty(t,"__esModule",{
