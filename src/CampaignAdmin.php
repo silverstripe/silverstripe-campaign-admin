@@ -645,7 +645,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'name' => _t('CMSMain.ACCESS', "Access to '{title}' section", array('title' => static::menu_title())),
                 'category' => _t('Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
                 'help' => _t(
-                    'CampaignAdmin.ACCESS_HELP',
+                    __CLASS__.'.ACCESS_HELP',
                     'Allow viewing of the campaign publishing section.'
                 )
             )

@@ -6,13 +6,17 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
   }
 } else {
   ss.i18n.addDictionary('en', {
-    "Campaigns.ADDCAMPAIGN": "Add campaign",
-    "Campaigns.DELETECAMPAIGN": "Are you sure you want to delete this record?",
-    "Campaigns.ITEM_SUMMARY_PLURAL": "%s items",
-    "Campaigns.ITEM_SUMMARY_SINGULAR": "%s item",
-    "Campaigns.LOADING": "Loading...",
-    "Campaigns.NO_RECORDS": "No campaigns created yet.",
-    "Campaigns.PUBLISHCAMPAIGN": "Publish campaign",
-    "Campaigns.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
+    "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
+    "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
+    "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
+    "CampaignAdmin.LOADING": "Loading...",
+    "CampaignAdmin.NO_RECORDS": "No campaigns created yet.",
+    "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.DRAFT": "Draft",
+    "CampaignAdmin.MODIFIED": "Modified",
+    "CampaignAdmin.REMOVED": "Removed",
+    "CampaignAdmin.NO_CHANGES": "No changes"
 });
 }

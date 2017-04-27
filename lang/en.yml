@@ -1,0 +1,17 @@
+en:
+  SilverStripe\CampaignAdmin\AddToCampaignHandler:
+    AddToCampaignAddAction: Add
+    AddToCampaignAvailableLabel: 'Available campaigns'
+    AddToCampaignFormFieldLabel: 'Select a Campaign'
+    AddToCampaignInChangsetLabel: 'Heads up, this item is already in campaign(s):'
+    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">This item has been added to all available campaigns.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Create a new campaign?</a></p>'
+    ErrorCampaignPermissionDenied: 'It seems you don''t have the necessary permissions to add {ObjectTitle} to {CampaignTitle}'
+    ErrorGeneral: 'We apologise, but there was an error'
+    ErrorItemPermissionDenied: 'It seems you don''t have the necessary permissions to add {ObjectTitle} to a campaign'
+    ErrorNotFound: 'That {Type} couldn''t be found'
+    Success: 'Successfully added <strong>{ObjectTitle}</strong> to <strong>{CampaignTitle}</strong>'
+  SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
+    ADDTOCAMPAIGN: 'Add to Campaign'
+  SilverStripe\CampaignAdmin\CampaignAdmin:
+    MENUTITLE: Campaigns
+    ACCESS_HELP: 'Allow viewing of the campaign publishing section.'

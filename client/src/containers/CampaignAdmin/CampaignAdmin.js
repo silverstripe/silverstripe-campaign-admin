@@ -52,7 +52,7 @@ class CampaignAdmin extends SilverStripeComponent {
   setBreadcrumbs(view, id) {
     // Set root breadcrumb
     const breadcrumbs = [{
-      text: i18n._t('Campaigns.CAMPAIGN', 'Campaigns'),
+      text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
       href: this.props.sectionConfig.url,
     }];
     switch (view) {
@@ -62,13 +62,13 @@ class CampaignAdmin extends SilverStripeComponent {
       case 'edit':
         // @todo - Lazy load in FormBuilderLoader / GridField
         breadcrumbs.push({
-          text: i18n._t('Campaigns.EDIT_CAMPAIGN', 'Editing Campaign'),
+          text: i18n._t('CampaignAdmin.EDIT_CAMPAIGN', 'Editing Campaign'),
           href: this.getActionRoute(id, view),
         });
         break;
       case 'create':
         breadcrumbs.push({
-          text: i18n._t('Campaigns.ADD_CAMPAIGN', 'Add Campaign'),
+          text: i18n._t('CampaignAdmin.ADD_CAMPAIGN', 'Add Campaign'),
           href: this.getActionRoute(id, view),
         });
         break;
@@ -155,7 +155,7 @@ class CampaignAdmin extends SilverStripeComponent {
   renderIndexView() {
     const schemaUrl = this.props.sectionConfig.form.EditForm.schemaUrl;
     const formActionProps = {
-      title: i18n._t('Campaigns.ADDCAMPAIGN'),
+      title: i18n._t('CampaignAdmin.ADDCAMPAIGN'),
       icon: 'plus',
       handleClick: this.addCampaign.bind(this),
     };
