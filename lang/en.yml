@@ -14,5 +14,4 @@ en:
     ADDTOCAMPAIGN: 'Add to Campaign'
   SilverStripe\CampaignAdmin\CampaignAdmin:
     MENUTITLE: Campaigns
-  SilverStripe\CampaignAdmin\CampaignAdmin:
     ACCESS_HELP: 'Allow viewing of the campaign publishing section.'
