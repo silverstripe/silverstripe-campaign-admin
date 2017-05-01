@@ -1,11 +1,12 @@
 {
-    "CampaignAdmin.DRAFT": "Draft",
-    "CampaignAdmin.MODIFIED": "Modified",
-    "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.NO_CHANGES": "No changes",
-    "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
-    "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
-    "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
-    "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+  "CampaignAdmin.ADDCAMPAIGN": "Lägg till kampanj",
+  "CampaignAdmin.DELETECAMPAIGN": "Är du säker på att du vill ta bort denna posten?",
+  "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s objekt",
+  "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s objekt",
+  "CampaignAdmin.PUBLISHCAMPAIGN": "Publicera kampanj",
+  "CampaignAdmin.REVERTCAMPAIGN": "Återgå",
+  "CampaignAdmin.DRAFT": "Utkast",
+  "CampaignAdmin.MODIFIED": "Ändrad",
+  "CampaignAdmin.REMOVED": "Raderad",
+  "CampaignAdmin.NO_CHANGES": "Inga ändringar"
 }

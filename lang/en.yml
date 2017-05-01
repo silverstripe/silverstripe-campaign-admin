@@ -1,5 +1,7 @@
 en:
-  SilverStripe\CampaignAdmin\AddToCampaignHandler:
+  LeftAndMain:
+    CANCEL: Cancel
+  SilverStripe\CampaignAdmin\AddToCampaignHandler\Object\controller:
     AddToCampaignAddAction: Add
     AddToCampaignAvailableLabel: 'Available campaigns'
     AddToCampaignFormFieldLabel: 'Select a Campaign'
@@ -14,4 +16,5 @@ en:
     ADDTOCAMPAIGN: 'Add to Campaign'
   SilverStripe\CampaignAdmin\CampaignAdmin:
     MENUTITLE: Campaigns
+  SilverStripe\CampaignAdmin\CampaignAdmin\getClientConfig:
     ACCESS_HELP: 'Allow viewing of the campaign publishing section.'
