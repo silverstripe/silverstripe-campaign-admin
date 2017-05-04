@@ -109,12 +109,14 @@ class CampaignAdmin extends SilverStripeComponent {
     }
     return promise
       .then((response) => {
-        if (action === 'action_save') {
-          // open the new folder in edit mode after save completes
+        const hasErrors = response.errors && response.errors.length > 0;
+        if (action === 'action_save' && !hasErrors) {
+          // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
           const id = response.record.id;
           this.props.router.push(`${sectionUrl}/set/${id}/edit`);
         }
+
         return response;
       });
   }

@@ -13,6 +13,8 @@ en:
   SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
     ADDTOCAMPAIGN: 'Add to Campaign'
   SilverStripe\CampaignAdmin\CampaignAdmin:
+    ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists.'
+  SilverStripe\CampaignAdmin\CampaignAdmin\getClientConfig:
     ACCESS_HELP: 'Allow viewing of the campaign publishing section.'
     CANCEL: Cancel
     MENUTITLE: Campaigns
