@@ -14,4 +14,7 @@ en:
     ADDTOCAMPAIGN: 'Add to Campaign'
   SilverStripe\CampaignAdmin\CampaignAdmin:
     ACCESS_HELP: 'Allow viewing of the campaign publishing section.'
+    CANCEL: Cancel
     MENUTITLE: Campaigns
+    SAVE: Save
+    SAVEDUP: Saved.

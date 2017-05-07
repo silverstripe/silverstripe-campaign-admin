@@ -474,9 +474,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignEditForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t('SilverStripe\\CMS\\Controllers\\CMSMain.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
                     ->setIcon('save'),
-                FormAction::create('cancel', _t('SilverStripe\\Admin\\LeftAndMain.CANCEL', 'Cancel'))
+                FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
             new RequiredFields('Name')
@@ -537,9 +537,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignCreateForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t('SilverStripe\\CMS\\Controllers\\CMSMain.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
                     ->setIcon('save'),
-                FormAction::create('cancel', _t('SilverStripe\\Admin\\LeftAndMain.CANCEL', 'Cancel'))
+                FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
             new RequiredFields('Name')
@@ -593,7 +593,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $record->write();
         $this->extend('onAfterSave', $record);
 
-        $message = _t('SilverStripe\\Admin\\LeftAndMain.SAVEDUP', 'Saved.');
+        $message = _t(__CLASS__.'.SAVEDUP', 'Saved.');
 
         if ($id) {
             $schemaId = Controller::join_links($this->Link('schema'), 'campaignEditForm', $id);
