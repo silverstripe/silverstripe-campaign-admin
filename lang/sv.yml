@@ -1,6 +1,6 @@
 sv:
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
-    AddToCampaignAddAction: 'Lägg till'
+    AddToCampaignAddAction: Lägg till
     AddToCampaignAvailableLabel: 'Tillgängliga kampanjer'
     AddToCampaignFormFieldLabel: 'Välj kampanj'
     AddToCampaignInChangsetLabel: 'Obs! Detta objekt är redan tillagt:'
