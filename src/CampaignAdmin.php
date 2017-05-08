@@ -474,9 +474,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignEditForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t('CMSMain.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
                     ->setIcon('save'),
-                FormAction::create('cancel', _t('LeftAndMain.CANCEL', 'Cancel'))
+                FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
             new RequiredFields('Name')
@@ -537,9 +537,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignCreateForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t('CMSMain.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
                     ->setIcon('save'),
-                FormAction::create('cancel', _t('LeftAndMain.CANCEL', 'Cancel'))
+                FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
             new RequiredFields('Name')
@@ -593,7 +593,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $record->write();
         $this->extend('onAfterSave', $record);
 
-        $message = _t('LeftAndMain.SAVEDUP', 'Saved.');
+        $message = _t(__CLASS__.'.SAVEDUP', 'Saved.');
 
         if ($id) {
             $schemaId = Controller::join_links($this->Link('schema'), 'campaignEditForm', $id);
@@ -642,8 +642,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     {
         return array(
             "CMS_ACCESS_CampaignAdmin" => array(
-                'name' => _t('CMSMain.ACCESS', "Access to '{title}' section", array('title' => static::menu_title())),
-                'category' => _t('Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
+                'name' => _t('SilverStripe\\CMS\\Controllers\\CMSMain.ACCESS', "Access to '{title}' section", array('title' => static::menu_title())),
+                'category' => _t('SilverStripe\\Security\\Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
                 'help' => _t(
                     __CLASS__.'.ACCESS_HELP',
                     'Allow viewing of the campaign publishing section.'

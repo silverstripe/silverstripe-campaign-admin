@@ -1,0 +1,5 @@
+eo:
+  SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
+    ADDTOCAMPAIGN: 'Aldoni al kampanjo'
+  SilverStripe\CampaignAdmin\CampaignAdmin:
+    MENUTITLE: Kampanjoj

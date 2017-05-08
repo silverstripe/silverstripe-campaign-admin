@@ -1,0 +1,5 @@
+fi:
+  SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
+    ADDTOCAMPAIGN: 'Lisää kampanjaan'
+  SilverStripe\CampaignAdmin\CampaignAdmin:
+    MENUTITLE: Kampanjat
