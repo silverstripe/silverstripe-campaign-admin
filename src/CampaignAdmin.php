@@ -570,6 +570,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     public function save($data, $form)
     {
         $request = $this->getRequest();
+        $errors = null;
 
         // Existing or new record?
         $id = empty($data['ID']) ? 0 : $data['ID'];
@@ -588,12 +589,26 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $record = ChangeSet::create();
         }
 
-        // save form data into record
-        $form->saveInto($record, true);
-        $record->write();
-        $this->extend('onAfterSave', $record);
+        $hasExistingName = Changeset::get()
+            ->filter('Name:nocase', $data['Name'])
+            ->exclude('ID', $id)
+            ->count() > 0;
 
-        $message = _t(__CLASS__.'.SAVEDUP', 'Saved.');
+        if (!$hasExistingName) {
+            // save form data into record
+            $form->saveInto($record, true);
+            $record->write();
+            $this->extend('onAfterSave', $record);
+            $message = _t(__CLASS__.'.SAVEDUP', 'Saved.');
+            $form->setMessage($message, ValidationResult::TYPE_GOOD);
+        } else {
+            $nameDuplicateMsg = _t(__CLASS__ . '.ERROR_DUPLICATE_NAME', 'Name "{Name}" already exists', '', [ 'Name' => $data['Name']]);
+            $errors = new ValidationResult();
+            $errors->addFieldMessage('Name', $nameDuplicateMsg);
+            $message = _t('LeftAndMain.SAVEDERROR', 'Error.');
+            // Need to set the form message or the field message won't show up at all
+            $form->setMessage($message, ValidationResult::TYPE_ERROR);
+        }
 
         if ($id) {
             $schemaId = Controller::join_links($this->Link('schema'), 'campaignEditForm', $id);
@@ -603,9 +618,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
         // Ensure that newly created records have all their data loaded back into the form.
         $form->loadDataFrom($record);
-        $form->setMessage($message, 'good');
         $extra = ['record' => ['id' => $record->ID]];
-        $response = $this->getSchemaResponse($schemaId, $form, null, $extra);
+        $response = $this->getSchemaResponse($schemaId, $form, $errors, $extra);
         $response->addHeader('X-Status', rawurlencode($message));
         return $response;
     }

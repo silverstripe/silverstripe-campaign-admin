@@ -35,8 +35,9 @@ case"create":a.push({text:T.default._t("CampaignAdmin.ADD_CAMPAIGN","Add Campaig
 if(this.props.breadcrumbs.length>1){var n=this.props.breadcrumbs[this.props.breadcrumbs.length-2]
 n&&n.href&&(t.preventDefault(),this.props.router.push(n.href))}}},{key:"handleCreateCampaignSubmit",value:function e(t,n,a){var r=this,i=a()
 if(!i)throw new Error("Promise was not returned for submitting")
-return i.then(function(e){if("action_save"===n){var t=r.props.sectionConfig.url,a=e.record.id
-r.props.router.push(t+"/set/"+a+"/edit")}return e})}},{key:"handleFormAction",value:function e(t){var n=t.currentTarget.name
+return i.then(function(e){var t=e.errors&&e.errors.length>0
+if("action_save"===n&&!t){var a=r.props.sectionConfig.url,i=e.record.id
+r.props.router.push(a+"/set/"+i+"/edit")}return e})}},{key:"handleFormAction",value:function e(t){var n=t.currentTarget.name
 if("action_cancel"===n){var a=this.props.sectionConfig.url
 this.props.router.push(a),t.preventDefault()}}},{key:"render",value:function e(){var t=null
 switch(this.props.params.view){case"show":t=this.renderItemListView()
