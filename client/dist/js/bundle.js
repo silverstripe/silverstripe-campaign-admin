@@ -16,11 +16,11 @@ return t.default=e,t}function r(e){return e&&e.__esModule?e:{default:e}}function
 
 return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function l(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t)
 e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function s(e){return{config:e.config,
-campaignId:e.campaign.campaignId,view:e.campaign.view,breadcrumbs:e.breadcrumbs,sectionConfig:e.config.sections["SilverStripe\\CampaignAdmin\\CampaignAdmin"],securityId:e.config.SecurityID}}function u(e){
-return{breadcrumbsActions:(0,h.bindActionCreators)(v,e)}}Object.defineProperty(t,"__esModule",{value:!0})
+campaignId:e.campaign.campaignId,view:e.campaign.view,breadcrumbs:e.breadcrumbs,sectionConfig:e.config.sections.find(function(e){return e.name===R}),securityId:e.config.SecurityID}}function u(e){return{
+breadcrumbsActions:(0,h.bindActionCreators)(v,e)}}Object.defineProperty(t,"__esModule",{value:!0})
 var c=Object.assign||function(e){for(var t=1;t<arguments.length;t++){var n=arguments[t]
 for(var a in n)Object.prototype.hasOwnProperty.call(n,a)&&(e[a]=n[a])}return e},p=function(){function e(e,t){for(var n=0;n<t.length;n++){var a=t[n]
-a.enumerable=a.enumerable||!1,a.configurable=!0,"value"in a&&(a.writable=!0),Object.defineProperty(e,a.key,a)}}return function(t,n,a){return n&&e(t.prototype,n),a&&e(t,a),t}}(),d=n(7),f=r(d),m=n(8),h=n(9),g=n(2),b=n(10),y=r(b),C=n(11),v=a(C),_=n(12),E=r(_),A=n(13),I=r(A),P=n(14),S=r(P),k=n(15),T=r(k),w=n(16),N=r(w),B=n(17),O=r(B),M=n(18),j=r(M),R=function(e){
+a.enumerable=a.enumerable||!1,a.configurable=!0,"value"in a&&(a.writable=!0),Object.defineProperty(e,a.key,a)}}return function(t,n,a){return n&&e(t.prototype,n),a&&e(t,a),t}}(),d=n(7),f=r(d),m=n(8),h=n(9),g=n(2),b=n(10),y=r(b),C=n(11),v=a(C),_=n(12),E=r(_),A=n(13),I=r(A),P=n(14),S=r(P),k=n(15),T=r(k),w=n(16),N=r(w),B=n(17),O=r(B),M=n(18),j=r(M),R="SilverStripe\\CampaignAdmin\\CampaignAdmin",x=function(e){
 function t(e){i(this,t)
 var n=o(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e))
 return n.publishApi=y.default.createEndpointFetcher({url:n.props.sectionConfig.publishEndpoint.url,method:n.props.sectionConfig.publishEndpoint.method,defaultData:{SecurityID:n.props.securityId},payloadSchema:{
@@ -71,10 +71,10 @@ if("GridField"===n.schemaComponent){var o=c({},n,{data:c({},n.data,{handleDrillD
 }})})
 return f.default.createElement(t,c({key:o.name},o))}return f.default.createElement(t,c({key:n.name},n))}},{key:"addCampaign",value:function e(){var t=this.getActionRoute(0,"create")
 this.props.router.push(t)}},{key:"getActionRoute",value:function e(t,n){return this.props.sectionConfig.url+"/set/"+t+"/"+n}}]),t}(I.default)
-R.propTypes={breadcrumbsActions:f.default.PropTypes.object.isRequired,campaignId:f.default.PropTypes.string,sectionConfig:f.default.PropTypes.shape({publishEndpoint:f.default.PropTypes.shape({url:f.default.PropTypes.string,
+x.propTypes={breadcrumbsActions:f.default.PropTypes.object.isRequired,campaignId:f.default.PropTypes.string,sectionConfig:f.default.PropTypes.shape({publishEndpoint:f.default.PropTypes.shape({url:f.default.PropTypes.string,
 method:f.default.PropTypes.string}),form:f.default.PropTypes.shape({EditForm:f.default.PropTypes.shape({schemaUrl:f.default.PropTypes.string}),campaignEditForm:f.default.PropTypes.shape({schemaUrl:f.default.PropTypes.string
 }),campaignCreateForm:f.default.PropTypes.shape({schemaUrl:f.default.PropTypes.string})})}),securityId:f.default.PropTypes.string.isRequired,view:f.default.PropTypes.string},t.default=(0,g.withRouter)((0,
-m.connect)(s,u)(R))},function(e,t){e.exports=React},function(e,t){e.exports=ReactRedux},function(e,t){e.exports=Redux},function(e,t){e.exports=Backend},function(e,t){e.exports=BreadcrumbsActions},function(e,t){
+m.connect)(s,u)(x))},function(e,t){e.exports=React},function(e,t){e.exports=ReactRedux},function(e,t){e.exports=Redux},function(e,t){e.exports=Backend},function(e,t){e.exports=BreadcrumbsActions},function(e,t){
 e.exports=Breadcrumb},function(e,t){e.exports=SilverStripeComponent},function(e,t){e.exports=FormAction},function(e,t){e.exports=i18n},function(e,t){e.exports=Toolbar},function(e,t){e.exports=FormBuilderLoader
 
 },function(e,t,n){"use strict"
@@ -99,7 +99,7 @@ var r=Object.getOwnPropertyDescriptor(t,n)
 if(void 0===r){var i=Object.getPrototypeOf(t)
 return null===i?void 0:e(i,n,a)}if("value"in r)return r.value
 var o=r.get
-if(void 0!==o)return o.call(a)},f=n(7),m=r(f),h=n(9),g=n(8),b=n(11),y=a(b),C=n(19),v=a(C),_=n(20),E=a(_),A=n(13),I=r(A),P=n(23),S=r(P),k=n(24),T=r(k),w=n(25),N=r(w),B=n(16),O=r(B),M=n(14),j=r(M),R=n(26),x=r(R),G=n(12),D=r(G),U=n(27),L=r(U),F=n(15),H=r(F),V=function(e){
+if(void 0!==o)return o.call(a)},f=n(7),m=r(f),h=n(9),g=n(8),b=n(11),y=a(b),C=n(19),v=a(C),_=n(20),E=a(_),A=n(13),I=r(A),P=n(23),S=r(P),k=n(24),T=r(k),w=n(25),N=r(w),B=n(16),O=r(B),M=n(14),j=r(M),R=n(26),x=r(R),G=n(12),D=r(G),U=n(27),L=r(U),F=n(15),H=r(F),V="SilverStripe\\CMS\\Controllers\\CMSPagesController",q=function(e){
 function t(e){i(this,t)
 var n=o(this,(t.__proto__||Object.getPrototypeOf(t)).call(this,e))
 return n.handlePublish=n.handlePublish.bind(n),n.handleItemSelected=n.handleItemSelected.bind(n),n.setBreadcrumbs=n.setBreadcrumbs.bind(n),n.handleCloseItem=n.handleCloseItem.bind(n),n}return l(t,e),p(t,[{
@@ -117,7 +117,7 @@ r&&e._links&&(a=e._links)
 var i=[]
 "none"!==e.ChangeType&&"published"!==o.State||i.push("list-group-item--inactive"),r&&i.push("active"),c.push(m.default.createElement(N.default,{key:e.ID,className:i.join(" "),handleClick:t.handleItemSelected,
 handleClickArg:e.ID},m.default.createElement(x.default,{item:e,campaign:t.props.record})))}),s.push(m.default.createElement(T.default,{key:d,groupid:d,title:p},c))})
-var u=[this.props.config.absoluteBaseUrl,this.props.config.sections["SilverStripe\\CMS\\Controllers\\CMSPagesController"].url].join(""),c=s.length?m.default.createElement(S.default,null,s):m.default.createElement("div",{
+var u=[this.props.config.absoluteBaseUrl,this.props.config.sections.find(function(e){return e.name===V}).url].join(""),c=s.length?m.default.createElement(S.default,null,s):m.default.createElement("div",{
 className:"alert alert-warning",role:"alert"},m.default.createElement("strong",null,"This campaign is empty.")," You can add items to a campaign by selecting ",m.default.createElement("em",null,"Add to campaign")," from within the ",m.default.createElement("em",null,"More Options "),"popup on ",m.default.createElement("a",{
 href:u},"pages")," and files."),p=["panel","panel--padded","panel--scrollable","flexbox-area-grow"]
 return m.default.createElement("div",{className:"fill-width campaign-admin__campaign "+r},m.default.createElement("div",{className:"fill-height campaign-admin__campaign-items","aria-expanded":"true"},m.default.createElement(O.default,{
@@ -136,9 +136,9 @@ return n?(n.forEach(function(e){var n=e.BaseClass
 t[n]||(t[n]={singular:e.Singular,plural:e.Plural,items:[]}),t[n].items.push(e)}),t):t}},{key:"handlePublish",value:function e(t){t.preventDefault(),this.props.campaignActions.publishCampaign(this.props.publishApi,this.props.treeClass,this.props.campaignId)
 
 }}]),t}(I.default)
-V.propTypes={campaign:m.default.PropTypes.shape({isPublishing:m.default.PropTypes.bool.isRequired,changeSetItemId:m.default.PropTypes.number}),breadcrumbsActions:m.default.PropTypes.object.isRequired,campaignActions:m.default.PropTypes.object.isRequired,
+q.propTypes={campaign:m.default.PropTypes.shape({isPublishing:m.default.PropTypes.bool.isRequired,changeSetItemId:m.default.PropTypes.number}),breadcrumbsActions:m.default.PropTypes.object.isRequired,campaignActions:m.default.PropTypes.object.isRequired,
 publishApi:m.default.PropTypes.func.isRequired,record:m.default.PropTypes.object.isRequired,recordActions:m.default.PropTypes.object.isRequired,sectionConfig:m.default.PropTypes.object.isRequired,handleBackButtonClick:m.default.PropTypes.func
-},t.default=(0,g.connect)(s,u)(V)},function(e,t){e.exports=RecordsActions},function(e,t,n){"use strict"
+},t.default=(0,g.connect)(s,u)(q)},function(e,t){e.exports=RecordsActions},function(e,t,n){"use strict"
 function a(e){return e&&e.__esModule?e:{default:e}}function r(e){return{type:s.default.SET_CAMPAIGN_SELECTED_CHANGESETITEM,payload:{changeSetItemId:e}}}function i(e,t){return function(n){n({type:s.default.SET_CAMPAIGN_ACTIVE_CHANGESET,
 payload:{campaignId:e,view:t}})}}function o(e,t,n){return function(a){a({type:s.default.PUBLISH_CAMPAIGN_REQUEST,payload:{campaignId:n}}),e({id:n}).then(function(e){a({type:s.default.PUBLISH_CAMPAIGN_SUCCESS,
 payload:{campaignId:n}}),a({type:c.default.FETCH_RECORD_SUCCESS,payload:{recordType:t,data:e}})}).catch(function(e){a({type:s.default.PUBLISH_CAMPAIGN_FAILURE,payload:{error:e}})})}}Object.defineProperty(t,"__esModule",{

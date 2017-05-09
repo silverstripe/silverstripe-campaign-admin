@@ -15,6 +15,7 @@ import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import Preview from 'components/Preview/Preview';
 import i18n from 'i18n';
 
+const sectionConfigKey = 'SilverStripe\\CMS\\Controllers\\CMSPagesController';
 
 /**
  * Represents a campaign list view
@@ -136,7 +137,7 @@ class CampaignAdminList extends SilverStripeComponent {
     // Set body
     const pagesLink = [
       this.props.config.absoluteBaseUrl,
-      this.props.config.sections['SilverStripe\\CMS\\Controllers\\CMSPagesController'].url,
+      this.props.config.sections.find((section) => section.name === sectionConfigKey).url,
     ].join('');
 
     const body = accordionBlocks.length
