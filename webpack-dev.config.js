@@ -5,6 +5,7 @@ if (Array.isArray(Config)) {
   const jsConfig = Config.find((item) => item.name === 'js');
 
   jsConfig.plugins = [
+  	...jsConfig.plugins,
     // Most vendor libs are loaded directly into the 'vendor' bundle (through require()
     // calls in vendor.js). This ensures that any further require() calls in other bundles
     // aren't duplicating libs.
