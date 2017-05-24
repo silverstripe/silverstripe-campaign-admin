@@ -15,6 +15,10 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.LINKED_TO_SINGULAR": "Links to %s item",
+    "CampaignAdmin.LINKED_TO_PLURAL": "Links to %s items",
+    "CampaignAdmin.LINKED_FROM_SINGULAR": "Linked to from %s item",
+    "CampaignAdmin.LINKED_FROM_PLURAL": "Linked to from %s items",
 });
 }
