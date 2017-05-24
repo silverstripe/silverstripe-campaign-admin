@@ -8,7 +8,6 @@ use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Core\Object;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
@@ -20,7 +19,6 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
 use SilverStripe\Versioned\Versioned;
-use SilverStripe\CampaignAdmin\CampaignAdmin;
 use SilverStripe\Core\Convert;
 
 /**
@@ -151,7 +149,7 @@ class AddToCampaignHandler
         $id = (int)$id;
         $class = ClassInfo::class_name($class);
 
-        if (!$class || !is_subclass_of($class, DataObject::class) || !Object::has_extension($class, Versioned::class)) {
+        if (!$class || !is_subclass_of($class, DataObject::class) || !DataObject::has_extension($class, Versioned::class)) {
             $this->controller->httpError(400, _t(
                 __CLASS__.'.ErrorGeneral',
                 'We apologise, but there was an error'
