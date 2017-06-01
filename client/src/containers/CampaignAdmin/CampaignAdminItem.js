@@ -14,9 +14,9 @@ class CampaignAdminItem extends SilverStripeComponent {
    */
   getNumReferTo() {
     const numReferTo = (
-      this.props.item.links &&
-      this.props.item.links.refer_to &&
-      this.props.item.links.refer_to.length
+      this.props.item._links &&
+      this.props.item._links.references &&
+      this.props.item._links.references.length
     );
 
     return numReferTo || 0;
@@ -27,9 +27,9 @@ class CampaignAdminItem extends SilverStripeComponent {
    */
   getNumReferredBy() {
     const numReferredBy = (
-      this.props.item.links &&
-      this.props.item.links.referenced_by &&
-      this.props.item.links.referenced_by.length
+      this.props.item._links &&
+      this.props.item._links.referenced_by &&
+      this.props.item._links.referenced_by.length
     );
 
     return numReferredBy || 0;
@@ -40,12 +40,10 @@ class CampaignAdminItem extends SilverStripeComponent {
    */
   getReferToTooltipText() {
     const numReferTo = this.getNumReferTo();
-
-    const text = numReferTo < 2 ?
-      i18n._t('CampaignAdmin.LINKED_TO_SINGULAR', 'Links to %s item') :
-      i18n._t('CampaignAdmin.LINKED_TO_PLURAL', 'Links to %s items');
-
-    return i18n.sprintf(text, formatWrittenNumber(numReferTo));
+    return i18n.sprintf(
+      i18n._t('CampaignAdmin.LINKED_TO', 'Requires %s item(s)'),
+      formatWrittenNumber(numReferTo)
+    );
   }
 
   /**
@@ -54,11 +52,10 @@ class CampaignAdminItem extends SilverStripeComponent {
   getReferredByTooltipText() {
     const numReferredBy = this.getNumReferredBy();
 
-    const text = numReferredBy < 2 ?
-      i18n._t('CampaignAdmin.LINKED_FROM_SINGULAR', 'Linked to from %s item') :
-      i18n._t('CampaignAdmin.LINKED_FROM_PLURAL', 'Linked to from %s items');
-
-    return i18n.sprintf(text, formatWrittenNumber(numReferredBy));
+    return i18n.sprintf(
+      i18n._t('CampaignAdmin.LINKED_FROM', 'Required by %s item(s)'),
+      formatWrittenNumber(numReferredBy)
+    );
   }
 
   render() {

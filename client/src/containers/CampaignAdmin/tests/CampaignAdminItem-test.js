@@ -1,8 +1,6 @@
 /* global jest, describe, beforeEach, it, expect */
 
-jest.unmock('react');
-jest.unmock('react-addons-test-utils');
-jest.unmock('../CampaignAdminItem');
+jest.mock('react-bootstrap-ss');
 
 import React from 'react';
 import ReactTestUtils from 'react-addons-test-utils';
@@ -48,8 +46,8 @@ describe('CampaignAdminItem', () => {
     it('should show link icon when the item is selected and have links to other items', () => {
       props.isLinked = false;
       props.selected = true;
-      props.item.links = {
-        refer_to: [
+      props.item._links = {
+        references: [
           { ID: 2 },
           { ID: 3 },
           { ID: 4 },
@@ -65,8 +63,8 @@ describe('CampaignAdminItem', () => {
     });
 
     it('should show correct link to information in the tooltip', () => {
-      props.item.links = {
-        refer_to: [
+      props.item._links = {
+        references: [
           { ID: 2 },
         ],
       };
@@ -74,11 +72,11 @@ describe('CampaignAdminItem', () => {
       cmp = ReactTestUtils.renderIntoDocument(
         <CampaignAdminItem {...props} />
       );
-      expect(cmp.getReferToTooltipText()).toEqual('Links to one item');
-      expect(cmp.getReferredByTooltipText()).toEqual('Linked to from zero item');
+      expect(cmp.getReferToTooltipText()).toEqual('Requires one item(s)');
+      expect(cmp.getReferredByTooltipText()).toEqual('Required by zero item(s)');
 
-      props.item.links = {
-        refer_to: [
+      props.item._links = {
+        references: [
           { ID: 2 },
           { ID: 3 },
           { ID: 4 },
@@ -95,11 +93,11 @@ describe('CampaignAdminItem', () => {
       cmp = ReactTestUtils.renderIntoDocument(
         <CampaignAdminItem {...props} />
       );
-      expect(cmp.getReferToTooltipText()).toEqual('Links to 10 items');
+      expect(cmp.getReferToTooltipText()).toEqual('Requires 10 item(s)');
     });
 
     it('should show correct linked by information in the tooltip', () => {
-      props.item.links = {
+      props.item._links = {
         referenced_by: [
           { ObjectId: 2 },
         ],
@@ -108,40 +106,40 @@ describe('CampaignAdminItem', () => {
       cmp = ReactTestUtils.renderIntoDocument(
         <CampaignAdminItem {...props} />
       );
-      expect(cmp.getReferToTooltipText()).toEqual('Links to zero item');
-      expect(cmp.getReferredByTooltipText()).toEqual('Linked to from one item');
+      expect(cmp.getReferToTooltipText()).toEqual('Requires zero item(s)');
+      expect(cmp.getReferredByTooltipText()).toEqual('Required by one item(s)');
 
-      props.item.links = {
+      props.item._links = {
         referenced_by: [
-          { ObjectID: 2 },
-          { ObjectID: 3 },
-          { ObjectID: 4 },
+          { ChangeSetItemID: 2 },
+          { ChangeSetItemID: 3 },
+          { ChangeSetItemID: 4 },
         ],
       };
 
       cmp = ReactTestUtils.renderIntoDocument(
         <CampaignAdminItem {...props} />
       );
-      expect(cmp.getReferredByTooltipText()).toEqual('Linked to from three items');
+      expect(cmp.getReferredByTooltipText()).toEqual('Required by three item(s)');
     });
 
     it('should show correct link to and linked by information in the tooltip', () => {
-      props.item.links = {
-        refer_to: [
+      props.item._links = {
+        references: [
           { ID: 5 },
         ],
         referenced_by: [
-          { ObjectID: 2 },
-          { ObjectID: 3 },
-          { ObjectID: 4 },
+          { ChangeSetItemID: 2 },
+          { ChangeSetItemID: 3 },
+          { ChangeSetItemID: 4 },
         ],
       };
 
       cmp = ReactTestUtils.renderIntoDocument(
         <CampaignAdminItem {...props} />
       );
-      expect(cmp.getReferToTooltipText()).toEqual('Links to one item');
-      expect(cmp.getReferredByTooltipText()).toEqual('Linked to from three items');
+      expect(cmp.getReferToTooltipText()).toEqual('Requires one item(s)');
+      expect(cmp.getReferredByTooltipText()).toEqual('Required by three item(s)');
     });
   });
 });

@@ -71,7 +71,9 @@ class CampaignAdminList extends SilverStripeComponent {
     const items = this.getItems() || [];
     let selected = null;
 
-    selected = items.find(item => itemId === item.ID);
+    if (itemId) {
+      selected = items.find(item => itemId === item.ID);
+    }
 
     if (!selected && items.length > 0) {
       selected = items[0];
@@ -101,10 +103,10 @@ class CampaignAdminList extends SilverStripeComponent {
 
     const selectedItem = this.getSelectedItem();
     const selectedItemsLinkedTo = (
-      selectedItem && selectedItem.links && selectedItem.links.refer_to
+      selectedItem && selectedItem._links && selectedItem._links.references
       ) || [];
     const selectedItemsLinkedFrom = (
-      selectedItem && selectedItem.links && selectedItem.links.referenced_by
+      selectedItem && selectedItem._links && selectedItem._links.referenced_by
       ) || [];
 
     Object.keys(itemGroups).forEach(className => {
@@ -124,8 +126,8 @@ class CampaignAdminList extends SilverStripeComponent {
         const selected = (itemId === item.ID);
 
         // Check links
-        if (selected && item.links) {
-          itemLinks = item.links;
+        if (selected && item._links) {
+          itemLinks = item._links;
         }
 
         // Add extra css class for published items
@@ -138,10 +140,11 @@ class CampaignAdminList extends SilverStripeComponent {
         }
 
         let isLinked = !!selectedItemsLinkedTo.find(
-            linkToObj => linkToObj.ID === parseInt(item.ObjectID, 10));
+            linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
 
-        isLinked = isLinked || selectedItemsLinkedFrom.find(
-            linkFromObj => linkFromObj.ObjectID === item.ObjectID);
+        isLinked = isLinked || selectedItemsLinkedFrom.find(linkFromObj => (
+          linkFromObj.ChangeSetItemID === item.ID
+        ));
 
         listGroupItems.push(
           <ListGroupItem

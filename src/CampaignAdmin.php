@@ -169,7 +169,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $hal = [
             'count' => $count,
             'total' => $count,
-            'links' => [
+            '_links' => [
                 'self' => [
                     'href' => $this->Link('items')
                 ]
@@ -193,7 +193,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     protected function getChangeSetResource(ChangeSet $changeSet)
     {
         $hal = [
-            'links' => [
+            '_links' => [
                 'self' => [
                     'href' => $this->SetLink($changeSet->ID)
                 ]
@@ -248,7 +248,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $thumbnailWidth = (int)$this->config()->get('thumbnail_width');
         $thumbnailHeight = (int)$this->config()->get('thumbnail_height');
         $hal = [
-            'links' => [
+            '_links' => [
                 'self' => [
                     'id' => $changeSetItem->ID,
                     'href' => $this->ItemLink($changeSetItem->ID)
@@ -270,13 +270,13 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         // Get preview urls
         $previews = $changeSetItem->getPreviewLinks();
         if ($previews) {
-            $hal['links']['preview'] = $previews;
+            $hal['_links']['preview'] = $previews;
         }
 
         // Get edit link
         $editLink = $changeSetItem->CMSEditLink();
         if ($editLink) {
-            $hal['links']['edit'] = [
+            $hal['_links']['edit'] = [
                 'href' => $editLink,
             ];
         }
@@ -289,22 +289,22 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             foreach ($referencedItems as $referencedItem) {
                 $referencedBy[] = [
                     'href' => $this->SetLink($referencedItem->ID),
-                    'ObjectID' => $referencedItem->ObjectID
+                    'ChangeSetItemID' => $referencedItem->ID
                 ];
             }
             if ($referencedBy) {
-                $hal['links']['referenced_by'] = $referencedBy;
+                $hal['_links']['referenced_by'] = $referencedBy;
             }
         }
 
-        $referToItems = $changeSetItem->findReferenced();
+        $referToItems = $changeSetItem->References();
         $referTo = [];
         foreach ($referToItems as $referToItem) {
             $referTo[] = [
-                'ID' => $referToItem->ID
+                'ChangeSetItemID' => $referToItem->ID,
             ];
         }
-        $hal['links']['refer_to'] = $referTo;
+        $hal['_links']['references'] = $referTo;
 
         return $hal;
     }
