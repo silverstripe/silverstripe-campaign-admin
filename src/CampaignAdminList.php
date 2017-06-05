@@ -14,6 +14,17 @@ class CampaignAdminList extends FormField
     protected $schemaDataType = FormField::SCHEMA_DATA_TYPE_CUSTOM;
 
     protected $schemaComponent = 'GridField';
+    
+    /**
+     * Placeholder for react-only custom form field
+     *
+     * @param array $properties
+     * @return string
+     */
+    public function FieldHolder($properties = [])
+    {
+        return '';
+    }
 
     public function getSchemaDataDefaults()
     {
