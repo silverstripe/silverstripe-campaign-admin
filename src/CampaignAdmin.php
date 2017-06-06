@@ -250,6 +250,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $hal = [
             '_links' => [
                 'self' => [
+                    'id' => $changeSetItem->ID,
                     'href' => $this->ItemLink($changeSetItem->ID)
                 ]
             ],
@@ -287,13 +288,23 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $referencedBy = [];
             foreach ($referencedItems as $referencedItem) {
                 $referencedBy[] = [
-                    'href' => $this->SetLink($referencedItem->ID)
+                    'href' => $this->SetLink($referencedItem->ID),
+                    'ChangeSetItemID' => $referencedItem->ID
                 ];
             }
             if ($referencedBy) {
                 $hal['_links']['referenced_by'] = $referencedBy;
             }
         }
+
+        $referToItems = $changeSetItem->References();
+        $referTo = [];
+        foreach ($referToItems as $referToItem) {
+            $referTo[] = [
+                'ChangeSetItemID' => $referToItem->ID,
+            ];
+        }
+        $hal['_links']['references'] = $referTo;
 
         return $hal;
     }

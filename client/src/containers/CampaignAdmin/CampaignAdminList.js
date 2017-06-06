@@ -66,6 +66,22 @@ class CampaignAdminList extends SilverStripeComponent {
     this.props.breadcrumbsActions.setBreadcrumbs(breadcrumbs);
   }
 
+  getSelectedItem() {
+    const itemId = this.props.campaign.changeSetItemId;
+    const items = this.getItems() || [];
+    let selected = null;
+
+    if (itemId) {
+      selected = items.find(item => itemId === item.ID);
+    }
+
+    if (!selected && items.length > 0) {
+      selected = items[0];
+    }
+
+    return selected;
+  }
+
   /**
    * Renders a list of items in a Campaign.
    *
@@ -73,6 +89,7 @@ class CampaignAdminList extends SilverStripeComponent {
    */
   render() {
     let itemId = this.props.campaign.changeSetItemId;
+
     let itemLinks = null;
     const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
     const campaignId = this.props.campaignId;
@@ -83,6 +100,14 @@ class CampaignAdminList extends SilverStripeComponent {
 
     // Get items in this set
     let accordionBlocks = [];
+
+    const selectedItem = this.getSelectedItem();
+    const selectedItemsLinkedTo = (
+      selectedItem && selectedItem._links && selectedItem._links.references
+      ) || [];
+    const selectedItemsLinkedFrom = (
+      selectedItem && selectedItem._links && selectedItem._links.referenced_by
+      ) || [];
 
     Object.keys(itemGroups).forEach(className => {
       const group = itemGroups[className];
@@ -114,6 +139,13 @@ class CampaignAdminList extends SilverStripeComponent {
           itemClassNames.push('active');
         }
 
+        let isLinked = !!selectedItemsLinkedTo.find(
+            linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
+
+        isLinked = isLinked || selectedItemsLinkedFrom.find(linkFromObj => (
+          linkFromObj.ChangeSetItemID === item.ID
+        ));
+
         listGroupItems.push(
           <ListGroupItem
             key={item.ID}
@@ -121,7 +153,12 @@ class CampaignAdminList extends SilverStripeComponent {
             handleClick={this.handleItemSelected}
             handleClickArg={item.ID}
           >
-            <CampaignAdminItem item={item} campaign={this.props.record} />
+            <CampaignAdminItem
+              item={item}
+              campaign={this.props.record}
+              selected={selected}
+              isLinked={isLinked}
+            />
           </ListGroupItem>
         );
       });

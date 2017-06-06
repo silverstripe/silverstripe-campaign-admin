@@ -14,6 +14,10 @@
       color: $list-group-link-color;
       z-index: 0;
 
+      @include media-breakpoint-down(lg) {
+        border: none;
+      }
+
       &:hover {
         background-color: $list-group-hover-bg;
         color: $list-group-link-color;
@@ -35,19 +39,54 @@
 
 
 // Campaign items which have linked associations
+.campaign-admin__item-links,
 .campaign-admin__item-links--has-links,
 .campaign-admin__item-links--is-linked {
+  display: flex;
+  align-items: center;
   color: $brand-primary;
-  float: right;
   position: absolute;
-  right: $spacer-y;
-  top: 27px;
+  right: $spacer-x;
+  bottom: $spacer-y * 2 / 3;
   font-size: $font-size-sm;
 
-  &::before {
+  .font-icon-link {
     font-size: 16px;
     position: relative;
     top: 3px;
     margin-right: 1px;
+    margin-left: 3px;
+  }
+
+  .campaign-admin__item-links__number {
+    opacity: 0;
+  }
+}
+
+.list-group-item.active {
+  .campaign-admin__item-links--has-links {
+    @include media-breakpoint-up(lg) {
+      color: $white;
+    }
+
+    opacity: 1;
+  }
+
+  .campaign-admin__item-links__number {
+    opacity: 1;
+  }
+}
+
+.campaign-admin__item-links--is-linked {
+  opacity: 1;
+
+  .campaign-admin__item-links__number {
+    display: none;
+  }
+}
+
+.list-group-item:hover {
+  .campaign-admin__item-links--is-linked {
+    opacity: 1;
   }
 }
