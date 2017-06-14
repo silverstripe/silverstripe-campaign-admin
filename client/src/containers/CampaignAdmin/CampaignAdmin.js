@@ -382,10 +382,16 @@ CampaignAdmin.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  const sectionConfig = state.config.sections.find((section) => section.name === sectionConfigKey);
-  const formID = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
-  const selector = formValueSelector(formID);
-  const title = selector(state, 'Name');
+  let title = null;
+  const sectionConfig = state.config.sections.find((section) => (
+    section.name === sectionConfigKey
+  ));
+
+  if (ownProps.params.id > 0) {
+    const formID = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
+    const selector = formValueSelector(formID);
+    title = selector(state, 'Name');
+  }
 
   return {
     config: state.config,
