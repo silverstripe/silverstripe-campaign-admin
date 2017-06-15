@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { formValueSelector } from 'redux-form';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import backend from 'lib/Backend';
@@ -36,22 +37,25 @@ class CampaignAdmin extends SilverStripeComponent {
 
   componentWillMount() {
     // Ensure default breadcrumbs are setup
-    if (this.props.breadcrumbs.length === 0) {
-      this.setBreadcrumbs(this.props.params.view, this.props.params.id);
+    const { breadcrumbs, title, params: { view, id } } = this.props;
+    if (breadcrumbs.length === 0) {
+      this.setBreadcrumbs(view, id, title);
     }
   }
 
   componentWillReceiveProps(props) {
+    const { title, params: { id, view } } = props;
     const hasChangedRoute = (
-      this.props.params.id !== props.params.id ||
-      this.props.params.view !== props.params.view
+      this.props.params.id !== id ||
+      this.props.params.view !== view ||
+      this.props.title !== title
     );
     if (hasChangedRoute) {
-      this.setBreadcrumbs(props.params.view, props.params.id);
+      this.setBreadcrumbs(view, id, title);
     }
   }
 
-  setBreadcrumbs(view, id) {
+  setBreadcrumbs(view, id, title) {
     // Set root breadcrumb
     const breadcrumbs = [{
       text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
@@ -64,7 +68,7 @@ class CampaignAdmin extends SilverStripeComponent {
       case 'edit':
         // @todo - Lazy load in FormBuilderLoader / GridField
         breadcrumbs.push({
-          text: i18n._t('CampaignAdmin.EDIT_CAMPAIGN', 'Editing Campaign'),
+          text: title,
           href: this.getActionRoute(id, view),
         });
         break;
@@ -377,14 +381,26 @@ CampaignAdmin.propTypes = {
   view: React.PropTypes.string,
 };
 
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  let title = null;
+  const sectionConfig = state.config.sections.find((section) => (
+    section.name === sectionConfigKey
+  ));
+
+  if (ownProps.params.id > 0) {
+    const formID = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
+    const selector = formValueSelector(formID);
+    title = selector(state, 'Name');
+  }
+
   return {
     config: state.config,
     campaignId: state.campaign.campaignId,
     view: state.campaign.view,
     breadcrumbs: state.breadcrumbs,
-    sectionConfig: state.config.sections.find((section) => section.name === sectionConfigKey),
+    sectionConfig,
     securityId: state.config.SecurityID,
+    title,
   };
 }
 
