@@ -512,6 +512,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             return $this->getSchemaResponse($schemaId, $form, $errors);
         });
 
+        $form->setNotifyUnsavedChanges(true);
+
         return $form;
     }
 
@@ -567,6 +569,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $schemaId = $this->Link('schema/campaignCreateForm');
             return $this->getSchemaResponse($schemaId, $form, $errors);
         });
+
+        $form->setNotifyUnsavedChanges(true);
 
         return $form;
     }
