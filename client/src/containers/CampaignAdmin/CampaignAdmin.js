@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
+import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
@@ -170,6 +171,7 @@ class CampaignAdmin extends SilverStripeComponent {
     const formBuilderProps = {
       createFn: this.campaignListCreateFn.bind(this),
       schemaUrl,
+      identifier: 'Campaign.IndexView',
     };
 
     return (
@@ -228,6 +230,7 @@ class CampaignAdmin extends SilverStripeComponent {
           <FormBuilderLoader
             handleAction={this.handleFormAction}
             schemaUrl={schemaUrl}
+            identifier="Campaign.EditView"
           />
         </div>
       </div>
@@ -249,6 +252,7 @@ class CampaignAdmin extends SilverStripeComponent {
             handleSubmit={this.handleCreateCampaignSubmit}
             handleAction={this.handleFormAction}
             schemaUrl={schemaUrl}
+            identifier="Campaign.CreateView"
           />
         </div>
       </div>
@@ -388,8 +392,7 @@ function mapStateToProps(state, ownProps) {
   ));
 
   if (ownProps.params.id > 0) {
-    const formID = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
-    const selector = formValueSelector(formID);
+    const selector = formValueSelector('Campaign.EditView', getFormState);
     title = selector(state, 'Name');
   }
 
