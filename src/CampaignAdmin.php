@@ -113,9 +113,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     {
         parent::init();
         $module = ModuleLoader::getModule('silverstripe/campaign-admin');
-        Requirements::add_i18n_javascript($module->getResourcePath('client/lang'), false, true);
-        Requirements::javascript($module->getResourcePath('client/dist/js/bundle.js'));
-        Requirements::css($module->getResourcePath('client/dist/styles/bundle.css'));
+        Requirements::add_i18n_javascript($module->getRelativeResourcePath('client/lang'), false, true);
+        Requirements::javascript('silverstripe/campaign-admin: client/dist/js/bundle.js');
+        Requirements::css('silverstripe/campaign-admin: client/dist/styles/bundle.css');
     }
 
     public function getEditForm($id = null, $fields = null)
