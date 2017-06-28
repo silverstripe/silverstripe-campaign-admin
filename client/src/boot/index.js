@@ -1,6 +1,6 @@
 import { withRouter } from 'react-router';
 import ConfigHelpers from 'lib/Config';
-import reducerRegister from 'lib/ReducerRegister';
+import Injector from 'lib/Injector';
 import reactRouteRegister from 'lib/ReactRouteRegister';
 import CampaignAdmin from 'containers/CampaignAdmin/CampaignAdmin';
 import CampaignReducer from 'state/campaign/CampaignReducer';
@@ -16,5 +16,5 @@ document.addEventListener('DOMContentLoaded', () => {
     ],
   });
 
-  reducerRegister.add('campaign', CampaignReducer);
+  Injector.reducer.register('campaign', CampaignReducer);
 });
