@@ -7,7 +7,7 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
 } else {
   ss.i18n.addDictionary('ru', {
     "CampaignAdmin.ADDCAMPAIGN": "Добавить кампанию",
-    "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
+    "CampaignAdmin.DELETECAMPAIGN": "Вы действительно хотите удалить эту запись?",
     "CampaignAdmin.DRAFT": "Draft",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s элементов",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s элемент",

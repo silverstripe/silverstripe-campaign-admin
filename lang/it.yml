@@ -1,0 +1,20 @@
+it:
+  SilverStripe\CampaignAdmin\AddToCampaignHandler:
+    AddToCampaignAddAction: Aggiungi
+    AddToCampaignAvailableLabel: 'Campagne disponibili'
+    AddToCampaignFormFieldLabel: 'Selezionare una Campagna'
+    AddToCampaignInChangsetLabel: 'Attenzione, questo elemento è già presente in una campagna:'
+    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Questo elemento è stato aggiunto a tutte le campagne disponibili.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Creare una nuova campagna?</a></p>'
+    ErrorCampaignPermissionDenied: 'Sembra tu non disponga dei privilegi necessari per aggiungere {ObjectTitle} a {CampaignTitle}'
+    ErrorGeneral: 'Spiacenti, ma c''è stato un errore'
+    ErrorItemPermissionDenied: 'Sembra tu non disponga dei privilegi necessari per aggiungere {ObjectTitle} ad una campagna'
+    ErrorNotFound: '{Type} potrebbe non essere trovato'
+    Success: '<strong>{ObjectTitle}</strong> è stato aggiunto con successo a <strong>{CampaignTitle}</strong>'
+  SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
+    ADDTOCAMPAIGN: 'Aggiungi alla Campagna'
+  SilverStripe\CampaignAdmin\CampaignAdmin:
+    ACCESS_HELP: 'Consentire la visione della sezione di pubblicazione campagna.'
+    CANCEL: Annulla
+    MENUTITLE: Campagne
+    SAVE: Salva
+    SAVEDUP: Salvato.

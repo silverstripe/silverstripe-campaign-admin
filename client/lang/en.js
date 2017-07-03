@@ -15,8 +15,6 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
-    "CampaignAdmin.LINKED_TO": "Requires %s item(s)",
-    "CampaignAdmin.LINKED_FROM": "Required by %s item(s)",
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
 });
 }

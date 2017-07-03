@@ -1,5 +1,20 @@
 eo:
+  SilverStripe\CampaignAdmin\AddToCampaignHandler:
+    AddToCampaignAddAction: Aldoni
+    AddToCampaignAvailableLabel: 'Disponeblaj kampanjoj'
+    AddToCampaignFormFieldLabel: 'Elekti kampanjon'
+    AddToCampaignInChangsetLabel: 'Averto, ĉi tiu ero jam estas en kampanjoj(j):'
+    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Ĉi tiu elemento estas aldonita al ĉiuj disponeblaj kampanjoj.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Ĉu kreu novan kampanjon?</a></p>'
+    ErrorCampaignPermissionDenied: 'Ŝajne vi ne havas la necesajn permesojn por aldoni je {ObjectTitle} al {CampaignTitle}'
+    ErrorGeneral: 'Ni bedaŭras, ke okazis eraro'
+    ErrorItemPermissionDenied: 'Ŝajne vi ne havas la necesajn permesojn por aldoni je {ObjectTitle} al kampanjo'
+    ErrorNotFound: 'Tiu {Type} ne estas trovita'
+    Success: 'Sukcese aldoniĝis <strong>{ObjectTitle}</strong> al <strong>{CampaignTitle}</strong>'
   SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
     ADDTOCAMPAIGN: 'Aldoni al kampanjo'
   SilverStripe\CampaignAdmin\CampaignAdmin:
+    ACCESS_HELP: 'Ebligi vidigon de la kampanja publikiga sekcio.'
+    CANCEL: Nuligi
     MENUTITLE: Kampanjoj
+    SAVE: Konservi
+    SAVEDUP: Konservita.
