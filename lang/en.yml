@@ -1,4 +1,6 @@
 en:
+  LeftAndMain:
+    SAVEDERROR: Error.
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     AddToCampaignAddAction: Add
     AddToCampaignAvailableLabel: 'Available campaigns'
@@ -13,10 +15,9 @@ en:
   SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
     ADDTOCAMPAIGN: 'Add to Campaign'
   SilverStripe\CampaignAdmin\CampaignAdmin:
-    ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists.'
-  SilverStripe\CampaignAdmin\CampaignAdmin\getClientConfig:
     ACCESS_HELP: 'Allow viewing of the campaign publishing section.'
     CANCEL: Cancel
+    ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists'
     MENUTITLE: Campaigns
     SAVE: Save
     SAVEDUP: Saved.

@@ -7,14 +7,14 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
 } else {
   ss.i18n.addDictionary('it', {
     "CampaignAdmin.ADDCAMPAIGN": "Aggiungi campagna",
-    "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
-    "CampaignAdmin.DRAFT": "Draft",
+    "CampaignAdmin.DELETECAMPAIGN": "Sei sicuro di voler eliminare questo record?",
+    "CampaignAdmin.DRAFT": "Bozza",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s elementi",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s elemento",
-    "CampaignAdmin.MODIFIED": "Modified",
-    "CampaignAdmin.NO_CHANGES": "No changes",
+    "CampaignAdmin.MODIFIED": "Modificato",
+    "CampaignAdmin.NO_CHANGES": "Nessuna modifica",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Pubblica campagna",
-    "CampaignAdmin.REMOVED": "Removed",
+    "CampaignAdmin.REMOVED": "Eliminato",
     "CampaignAdmin.REVERTCAMPAIGN": "Ripristina"
 });
 }
