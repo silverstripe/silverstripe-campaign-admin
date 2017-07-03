@@ -5,15 +5,14 @@ namespace SilverStripe\CampaignAdmin;
 use SilverStripe\Forms\FormAction;
 
 /**
- * A form action to return from geCMSActions or otherwise include in a CMS Edit Form that
+ * A form action to return from getCMSActions or otherwise include in a CMS Edit Form that
  * has the right action name and CSS classes to trigger the AddToCampaignHandler.
  *
- * See SiteTree.php and CMSMain.php for an example of it's use
+ * See SiteTree.php and CMSMain.php for an example of its use
  */
 class AddToCampaignHandler_FormAction extends FormAction
 {
-
-    function __construct()
+    public function __construct()
     {
         parent::__construct('addtocampaign', _t(__CLASS__.'.ADDTOCAMPAIGN', 'Add to Campaign'));
 
