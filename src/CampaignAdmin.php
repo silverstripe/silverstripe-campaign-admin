@@ -620,7 +620,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $nameDuplicateMsg = _t(__CLASS__ . '.ERROR_DUPLICATE_NAME', 'Name "{Name}" already exists', '', [ 'Name' => $data['Name']]);
             $errors = new ValidationResult();
             $errors->addFieldMessage('Name', $nameDuplicateMsg);
-            $message = _t('LeftAndMain.SAVEDERROR', 'Error.');
+            $message = _t(__CLASS__.'.SAVEDERROR', 'Error.');
             // Need to set the form message or the field message won't show up at all
             $form->setMessage($message, ValidationResult::TYPE_ERROR);
         }
