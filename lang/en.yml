@@ -17,6 +17,6 @@ en:
     CANCEL: Cancel
     ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists'
     MENUTITLE: Campaigns
-    SAVE: Save
+    SAVE: Create
     SAVEDERROR: Error.
     SAVEDUP: Saved.

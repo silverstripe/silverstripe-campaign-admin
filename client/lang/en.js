@@ -6,7 +6,7 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
   }
 } else {
   ss.i18n.addDictionary('en', {
-    "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
+    "CampaignAdmin.ADDCAMPAIGN": "Add new",
     "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
     "CampaignAdmin.DRAFT": "Draft",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",

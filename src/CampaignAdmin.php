@@ -550,7 +550,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignCreateForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Create'))
                     ->setIcon('save'),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
