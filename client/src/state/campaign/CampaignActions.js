@@ -65,3 +65,16 @@ export function publishCampaign(publishApi, recordType, campaignId) {
       });
   };
 }
+
+/**
+ * Set new campaign created flag
+ *
+ * @param {boolean}
+ * @return {Object}
+ */
+export function setNewCampaignCreated(newItemCreated) {
+  return {
+    type: ACTION_TYPES.SET_NEW_CAMPAIGN_CREATED,
+    payload: { newItemCreated },
+  };
+}

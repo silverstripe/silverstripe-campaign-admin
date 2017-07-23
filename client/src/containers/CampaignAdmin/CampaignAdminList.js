@@ -44,6 +44,11 @@ class CampaignAdminList extends SilverStripeComponent {
     }
   }
 
+  componentWillUnmount() {
+    // Reset new create flag
+    this.props.campaignActions.setNewCampaignCreated(false);
+  }
+
   /**
    * Update breadcrumbs for this view
    */
@@ -94,6 +99,7 @@ class CampaignAdminList extends SilverStripeComponent {
     const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
     const campaignId = this.props.campaignId;
     const campaign = this.props.record;
+    const newItemCreated = this.props.newItemCreated;
 
     // Trigger different layout when preview is enabled
     const itemGroups = this.groupItemsForSet();
@@ -171,6 +177,12 @@ class CampaignAdminList extends SilverStripeComponent {
       );
     });
 
+    const newItemInfo = newItemCreated ?
+      (<p className="alert alert-success alert--no-border" role="alert">
+        Nice one! You have successfully created a campaign.
+      </p>):
+      null;
+
     // Set body
     const pagesLink = [
       this.props.config.absoluteBaseUrl,
@@ -196,6 +208,7 @@ class CampaignAdminList extends SilverStripeComponent {
           <Toolbar showBackButton handleBackButtonClick={this.props.handleBackButtonClick}>
             <Breadcrumb multiline />
           </Toolbar>
+          {newItemInfo}
           <div className={bodyClass.join(' ')}>
             {body}
           </div>
@@ -352,6 +365,7 @@ function mapStateToProps(state, ownProps) {
     record: record || {},
     campaign: state.campaign,
     treeClass,
+    newItemCreated: state.campaign.newItemCreated,
   };
 }
 
