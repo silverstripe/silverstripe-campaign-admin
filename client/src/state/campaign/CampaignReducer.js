@@ -36,10 +36,10 @@ function reducer(state = initialState, action) {
       }));
 
     case ACTION_TYPES.SET_NEW_CAMPAIGN_CREATED:
-      return {
+      return deepFreeze({
         ...state,
         newItemCreated: action.payload.newItemCreated,
-      };
+      });
 
     default:
       return state;

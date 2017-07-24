@@ -29,6 +29,16 @@ class CampaignAdminList extends SilverStripeComponent {
     this.handleItemSelected = this.handleItemSelected.bind(this);
     this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
     this.handleCloseItem = this.handleCloseItem.bind(this);
+
+    if (!this.isRecordLoaded()) {
+      this.state = {
+        loading: true,
+      };
+    } else {
+      this.state = {
+        loading: false,
+      };
+    }
   }
 
   componentDidMount() {
@@ -37,16 +47,26 @@ class CampaignAdminList extends SilverStripeComponent {
     this.setBreadcrumbs();
 
     // Only load record if not already present
-    if (!Object.keys(this.props.record).length) {
+    if (!this.isRecordLoaded()) {
       this.props.recordActions
         .fetchRecord(this.props.treeClass, 'get', fetchURL)
-        .then(this.setBreadcrumbs);
+        .then(() => {
+          this.setBreadcrumbs();
+          this.setState({ loading: false });
+        });
     }
   }
 
   componentWillUnmount() {
     // Reset new create flag
     this.props.campaignActions.setNewCampaignCreated(false);
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isRecordLoaded() {
+    return Object.keys(this.props.record).length !== 0;
   }
 
   /**
@@ -180,7 +200,7 @@ class CampaignAdminList extends SilverStripeComponent {
     const newItemInfo = newItemCreated ?
       (<p className="alert alert-success alert--no-border" role="alert">
         Nice one! You have successfully created a campaign.
-      </p>):
+      </p>) :
       null;
 
     // Set body
@@ -216,9 +236,47 @@ class CampaignAdminList extends SilverStripeComponent {
             {this.renderButtonToolbar()}
           </div>
         </div>
-        <Preview itemLinks={itemLinks} itemId={itemId} onBack={this.handleCloseItem} />
+        {this.renderPreview(itemLinks, itemId)}
       </div>
     );
+  }
+
+  renderPreview(itemLinks, itemId) {
+    let preview = null;
+
+    if (this.state.loading) {
+      preview = (
+        <div
+          className="flexbox-area-grow
+          fill-height
+          preview
+          campaign-admin__campaign-preview
+          campaign-admin__campaign-preview--empty"
+        >
+          <p>Loading...</p>
+        </div>
+      );
+    } else if (!this.getItems() || this.getItems().length === 0) {
+      preview = (
+        <div
+          className="flexbox-area-grow
+          fill-height
+          preview
+          campaign-admin__campaign-preview
+          campaign-admin__campaign-preview--empty"
+        >
+          <h2 className="campaign-admin__empty-heading">Getting started</h2>
+          <p className="campaign-admin__empty-info">
+            Select <strong>Add to Campaign</strong>
+            from pages, files, and other content types
+          </p>
+        </div>
+      );
+    } else {
+      preview = <Preview itemLinks={itemLinks} itemId={itemId} onBack={this.handleCloseItem} />;
+    }
+
+    return preview;
   }
 
   /**
@@ -238,11 +296,6 @@ class CampaignAdminList extends SilverStripeComponent {
   renderButtonToolbar() {
     const items = this.getItems();
 
-    // let itemSummaryLabel;
-    if (!items || !items.length) {
-      return <div className="btn-toolbar"></div>;
-    }
-
     // let itemSummaryLabel = i18n.sprintf(
     //   items.length === 1
     //     ? i18n._t('CampaignAdmin.ITEM_SUMMARY_SINGULAR')
@@ -252,7 +305,14 @@ class CampaignAdminList extends SilverStripeComponent {
 
     let actionProps = {};
 
-    if (this.props.record.State === 'open') {
+    if (!items || items.length === 0) {
+      actionProps = Object.assign(actionProps, {
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN'),
+        buttonStyle: 'secondary-outline',
+        icon: 'rocket',
+        disabled: true,
+      });
+    } else if (this.props.record.State === 'open') {
       actionProps = Object.assign(actionProps, {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN'),
         buttonStyle: 'primary',
