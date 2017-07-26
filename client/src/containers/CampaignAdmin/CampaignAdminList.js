@@ -14,8 +14,7 @@ import CampaignAdminItem from './CampaignAdminItem';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import Preview from 'components/Preview/Preview';
 import i18n from 'i18n';
-
-const sectionConfigKey = 'SilverStripe\\CMS\\Controllers\\CMSPagesController';
+import classnames from 'classnames';
 
 /**
  * Represents a campaign list view
@@ -139,9 +138,12 @@ class CampaignAdminList extends SilverStripeComponent {
       const group = itemGroups[className];
       const groupCount = group.items.length;
 
-      let listGroupItems = [];
-      let title = `${groupCount} ${groupCount === 1 ? group.singular : group.plural}`;
-      let groupid = `Set_${campaignId}_Group_${className}`;
+      const listGroupItems = [];
+      const title = `
+        ${groupCount === 0 ? '' : groupCount}
+        ${groupCount === 1 ? group.singular : group.plural}
+      `;
+      const groupid = `Set_${campaignId}_Group_${className}`;
 
       // Create items for this group
       group.items.forEach(item => {
@@ -189,11 +191,21 @@ class CampaignAdminList extends SilverStripeComponent {
         );
       });
 
+      const wrapperClassnames = classnames('list-group-wrapper', {
+        'list-group-wrapper--empty': listGroupItems.length === 0,
+      });
+
       // Merge into group
       accordionBlocks.push(
-        <AccordionBlock key={groupid} groupid={groupid} title={title}>
-          {listGroupItems}
-        </AccordionBlock>
+        <div className={wrapperClassnames}>
+          <AccordionBlock key={groupid} groupid={groupid} title={title}>
+            {
+              listGroupItems.length > 0 ?
+              listGroupItems :
+              <p className="list-group-item">{group.noItemText}</p>
+            }
+          </AccordionBlock>
+        </div>
       );
     });
 
@@ -203,21 +215,7 @@ class CampaignAdminList extends SilverStripeComponent {
       </p>) :
       null;
 
-    // Set body
-    const pagesLink = [
-      this.props.config.absoluteBaseUrl,
-      this.props.config.sections.find((section) => section.name === sectionConfigKey).url,
-    ].join('');
-
-    const body = accordionBlocks.length
-      ? (<Accordion>{accordionBlocks}</Accordion>)
-      : (
-        <div className="alert alert-warning" role="alert">
-          <strong>This campaign is empty.</strong> You can add items to a campaign by
-          selecting <em>Add to campaign</em> from within the <em>More Options </em>
-          popup on <a href={pagesLink}>pages</a> and files.
-        </div>
-      );
+    const body = <Accordion>{accordionBlocks}</Accordion>;
     const bodyClass = [
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
     ];
@@ -362,7 +360,7 @@ class CampaignAdminList extends SilverStripeComponent {
    * @return {object}
    */
   groupItemsForSet() {
-    const groups = {};
+    const groups = this.getPlaceholderGroups();
     const items = this.getItems();
     if (!items) {
       return groups;
@@ -384,6 +382,19 @@ class CampaignAdminList extends SilverStripeComponent {
       // Push items
       groups[classname].items.push(item);
     });
+
+    return groups;
+  }
+
+  getPlaceholderGroups() {
+    const groups = {};
+
+    if (this.props.record && this.props.record.placeholderGroups) {
+      this.props.record.placeholderGroups.forEach((group) => {
+        groups[group.baseClass] = { ...group };
+        groups[group.baseClass].items = [...group.items];
+      });
+    }
 
     return groups;
   }

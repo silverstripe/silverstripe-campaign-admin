@@ -95,6 +95,27 @@
   }
 }
 
+.list-group-wrapper--empty {
+  .list-group {
+    border-bottom: 0;
+  }
+
+  .list-group-item {
+    background: transparent;
+    font-style: italic;
+    border-bottom: 0;
+    cursor: default;
+  }
+
+  .accordion__title {
+    cursor: default;
+
+    &:before {
+      display: none;
+    }
+  }
+}
+
 .campaign-admin__item-links--is-linked {
   opacity: 1;
 

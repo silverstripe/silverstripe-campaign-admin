@@ -155,6 +155,35 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         return $response;
     }
 
+    protected function getPlaceholderGroups()
+    {
+        $groups = [];
+
+        if (class_exists('SilverStripe\CMS\Model\SiteTree')) {
+            $class = singleton('SilverStripe\CMS\Model\SiteTree');
+            $groups[] = [
+                'baseClass' => DataObject::getSchema()->baseDataClass('SilverStripe\CMS\Model\SiteTree'),
+                'singular' => $class->i18n_singular_name(),
+                'plural' => $class->i18n_plural_name(),
+                'noItemText' => 'Add from ' . $class->i18n_plural_name() . ' area',
+                'items' => []
+            ];
+        }
+
+        if (class_exists('SilverStripe\AssetAdmin\Controller\AssetAdmin')) {
+            $class = singleton('SilverStripe\Assets\File');
+            $groups[] = [
+                'baseClass' => DataObject::getSchema()->baseDataClass('SilverStripe\Assets\File'),
+                'singular' => $class->i18n_singular_name(),
+                'plural' => $class->i18n_plural_name(),
+                'noItemText' => 'Add from ' . $class->i18n_plural_name() . ' area',
+                'items' => []
+            ];
+        }
+
+        return $groups;
+    }
+
     /**
      * Get list contained as a hal wrapper
      *
@@ -206,7 +235,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'IsInferred' => $changeSet->IsInferred,
             'canEdit' => $changeSet->canEdit(),
             'canPublish' => false,
-            '_embedded' => ['items' => []]
+            '_embedded' => ['items' => []],
+            'placeholderGroups' => $this->getPlaceholderGroups()
         ];
 
         // Before presenting the changeset to the client,
