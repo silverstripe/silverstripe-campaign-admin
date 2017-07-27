@@ -67,14 +67,14 @@ export function publishCampaign(publishApi, recordType, campaignId) {
 }
 
 /**
- * Set new campaign created flag
+ * Set new campaign
  *
- * @param {boolean}
+ * @param {?number}
  * @return {Object}
  */
-export function setNewCampaignCreated(newItemCreated) {
+export function setNewItem(itemId) {
   return {
-    type: ACTION_TYPES.SET_NEW_CAMPAIGN_CREATED,
-    payload: { newItemCreated },
+    type: ACTION_TYPES.SET_NEW_CAMPAIGN,
+    payload: { newItem: itemId },
   };
 }

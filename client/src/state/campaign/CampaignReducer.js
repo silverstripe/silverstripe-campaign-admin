@@ -6,7 +6,7 @@ const initialState = deepFreeze({
   changeSetItemId: null,
   isPublishing: false,
   view: null,
-  newItemCreated: false,
+  newItem: null,
 });
 
 function reducer(state = initialState, action) {
@@ -35,10 +35,10 @@ function reducer(state = initialState, action) {
         isPublishing: false,
       }));
 
-    case ACTION_TYPES.SET_NEW_CAMPAIGN_CREATED:
+    case ACTION_TYPES.SET_NEW_CAMPAIGN:
       return deepFreeze({
         ...state,
-        newItemCreated: action.payload.newItemCreated,
+        newItem: action.payload.newItem,
       });
 
     default:

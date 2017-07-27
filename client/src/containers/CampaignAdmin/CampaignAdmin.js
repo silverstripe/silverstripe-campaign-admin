@@ -120,7 +120,7 @@ class CampaignAdmin extends SilverStripeComponent {
           // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
           const id = response.record.id;
-          this.props.campaignActions.setNewCampaignCreated(true);
+          this.props.campaignActions.setNewItem(id);
           this.props.router.push(`${sectionUrl}/set/${id}/show`);
         }
 

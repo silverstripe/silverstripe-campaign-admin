@@ -58,7 +58,7 @@ class CampaignAdminList extends SilverStripeComponent {
 
   componentWillUnmount() {
     // Reset new create flag
-    this.props.campaignActions.setNewCampaignCreated(false);
+    this.props.campaignActions.setNewItem(null);
   }
 
   /**
@@ -118,7 +118,7 @@ class CampaignAdminList extends SilverStripeComponent {
     const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
     const campaignId = this.props.campaignId;
     const campaign = this.props.record;
-    const newItemCreated = this.props.newItemCreated;
+    const newItem = this.props.newItem;
 
     // Trigger different layout when preview is enabled
     const itemGroups = this.groupItemsForSet();
@@ -209,7 +209,7 @@ class CampaignAdminList extends SilverStripeComponent {
       );
     });
 
-    const newItemInfo = newItemCreated ?
+    const newItemInfo = newItem ?
       (<p className="alert alert-success alert--no-border" role="alert">
         Nice one! You have successfully created a campaign.
       </p>) :
@@ -241,32 +241,26 @@ class CampaignAdminList extends SilverStripeComponent {
 
   renderPreview(itemLinks, itemId) {
     let preview = null;
+    let previewClasses = classnames([
+      'flexbox-area-grow',
+      'fill-height',
+      'preview',
+      'campaign-admin__campaign-preview',
+      'campaign-admin__campaign-preview--empty',
+    ]);
 
     if (this.state.loading) {
       preview = (
-        <div
-          className="flexbox-area-grow
-          fill-height
-          preview
-          campaign-admin__campaign-preview
-          campaign-admin__campaign-preview--empty"
-        >
+        <div className={previewClasses}>
           <p>Loading...</p>
         </div>
       );
     } else if (!this.getItems() || this.getItems().length === 0) {
       preview = (
-        <div
-          className="flexbox-area-grow
-          fill-height
-          preview
-          campaign-admin__campaign-preview
-          campaign-admin__campaign-preview--empty"
-        >
+        <div className={previewClasses}>
           <h2 className="campaign-admin__empty-heading">Getting started</h2>
           <p className="campaign-admin__empty-info">
-            Select <strong>Add to Campaign</strong>
-            from pages, files, and other content types
+            Select <strong>Add to Campaign</strong> from pages, files, and other content types
           </p>
         </div>
       );
@@ -305,14 +299,14 @@ class CampaignAdminList extends SilverStripeComponent {
 
     if (!items || items.length === 0) {
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'secondary-outline',
         icon: 'rocket',
         disabled: true,
       });
     } else if (this.props.record.State === 'open') {
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'primary',
         loading: this.props.campaign.isPublishing,
         handleClick: this.handlePublish,
@@ -321,7 +315,7 @@ class CampaignAdminList extends SilverStripeComponent {
     } else if (this.props.record.State === 'published') {
       // TODO Implement "revert" feature
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('CampaignAdmin.REVERTCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.REVERTCAMPAIGN', 'Revert'),
         buttonStyle: 'secondary-outline',
         icon: 'back-in-time',
         disabled: true,
@@ -436,7 +430,7 @@ function mapStateToProps(state, ownProps) {
     record: record || {},
     campaign: state.campaign,
     treeClass,
-    newItemCreated: state.campaign.newItemCreated,
+    newItem: state.campaign.newItem,
   };
 }
 
