@@ -519,9 +519,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                     ->setIcon('save')
                     ->setSchemaState([
                         'data' => [
-                            'pristineTitle' => 'Saved',
+                            'pristineTitle' => _t(__CLASS__.'SAVED', 'Saved'),
                             'pristineIcon' => 'tick',
-                            'dirtyTitle' => 'Save changes',
+                            'dirtyTitle' => _t(__CLASS__.'SAVECHANGES', 'Save changes'),
                             'dirtyIcon' => '',
                             'pristineClass' => 'btn-primary-outline',
                             'dirtyClass' => '',

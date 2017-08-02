@@ -19,5 +19,7 @@ en:
     MENUTITLE: Campaigns
     CREATE: Create
     SAVE: Save
+    SAVED: Saved
+    SAVECHANGES: Save changes
     SAVEDERROR: Error.
     SAVEDUP: Saved.
