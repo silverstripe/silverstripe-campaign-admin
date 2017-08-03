@@ -202,7 +202,7 @@ class CampaignAdminList extends SilverStripeComponent {
             {
               listGroupItems.length > 0 ?
               listGroupItems :
-              <p className="list-group-item">{group.noItemText}</p>
+              <p className="list-group-item">{group.noItemsText}</p>
             }
           </AccordionBlock>
         </div>

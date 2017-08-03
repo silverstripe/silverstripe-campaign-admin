@@ -2,28 +2,30 @@
 
 namespace SilverStripe\CampaignAdmin;
 
+use LogicException;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Admin\LeftAndMainFormRequestHandler;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Manifest\ModuleLoader;
-use SilverStripe\Forms\HiddenField;
-use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\SS_List;
+use SilverStripe\ORM\UnexpectedDataException;
 use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\UnexpectedDataException;
-use SilverStripe\Security\SecurityToken;
-use SilverStripe\Security\PermissionProvider;
-use LogicException;
 use SilverStripe\View\Requirements;
 
 /**
@@ -81,6 +83,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
     private static $required_permission_codes = 'CMS_ACCESS_CampaignAdmin';
 
+    private static $placeholder_group_classes = [];
+    
     public function getClientConfig()
     {
         return array_merge(parent::getClientConfig(), [
@@ -159,28 +163,27 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     {
         $groups = [];
 
-        if (class_exists('SilverStripe\CMS\Model\SiteTree')) {
-            $class = singleton('SilverStripe\CMS\Model\SiteTree');
+        $classes = Config::inst()->get(self::class, 'placeholder_group_classes');
+        
+        foreach ($classes as $class) {
+            /** @var DataObject $item */
+            $item = Injector::inst()->get($class);
+            if (!$item) {
+                continue;
+            }
             $groups[] = [
-                'baseClass' => DataObject::getSchema()->baseDataClass('SilverStripe\CMS\Model\SiteTree'),
-                'singular' => $class->i18n_singular_name(),
-                'plural' => $class->i18n_plural_name(),
-                'noItemText' => 'Add from ' . $class->i18n_plural_name() . ' area',
+                'baseClass' => DataObject::getSchema()->baseDataClass($class),
+                'singular' => $item->i18n_singular_name(),
+                'plural' => $item->i18n_plural_name(),
+                'noItemsText' => _t(__CLASS__.'.NOITEMSTEXT', 'Add items from the {section} section', [
+                    'section' => $item->i18n_plural_name(),
+                ]),
                 'items' => []
             ];
         }
-
-        if (class_exists('SilverStripe\AssetAdmin\Controller\AssetAdmin')) {
-            $class = singleton('SilverStripe\Assets\File');
-            $groups[] = [
-                'baseClass' => DataObject::getSchema()->baseDataClass('SilverStripe\Assets\File'),
-                'singular' => $class->i18n_singular_name(),
-                'plural' => $class->i18n_plural_name(),
-                'noItemText' => 'Add from ' . $class->i18n_plural_name() . ' area',
-                'items' => []
-            ];
-        }
-
+        
+        $this->extend('updatePlaceholderGroups', $groups);
+        
         return $groups;
     }
 

@@ -17,6 +17,7 @@ en:
     CANCEL: Cancel
     ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists'
     MENUTITLE: Campaigns
+    NOITEMSTEXT: Add items from the {section} section
     CREATE: Create
     SAVE: Save
     SAVED: Saved
