@@ -82,8 +82,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     private static $thumbnail_height = 64;
 
     private static $required_permission_codes = 'CMS_ACCESS_CampaignAdmin';
-
-    private static $placeholder_group_classes = [];
     
     public function getClientConfig()
     {
@@ -159,11 +157,14 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         return $response;
     }
 
+    /**
+     * @return array
+     */
     protected function getPlaceholderGroups()
     {
         $groups = [];
 
-        $classes = Config::inst()->get(self::class, 'placeholder_group_classes');
+        $classes = Config::inst()->get(ChangeSet::class, 'important_classes');
         
         foreach ($classes as $class) {
             /** @var DataObject $item */
@@ -518,14 +519,14 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignEditForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'SAVE', 'Save'))
                     ->setIcon('save')
                     ->setSchemaState([
                         'data' => [
                             'pristineTitle' => _t(__CLASS__.'SAVED', 'Saved'),
                             'pristineIcon' => 'tick',
-                            'dirtyTitle' => _t(__CLASS__.'SAVECHANGES', 'Save changes'),
-                            'dirtyIcon' => '',
+                            'dirtyTitle' => _t(__CLASS__.'SAVE', 'Save'),
+                            'dirtyIcon' => 'save',
                             'pristineClass' => 'btn-primary-outline',
                             'dirtyClass' => '',
                         ],
