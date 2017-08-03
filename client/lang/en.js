@@ -15,6 +15,9 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.NEWCAMPAIGNSUCCESS": "Nice one! You have successfully created a campaign.",
+    "CampaignAdmin.SELECTFROMSECTIONS": "Select \"Add to Campaign\" from pages, files, and other admin sections with content types",
+    "CampaignAdmin.LOADING": "Loading..."
 });
 }

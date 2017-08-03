@@ -200,20 +200,25 @@ class CampaignAdminList extends SilverStripeComponent {
         <div className={wrapperClassnames}>
           <AccordionBlock key={groupid} groupid={groupid} title={title}>
             {
-              listGroupItems.length > 0 ?
-              listGroupItems :
-              <p className="list-group-item">{group.noItemsText}</p>
+              listGroupItems.length > 0
+                ? listGroupItems
+                : <p className="list-group-item">{group.noItemsText}</p>
             }
           </AccordionBlock>
         </div>
       );
     });
 
-    const newItemInfo = newItem ?
-      (<p className="alert alert-success alert--no-border" role="alert">
-        Nice one! You have successfully created a campaign.
-      </p>) :
-      null;
+    const newItemInfo = newItem
+      ? (
+        <p className="alert alert-success alert--no-border" role="alert">
+          {i18n._t(
+            'CampaignAdmin.NEWCAMPAIGNSUCCESS',
+            'Nice one! You have successfully created a campaign.'
+          )}
+        </p>
+      )
+      : null;
 
     const body = <Accordion>{accordionBlocks}</Accordion>;
     const bodyClass = [
@@ -252,15 +257,19 @@ class CampaignAdminList extends SilverStripeComponent {
     if (this.state.loading) {
       preview = (
         <div className={previewClasses}>
-          <p>Loading...</p>
+          <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
         </div>
       );
     } else if (!this.getItems() || this.getItems().length === 0) {
+      const message = i18n._t(
+        'CampaignAdmin.SELECTFROMSECTIONS',
+        'Select "Add to Campaign" from pages, files, and other admin sections with content types'
+      );
       preview = (
         <div className={previewClasses}>
           <h2 className="campaign-admin__empty-heading">Getting started</h2>
           <p className="campaign-admin__empty-info">
-            Select <strong>Add to Campaign</strong> from pages, files, and other content types
+            {message}
           </p>
         </div>
       );
@@ -288,13 +297,6 @@ class CampaignAdminList extends SilverStripeComponent {
   renderButtonToolbar() {
     const items = this.getItems();
 
-    // let itemSummaryLabel = i18n.sprintf(
-    //   items.length === 1
-    //     ? i18n._t('CampaignAdmin.ITEM_SUMMARY_SINGULAR')
-    //     : i18n._t('CampaignAdmin.ITEM_SUMMARY_PLURAL'),
-    //   items.length
-    // );
-
     let actionProps = {};
 
     if (!items || items.length === 0) {
@@ -321,14 +323,6 @@ class CampaignAdminList extends SilverStripeComponent {
         disabled: true,
       });
     }
-
-    // TODO Fix indicator positioning
-    // const itemCountIndicator = (
-    //   <span className="text-muted">
-    //     <span className="label label-warning label--empty">&nbsp;</span>
-    //     &nbsp;{itemSummaryLabel}
-    //   </span>
-    // );
 
     return (
       <div className="btn-toolbar">
