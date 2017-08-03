@@ -167,11 +167,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $classes = Config::inst()->get(ChangeSet::class, 'important_classes');
         
         foreach ($classes as $class) {
-            /** @var DataObject $item */
-            $item = Injector::inst()->get($class);
-            if (!$item) {
+            if (!class_exists($class)) {
                 continue;
             }
+            /** @var DataObject $item */
+            $item = Injector::inst()->get($class);
             $groups[] = [
                 'baseClass' => DataObject::getSchema()->baseDataClass($class),
                 'singular' => $item->i18n_singular_name(),
