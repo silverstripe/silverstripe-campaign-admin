@@ -69,7 +69,7 @@ export function publishCampaign(publishApi, recordType, campaignId) {
 /**
  * Set new campaign
  *
- * @param {?number}
+ * @param {Number|null} itemId
  * @return {Object}
  */
 export function setNewItem(itemId) {

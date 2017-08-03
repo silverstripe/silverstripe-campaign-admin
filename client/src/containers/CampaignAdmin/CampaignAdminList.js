@@ -29,7 +29,7 @@ class CampaignAdminList extends SilverStripeComponent {
     this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
     this.handleCloseItem = this.handleCloseItem.bind(this);
 
-    if (!this.isRecordLoaded()) {
+    if (!this.isRecordLoaded(props)) {
       this.state = {
         loading: true,
       };
@@ -64,8 +64,8 @@ class CampaignAdminList extends SilverStripeComponent {
   /**
    * @return {boolean}
    */
-  isRecordLoaded() {
-    return Object.keys(this.props.record).length !== 0;
+  isRecordLoaded(props = this.props) {
+    return Object.keys(props.record).length !== 0;
   }
 
   /**
@@ -419,12 +419,13 @@ CampaignAdminList.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  // Find record specific to this item
-  let record = null;
   const treeClass = ownProps.sectionConfig.treeClass;
-  if (state.records && state.records[treeClass] && ownProps.campaignId) {
-    record = state.records[treeClass][parseInt(ownProps.campaignId, 10)];
-  }
+  const id = parseInt(ownProps.campaignId, 10);
+  // Find record specific to this item
+  const record = state.records[treeClass]
+    ? state.records[treeClass][id]
+    : null;
+
   return {
     config: state.config,
     record: record || {},

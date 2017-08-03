@@ -9,9 +9,9 @@
     "node": "^6.x"
   },
   "scripts": {
-    "build": "NODE_ENV=production webpack -p --bail --progress",
-    "watch": "NODE_ENV=development webpack --watch --progress",
-    "css": "WEBPACK_CHILD=css npm run build",
+    "build": "yarn && NODE_ENV=production webpack -p --bail --progress",
+    "watch": "yarn && NODE_ENV=development webpack --watch --progress",
+    "css": "yarn && WEBPACK_CHILD=css webpack -p --bail --progress",
     "test": "jest",
     "coverage": "jest --coverage",
     "lint": "eslint client/src && sass-lint -v client/src"
