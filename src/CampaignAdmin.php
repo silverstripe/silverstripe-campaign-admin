@@ -2,28 +2,30 @@
 
 namespace SilverStripe\CampaignAdmin;
 
+use LogicException;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Admin\LeftAndMainFormRequestHandler;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Core\Manifest\ModuleLoader;
-use SilverStripe\Forms\HiddenField;
-use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\SS_List;
+use SilverStripe\ORM\UnexpectedDataException;
 use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\UnexpectedDataException;
-use SilverStripe\Security\SecurityToken;
-use SilverStripe\Security\PermissionProvider;
-use LogicException;
 use SilverStripe\View\Requirements;
 
 /**
@@ -80,7 +82,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     private static $thumbnail_height = 64;
 
     private static $required_permission_codes = 'CMS_ACCESS_CampaignAdmin';
-
+    
     public function getClientConfig()
     {
         return array_merge(parent::getClientConfig(), [
@@ -156,6 +158,37 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     }
 
     /**
+     * @return array
+     */
+    protected function getPlaceholderGroups()
+    {
+        $groups = [];
+
+        $classes = Config::inst()->get(ChangeSet::class, 'important_classes');
+        
+        foreach ($classes as $class) {
+            if (!class_exists($class)) {
+                continue;
+            }
+            /** @var DataObject $item */
+            $item = Injector::inst()->get($class);
+            $groups[] = [
+                'baseClass' => DataObject::getSchema()->baseDataClass($class),
+                'singular' => $item->i18n_singular_name(),
+                'plural' => $item->i18n_plural_name(),
+                'noItemsText' => _t(__CLASS__.'.NOITEMSTEXT', 'Add items from the {section} section', [
+                    'section' => $item->i18n_plural_name(),
+                ]),
+                'items' => []
+            ];
+        }
+        
+        $this->extend('updatePlaceholderGroups', $groups);
+        
+        return $groups;
+    }
+
+    /**
      * Get list contained as a hal wrapper
      *
      * @return array
@@ -206,7 +239,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'IsInferred' => $changeSet->IsInferred,
             'canEdit' => $changeSet->canEdit(),
             'canPublish' => false,
-            '_embedded' => ['items' => []]
+            '_embedded' => ['items' => []],
+            'placeholderGroups' => $this->getPlaceholderGroups()
         ];
 
         // Before presenting the changeset to the client,
@@ -485,8 +519,18 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignEditForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
-                    ->setIcon('save'),
+                FormAction::create('save', _t(__CLASS__.'SAVE', 'Save'))
+                    ->setIcon('save')
+                    ->setSchemaState([
+                        'data' => [
+                            'pristineTitle' => _t(__CLASS__.'SAVED', 'Saved'),
+                            'pristineIcon' => 'tick',
+                            'dirtyTitle' => _t(__CLASS__.'SAVE', 'Save'),
+                            'dirtyIcon' => 'save',
+                            'pristineClass' => 'btn-primary-outline',
+                            'dirtyClass' => '',
+                        ],
+                    ]),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
@@ -550,7 +594,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignCreateForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.CREATE', 'Create'))
                     ->setIcon('save'),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)

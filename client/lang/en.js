@@ -6,7 +6,7 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
   }
 } else {
   ss.i18n.addDictionary('en', {
-    "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
+    "CampaignAdmin.ADDCAMPAIGN": "Add new",
     "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
     "CampaignAdmin.DRAFT": "Draft",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
@@ -15,6 +15,9 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.NEWCAMPAIGNSUCCESS": "Nice one! You have successfully created a campaign.",
+    "CampaignAdmin.SELECTFROMSECTIONS": "Select \"Add to Campaign\" from pages, files, and other admin sections with content types",
+    "CampaignAdmin.LOADING": "Loading..."
 });
 }

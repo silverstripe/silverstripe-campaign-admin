@@ -14,8 +14,7 @@ import CampaignAdminItem from './CampaignAdminItem';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import Preview from 'components/Preview/Preview';
 import i18n from 'i18n';
-
-const sectionConfigKey = 'SilverStripe\\CMS\\Controllers\\CMSPagesController';
+import classnames from 'classnames';
 
 /**
  * Represents a campaign list view
@@ -29,6 +28,16 @@ class CampaignAdminList extends SilverStripeComponent {
     this.handleItemSelected = this.handleItemSelected.bind(this);
     this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
     this.handleCloseItem = this.handleCloseItem.bind(this);
+
+    if (!this.isRecordLoaded(props)) {
+      this.state = {
+        loading: true,
+      };
+    } else {
+      this.state = {
+        loading: false,
+      };
+    }
   }
 
   componentDidMount() {
@@ -37,11 +46,26 @@ class CampaignAdminList extends SilverStripeComponent {
     this.setBreadcrumbs();
 
     // Only load record if not already present
-    if (!Object.keys(this.props.record).length) {
+    if (!this.isRecordLoaded()) {
       this.props.recordActions
         .fetchRecord(this.props.treeClass, 'get', fetchURL)
-        .then(this.setBreadcrumbs);
+        .then(() => {
+          this.setBreadcrumbs();
+          this.setState({ loading: false });
+        });
     }
+  }
+
+  componentWillUnmount() {
+    // Reset new create flag
+    this.props.campaignActions.setNewItem(null);
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isRecordLoaded(props = this.props) {
+    return Object.keys(props.record).length !== 0;
   }
 
   /**
@@ -94,6 +118,7 @@ class CampaignAdminList extends SilverStripeComponent {
     const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
     const campaignId = this.props.campaignId;
     const campaign = this.props.record;
+    const newItem = this.props.newItem;
 
     // Trigger different layout when preview is enabled
     const itemGroups = this.groupItemsForSet();
@@ -113,9 +138,12 @@ class CampaignAdminList extends SilverStripeComponent {
       const group = itemGroups[className];
       const groupCount = group.items.length;
 
-      let listGroupItems = [];
-      let title = `${groupCount} ${groupCount === 1 ? group.singular : group.plural}`;
-      let groupid = `Set_${campaignId}_Group_${className}`;
+      const listGroupItems = [];
+      const title = `
+        ${groupCount === 0 ? '' : groupCount}
+        ${groupCount === 1 ? group.singular : group.plural}
+      `;
+      const groupid = `Set_${campaignId}_Group_${className}`;
 
       // Create items for this group
       group.items.forEach(item => {
@@ -163,29 +191,36 @@ class CampaignAdminList extends SilverStripeComponent {
         );
       });
 
+      const wrapperClassnames = classnames('list-group-wrapper', {
+        'list-group-wrapper--empty': listGroupItems.length === 0,
+      });
+
       // Merge into group
       accordionBlocks.push(
-        <AccordionBlock key={groupid} groupid={groupid} title={title}>
-          {listGroupItems}
-        </AccordionBlock>
+        <div className={wrapperClassnames}>
+          <AccordionBlock key={groupid} groupid={groupid} title={title}>
+            {
+              listGroupItems.length > 0
+                ? listGroupItems
+                : <p className="list-group-item">{group.noItemsText}</p>
+            }
+          </AccordionBlock>
+        </div>
       );
     });
 
-    // Set body
-    const pagesLink = [
-      this.props.config.absoluteBaseUrl,
-      this.props.config.sections.find((section) => section.name === sectionConfigKey).url,
-    ].join('');
+    const newItemInfo = newItem
+      ? (
+        <p className="alert alert-success alert--no-border" role="alert">
+          {i18n._t(
+            'CampaignAdmin.NEWCAMPAIGNSUCCESS',
+            'Nice one! You have successfully created a campaign.'
+          )}
+        </p>
+      )
+      : null;
 
-    const body = accordionBlocks.length
-      ? (<Accordion>{accordionBlocks}</Accordion>)
-      : (
-        <div className="alert alert-warning" role="alert">
-          <strong>This campaign is empty.</strong> You can add items to a campaign by
-          selecting <em>Add to campaign</em> from within the <em>More Options </em>
-          popup on <a href={pagesLink}>pages</a> and files.
-        </div>
-      );
+    const body = <Accordion>{accordionBlocks}</Accordion>;
     const bodyClass = [
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
     ];
@@ -196,6 +231,7 @@ class CampaignAdminList extends SilverStripeComponent {
           <Toolbar showBackButton handleBackButtonClick={this.props.handleBackButtonClick}>
             <Breadcrumb multiline />
           </Toolbar>
+          {newItemInfo}
           <div className={bodyClass.join(' ')}>
             {body}
           </div>
@@ -203,9 +239,45 @@ class CampaignAdminList extends SilverStripeComponent {
             {this.renderButtonToolbar()}
           </div>
         </div>
-        <Preview itemLinks={itemLinks} itemId={itemId} onBack={this.handleCloseItem} />
+        {this.renderPreview(itemLinks, itemId)}
       </div>
     );
+  }
+
+  renderPreview(itemLinks, itemId) {
+    let preview = null;
+    let previewClasses = classnames([
+      'flexbox-area-grow',
+      'fill-height',
+      'preview',
+      'campaign-admin__campaign-preview',
+      'campaign-admin__campaign-preview--empty',
+    ]);
+
+    if (this.state.loading) {
+      preview = (
+        <div className={previewClasses}>
+          <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
+        </div>
+      );
+    } else if (!this.getItems() || this.getItems().length === 0) {
+      const message = i18n._t(
+        'CampaignAdmin.SELECTFROMSECTIONS',
+        'Select "Add to Campaign" from pages, files, and other admin sections with content types'
+      );
+      preview = (
+        <div className={previewClasses}>
+          <h2 className="campaign-admin__empty-heading">Getting started</h2>
+          <p className="campaign-admin__empty-info">
+            {message}
+          </p>
+        </div>
+      );
+    } else {
+      preview = <Preview itemLinks={itemLinks} itemId={itemId} onBack={this.handleCloseItem} />;
+    }
+
+    return preview;
   }
 
   /**
@@ -225,23 +297,18 @@ class CampaignAdminList extends SilverStripeComponent {
   renderButtonToolbar() {
     const items = this.getItems();
 
-    // let itemSummaryLabel;
-    if (!items || !items.length) {
-      return <div className="btn-toolbar"></div>;
-    }
-
-    // let itemSummaryLabel = i18n.sprintf(
-    //   items.length === 1
-    //     ? i18n._t('CampaignAdmin.ITEM_SUMMARY_SINGULAR')
-    //     : i18n._t('CampaignAdmin.ITEM_SUMMARY_PLURAL'),
-    //   items.length
-    // );
-
     let actionProps = {};
 
-    if (this.props.record.State === 'open') {
+    if (!items || items.length === 0) {
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
+        buttonStyle: 'secondary-outline',
+        icon: 'rocket',
+        disabled: true,
+      });
+    } else if (this.props.record.State === 'open') {
+      actionProps = Object.assign(actionProps, {
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'primary',
         loading: this.props.campaign.isPublishing,
         handleClick: this.handlePublish,
@@ -250,20 +317,12 @@ class CampaignAdminList extends SilverStripeComponent {
     } else if (this.props.record.State === 'published') {
       // TODO Implement "revert" feature
       actionProps = Object.assign(actionProps, {
-        title: i18n._t('CampaignAdmin.REVERTCAMPAIGN'),
+        title: i18n._t('CampaignAdmin.REVERTCAMPAIGN', 'Revert'),
         buttonStyle: 'secondary-outline',
         icon: 'back-in-time',
         disabled: true,
       });
     }
-
-    // TODO Fix indicator positioning
-    // const itemCountIndicator = (
-    //   <span className="text-muted">
-    //     <span className="label label-warning label--empty">&nbsp;</span>
-    //     &nbsp;{itemSummaryLabel}
-    //   </span>
-    // );
 
     return (
       <div className="btn-toolbar">
@@ -289,7 +348,7 @@ class CampaignAdminList extends SilverStripeComponent {
    * @return {object}
    */
   groupItemsForSet() {
-    const groups = {};
+    const groups = this.getPlaceholderGroups();
     const items = this.getItems();
     if (!items) {
       return groups;
@@ -311,6 +370,19 @@ class CampaignAdminList extends SilverStripeComponent {
       // Push items
       groups[classname].items.push(item);
     });
+
+    return groups;
+  }
+
+  getPlaceholderGroups() {
+    const groups = {};
+
+    if (this.props.record && this.props.record.placeholderGroups) {
+      this.props.record.placeholderGroups.forEach((group) => {
+        groups[group.baseClass] = { ...group };
+        groups[group.baseClass].items = [...group.items];
+      });
+    }
 
     return groups;
   }
@@ -341,17 +413,19 @@ CampaignAdminList.propTypes = {
 };
 
 function mapStateToProps(state, ownProps) {
-  // Find record specific to this item
-  let record = null;
   const treeClass = ownProps.sectionConfig.treeClass;
-  if (state.records && state.records[treeClass] && ownProps.campaignId) {
-    record = state.records[treeClass][parseInt(ownProps.campaignId, 10)];
-  }
+  const id = parseInt(ownProps.campaignId, 10);
+  // Find record specific to this item
+  const record = state.records[treeClass]
+    ? state.records[treeClass][id]
+    : null;
+
   return {
     config: state.config,
     record: record || {},
     campaign: state.campaign,
     treeClass,
+    newItem: state.campaign.newItem,
   };
 }
 

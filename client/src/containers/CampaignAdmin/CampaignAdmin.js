@@ -5,6 +5,7 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
+import * as campaignActions from 'state/campaign/CampaignActions';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import SilverStripeComponent from 'lib/SilverStripeComponent';
@@ -119,7 +120,8 @@ class CampaignAdmin extends SilverStripeComponent {
           // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
           const id = response.record.id;
-          this.props.router.push(`${sectionUrl}/set/${id}/edit`);
+          this.props.campaignActions.setNewItem(id);
+          this.props.router.push(`${sectionUrl}/set/${id}/show`);
         }
 
         return response;
@@ -166,6 +168,7 @@ class CampaignAdmin extends SilverStripeComponent {
     const formActionProps = {
       title: i18n._t('CampaignAdmin.ADDCAMPAIGN'),
       icon: 'plus',
+      extraClass: 'btn-primary',
       handleClick: this.addCampaign.bind(this),
     };
     const formBuilderProps = {
@@ -410,6 +413,7 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return {
     breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
+    campaignActions: bindActionCreators(campaignActions, dispatch),
   };
 }
 
