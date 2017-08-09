@@ -71,20 +71,20 @@ class CampaignAdminItem extends SilverStripeComponent {
     if (campaign.State === 'open') {
       switch (item.ChangeType) {
         case 'created':
-          badge.className = 'label label-warning list-group-item__status';
+          badge.className = 'badge badge-warning list-group-item__status';
           badge.Title = i18n._t('CampaignAdmin.DRAFT', 'Draft');
           break;
         case 'modified':
-          badge.className = 'label label-warning list-group-item__status';
+          badge.className = 'badge badge-warning list-group-item__status';
           badge.Title = i18n._t('CampaignAdmin.MODIFIED', 'Modified');
           break;
         case 'deleted':
-          badge.className = 'label label-error list-group-item__status';
+          badge.className = 'badge badge-error list-group-item__status';
           badge.Title = i18n._t('CampaignAdmin.REMOVED', 'Removed');
           break;
         case 'none':
         default:
-          badge.className = 'label label-success list-group-item__status';
+          badge.className = 'badge badge-success list-group-item__status';
           badge.Title = i18n._t('CampaignAdmin.NO_CHANGES', 'No changes');
           break;
       }
