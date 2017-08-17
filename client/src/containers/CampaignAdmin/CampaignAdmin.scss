@@ -32,7 +32,7 @@
   }
 
   .campaign-admin__empty-heading {
-    font-size: $font-size-h1;
+    font-size: $h1-font-size;
     margin-bottom: 1em;
   }
 
@@ -64,8 +64,8 @@
   align-items: center;
   color: $brand-primary;
   position: absolute;
-  right: $spacer-x;
-  bottom: $spacer-y * 2 / 3;
+  right: $spacer;
+  bottom: $spacer * 2 / 3;
   font-size: $font-size-sm;
 
   .font-icon-link {

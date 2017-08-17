@@ -82,7 +82,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     private static $thumbnail_height = 64;
 
     private static $required_permission_codes = 'CMS_ACCESS_CampaignAdmin';
-    
+
     public function getClientConfig()
     {
         return array_merge(parent::getClientConfig(), [
@@ -165,7 +165,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $groups = [];
 
         $classes = Config::inst()->get(ChangeSet::class, 'important_classes');
-        
+
         foreach ($classes as $class) {
             if (!class_exists($class)) {
                 continue;
@@ -182,9 +182,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'items' => []
             ];
         }
-        
+
         $this->extend('updatePlaceholderGroups', $groups);
-        
+
         return $groups;
     }
 
@@ -527,7 +527,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                             'pristineIcon' => 'tick',
                             'dirtyTitle' => _t(__CLASS__.'SAVE', 'Save'),
                             'dirtyIcon' => 'save',
-                            'pristineClass' => 'btn-primary-outline',
+                            'pristineClass' => 'btn-outline-primary',
                             'dirtyClass' => '',
                         ],
                     ]),
