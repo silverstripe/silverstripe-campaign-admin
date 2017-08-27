@@ -247,7 +247,10 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         // synchronise it with new changes.
         try {
             $changeSet->sync();
-            $hal['Details'] = $changeSet->getDetails();
+            $hal['ChangesCount'] = $changeSet->getChangesCount();
+            $hal['ContainsCount'] = $changeSet->getContainsCount();
+            $hal['LastPublishedLabel'] = $changeSet->getLastPublishedLabel();
+            $hal['PublisherName'] = $changeSet->getPublisherName();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
 
             foreach ($changeSet->Changes() as $changeSetItem) {
@@ -259,12 +262,13 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 $resource = $this->getChangeSetItemResource($changeSetItem);
                 $hal['_embedded']['items'][] = $resource;
             }
-            $hal['ChangesCount'] = count($hal['_embedded']['items']);
 
         // An unexpected data exception means that the database is corrupt
         } catch (UnexpectedDataException $e) {
-            $hal['Details'] = 'Corrupt database! ' . $e->getMessage();
             $hal['ChangesCount'] = '-';
+            $hal['ContainsCount'] = '-';
+            $hal['LastPublishedLabel'] = '-';
+            $hal['PublisherName'] = '-';
         }
         return $hal;
     }
@@ -351,7 +355,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     protected function getListItems()
     {
         return ChangeSet::get()
-            ->filter('State', ChangeSet::STATE_OPEN)
+            ->sort('Created DESC')
             ->filterByCallback(function ($item) {
                 /** @var ChangeSet $item */
                 return ($item->canView());
