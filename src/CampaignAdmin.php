@@ -249,8 +249,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $changeSet->sync();
             $hal['ChangesCount'] = $changeSet->getChangesCount();
             $hal['ContainsCount'] = $changeSet->getContainsCount();
-            $hal['LastPublishedLabel'] = $changeSet->getLastPublishedLabel();
-            $hal['PublisherName'] = $changeSet->getPublisherName();
+            $hal['LastPublishedLabel'] = $changeSet->getLastPublishedLabel() ?: '-';
+            $hal['PublisherName'] = $changeSet->getPublisherName() ?: '-';
             $hal['Details'] = $changeSet->getDetails();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
 
