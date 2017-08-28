@@ -135,3 +135,41 @@
     opacity: 1;
   }
 }
+
+#campaign-preview-popver_Popover {
+
+  .alert {
+    // margin: -10px 0 -10px 0;
+    margin-bottom: 0;
+    margin-left: calc(-#{$popover-padding} + 1px);
+    margin-right: calc(-#{$popover-padding} + 1px);
+
+    &:first-child {
+      margin-top: -10px;
+    }
+
+    &:not(:first-child) {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+    }
+
+    &:last-child {
+      margin-bottom: -10px;
+    }
+
+    &:not(:last-child) {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    &.campaign-admin__unremoveable-item {
+      padding-left: 35px;
+
+      .font-icon-link {
+        position: absolute;
+        top: 13px;
+        left: 15px;
+      }
+    }
+  }
+}

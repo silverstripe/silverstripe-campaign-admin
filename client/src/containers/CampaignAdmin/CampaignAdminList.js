@@ -28,6 +28,7 @@ class CampaignAdminList extends SilverStripeComponent {
     this.handleItemSelected = this.handleItemSelected.bind(this);
     this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
     this.handleCloseItem = this.handleCloseItem.bind(this);
+    this.handleRemoveItem = this.handleRemoveItem.bind(this);
 
     if (!this.isRecordLoaded(props)) {
       this.state = {
@@ -274,10 +275,79 @@ class CampaignAdminList extends SilverStripeComponent {
         </div>
       );
     } else {
-      preview = <Preview itemLinks={itemLinks} itemId={itemId} onBack={this.handleCloseItem} />;
+      preview = (
+        <Preview
+          itemLinks={itemLinks}
+          itemId={itemId}
+          onBack={this.handleCloseItem}
+          moreActions={this.getMoreActions()}
+        />
+      );
     }
 
     return preview;
+  }
+
+  /**
+   * @return {array}
+   */
+  getMoreActions() {
+    const selectedItem = this.getCurrentChangeSetItem();
+
+    if (!selectedItem) {
+      return null;
+    }
+
+    const requiredByNum =
+      selectedItem._links.referenced_by &&
+      selectedItem._links.referenced_by.length || 0;
+    const unremoveableInfoText = requiredByNum < 2 ?
+      i18n._t('CampaignAdmin.UNREMOVEABLE_INFO_SINGULAR', 'Required by %s item, and cannot be removed directly.') :
+      i18n._t('CampaignAdmin.UNREMOVEABLE_INFO_PLURAL', 'Required by %s items, and cannot be removed directly.');
+    const removeAction = selectedItem.Added === 'explicitly' ?
+      (
+        <button key="remove_action"
+          className="btn btn-secondary action"
+          onClick={this.handleRemoveItem}
+        >
+          Remove
+        </button>
+      ) :
+      (
+        <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
+          <span className="font-icon-link"></span>
+          {i18n.sprintf(unremoveableInfoText, requiredByNum)}
+        </p>
+      );
+
+    return [
+      removeAction,
+    ];
+
+    return moreActions;
+  }
+
+  handleRemoveItem() {
+    console.log(`To remove: ${this.getCurrentChangeSetItem().ID}`);
+  }
+
+  /**
+   * Default to first item if none was selcted by the user.
+   *
+   * @return {object|null}
+   */
+  getCurrentChangeSetItem() {
+    const items = this.getItems();
+    const selectedItemId = this.props.campaign.changeSetItemId;
+    let selected = null;
+
+    if (selectedItemId) {
+      selected = items.find(item => item.ID === selectedItemId);
+    } else {
+      selected = items.length > 0 ? items[0] : null;
+    }
+
+    return selected;
   }
 
   /**
