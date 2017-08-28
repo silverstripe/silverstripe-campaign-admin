@@ -297,33 +297,28 @@ class CampaignAdminList extends SilverStripeComponent {
   renderButtonToolbar() {
     const items = this.getItems();
 
-    let actionProps = {};
+    let actionProps = null;
 
     if (!items || items.length === 0) {
-      actionProps = Object.assign(actionProps, {
+      actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'secondary-outline',
         icon: 'rocket',
         disabled: true,
-      });
+      };
     } else if (this.props.record.State === 'open') {
-      actionProps = Object.assign(actionProps, {
+      actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'primary',
         loading: this.props.campaign.isPublishing,
         handleClick: this.handlePublish,
         icon: 'rocket',
-      });
-    } else if (this.props.record.State === 'published') {
-      // TODO Implement "revert" feature
-      actionProps = Object.assign(actionProps, {
-        title: i18n._t('CampaignAdmin.REVERTCAMPAIGN', 'Revert'),
-        buttonStyle: 'secondary-outline',
-        icon: 'back-in-time',
-        disabled: true,
-      });
+      };
     }
 
+    if (!actionProps) {
+      return null;
+    }
     return (
       <div className="btn-toolbar">
         <FormAction {...actionProps} />
