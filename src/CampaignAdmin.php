@@ -251,6 +251,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $hal['ContainsCount'] = $changeSet->getContainsCount();
             $hal['LastPublishedLabel'] = $changeSet->getLastPublishedLabel();
             $hal['PublisherName'] = $changeSet->getPublisherName();
+            $hal['Details'] = $changeSet->getDetails();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
 
             foreach ($changeSet->Changes() as $changeSetItem) {
@@ -267,6 +268,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         } catch (UnexpectedDataException $e) {
             $hal['ChangesCount'] = '-';
             $hal['ContainsCount'] = '-';
+            $hal['Details'] = 'Corrupt database! ' . $e->getMessage();
             $hal['LastPublishedLabel'] = '-';
             $hal['PublisherName'] = '-';
         }

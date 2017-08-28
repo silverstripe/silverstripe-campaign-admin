@@ -39,9 +39,22 @@ class CampaignAdminListTest extends SapphireTest
                 'name' => 'Changes',
             ],
             [
+                'field' => 'ContainsCount',
+                'name' => 'Contains',
+            ],
+            [
+                'field' => 'LastPublishedLabel',
+                'name' => 'Last Published',
+            ],
+            [
+                'field' => 'PublisherName',
+                'name' => 'Published By',
+            ],
+            [
                 'field' => 'Details',
                 'name' => 'Details',
             ]
+
         ], $schema['data']['columns']);
     }
 }
