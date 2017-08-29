@@ -395,8 +395,11 @@ function mapStateToProps(state, ownProps) {
   ));
 
   if (ownProps.params.id > 0) {
-    const selector = formValueSelector('Campaign.EditView', getFormState);
-    title = selector(state, 'Name');
+    const schemaUrl = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
+    const schema = state.form.formSchemas[schemaUrl];
+    const schemaName = schema && schema.name;
+    const selector = schemaName && formValueSelector(schema.name, getFormState);
+    title = selector && selector(state, 'Name');
   }
 
   return {
