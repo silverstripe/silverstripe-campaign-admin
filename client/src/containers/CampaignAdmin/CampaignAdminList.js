@@ -410,14 +410,13 @@ CampaignAdminList.propTypes = {
 function mapStateToProps(state, ownProps) {
   const treeClass = ownProps.sectionConfig.treeClass;
   const id = parseInt(ownProps.campaignId, 10);
+  const records = state.records[treeClass] || [];
   // Find record specific to this item
-  const record = state.records[treeClass]
-    ? state.records[treeClass][id]
-    : null;
+  const record = records.find(item => item.ID === id) || {};
 
   return {
     config: state.config,
-    record: record || {},
+    record,
     campaign: state.campaign,
     treeClass,
     newItem: state.campaign.newItem,
