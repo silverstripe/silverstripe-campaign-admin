@@ -197,8 +197,8 @@ class CampaignAdminList extends SilverStripeComponent {
 
       // Merge into group
       accordionBlocks.push(
-        <div className={wrapperClassnames}>
-          <AccordionBlock key={groupid} groupid={groupid} title={title}>
+        <div className={wrapperClassnames} key={groupid}>
+          <AccordionBlock groupid={groupid} title={title}>
             {
               listGroupItems.length > 0
                 ? listGroupItems

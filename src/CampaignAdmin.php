@@ -236,17 +236,19 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'Created' => $changeSet->Created,
             'LastEdited' => $changeSet->LastEdited,
             'State' => $changeSet->State,
+            'StateLabel' => $changeSet->getStateLabel(),
             'IsInferred' => $changeSet->IsInferred,
             'canEdit' => $changeSet->canEdit(),
             'canPublish' => false,
             '_embedded' => ['items' => []],
-            'placeholderGroups' => $this->getPlaceholderGroups()
+            'placeholderGroups' => $this->getPlaceholderGroups(),
         ];
 
         // Before presenting the changeset to the client,
         // synchronise it with new changes.
         try {
             $changeSet->sync();
+            $hal['PublishedLabel'] = $changeSet->getPublishedLabel() ?: '-';
             $hal['Details'] = $changeSet->getDetails();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
 
@@ -259,12 +261,12 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 $resource = $this->getChangeSetItemResource($changeSetItem);
                 $hal['_embedded']['items'][] = $resource;
             }
-            $hal['ChangesCount'] = count($hal['_embedded']['items']);
 
         // An unexpected data exception means that the database is corrupt
         } catch (UnexpectedDataException $e) {
+            $hal['PublishedLabel'] = '-';
             $hal['Details'] = 'Corrupt database! ' . $e->getMessage();
-            $hal['ChangesCount'] = '-';
+            $hal['canPublish'] = false;
         }
         return $hal;
     }
@@ -351,7 +353,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     protected function getListItems()
     {
         return ChangeSet::get()
-            ->filter('State', ChangeSet::STATE_OPEN)
             ->filterByCallback(function ($item) {
                 /** @var ChangeSet $item */
                 return ($item->canView());
