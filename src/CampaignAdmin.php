@@ -629,7 +629,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      */
     public function save($data, $form)
     {
-        $request = $this->getRequest();
         $errors = null;
 
         // Existing or new record?

@@ -35,6 +35,7 @@ class CampaignAdmin extends SilverStripeComponent {
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
     this.handleFormAction = this.handleFormAction.bind(this);
+    this.detectErrors = this.detectErrors.bind(this);
   }
 
   componentWillMount() {
@@ -115,7 +116,7 @@ class CampaignAdmin extends SilverStripeComponent {
     }
     return promise
       .then((response) => {
-        const hasErrors = response.errors && response.errors.length > 0;
+        const hasErrors = this.detectErrors(response);
         if (action === 'action_save' && !hasErrors) {
           // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
@@ -260,6 +261,24 @@ class CampaignAdmin extends SilverStripeComponent {
         </div>
       </div>
     );
+  }
+
+  detectErrors(response) {
+    if (response.errors && response.errors.length) {
+      return true;
+    }
+    // Check global messages
+    if (response.state && response.state.messages) {
+      return true;
+    }
+    // Find first field message
+    if (response.state
+      && response.state.fields
+      && response.state.fields.find((field) => field.message)
+    ) {
+      return true;
+    }
+    return false;
   }
 
   /**
@@ -419,5 +438,9 @@ function mapDispatchToProps(dispatch) {
     campaignActions: bindActionCreators(campaignActions, dispatch),
   };
 }
+
+const CampaignAdminBase = CampaignAdmin;
+
+export { CampaignAdminBase };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CampaignAdmin));
