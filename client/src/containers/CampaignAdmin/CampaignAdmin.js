@@ -7,6 +7,7 @@ import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
 import * as campaignActions from 'state/campaign/CampaignActions';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
+import * as recordActions from 'state/records/RecordsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import SilverStripeComponent from 'lib/SilverStripeComponent';
 import FormAction from 'components/FormAction/FormAction';
@@ -31,11 +32,22 @@ class CampaignAdmin extends SilverStripeComponent {
       },
     });
 
+    this.removeCampaignItemApi = backend.createEndpointFetcher({
+      url: this.props.sectionConfig.removeCampaignItemEndpoint.url,
+      method: this.props.sectionConfig.removeCampaignItemEndpoint.method,
+      defaultData: { SecurityID: this.props.securityId },
+      payloadSchema: {
+        id: { urlReplacement: ':id', remove: true },
+        itemId: { urlReplacement: ':itemId', remove: true },
+      },
+    });
+
     // Bind
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
     this.handleFormAction = this.handleFormAction.bind(this);
     this.detectErrors = this.detectErrors.bind(this);
+    this.handleRemoveCampaignItem = this.handleRemoveCampaignItem.bind(this);
   }
 
   componentWillMount() {
@@ -207,11 +219,32 @@ class CampaignAdmin extends SilverStripeComponent {
       itemListViewEndpoint: this.props.sectionConfig.itemListViewEndpoint,
       publishApi: this.publishApi,
       handleBackButtonClick: this.handleBackButtonClick.bind(this),
+      onRemoveCampaignItem: this.handleRemoveCampaignItem,
     };
 
     return (
       <CampaignAdminList {...props} />
     );
+  }
+
+  handleRemoveCampaignItem(campaignId, itemId) {
+    this.props.campaignActions.removeCampaignItem(
+      this.removeCampaignItemApi,
+      campaignId,
+      itemId
+    )
+      .then(() => {
+        const endpoint = this.props.sectionConfig.readCampaignsEndpoint;
+        const fetchURL = endpoint.url;
+        this.props.recordActions.fetchRecords(
+          this.props.sectionConfig.treeClass,
+          endpoint.method,
+          fetchURL
+        )
+          .then(() => {
+            this.props.campaignActions.selectChangeSetItem(null);
+          });
+      });
   }
 
   /**
@@ -436,6 +469,7 @@ function mapDispatchToProps(dispatch) {
   return {
     breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
     campaignActions: bindActionCreators(campaignActions, dispatch),
+    recordActions: bindActionCreators(recordActions, dispatch),
   };
 }
 

@@ -44,6 +44,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         'readCampaign',
         'deleteCampaign',
         'publishCampaign',
+        'removeCampaignItem'
     ];
 
     private static $menu_priority = 3;
@@ -61,6 +62,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         'DELETE set/$ID' => 'deleteCampaign',
         'campaignEditForm/$ID' => 'campaignEditForm',
         'campaignCreateForm' => 'campaignCreateForm',
+        'POST removeCampaignItem/$CampaignID/$ItemID' => 'removeCampaignItem',
     ];
 
     private static $url_segment = 'campaigns';
@@ -99,12 +101,20 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                     'schemaUrl' => $this->Link('schema/campaignCreateForm')
                 ],
             ],
+            'readCampaignsEndpoint' => [
+                'url' => $this->Link() . 'sets',
+                'method' => 'get'
+            ],
             'itemListViewEndpoint' => [
                 'url' => $this->Link() . 'set/:id/show',
                 'method' => 'get'
             ],
             'publishEndpoint' => [
                 'url' => $this->Link() . 'set/:id/publish',
+                'method' => 'post'
+            ],
+            'removeCampaignItemEndpoint' => [
+                'url' => $this->Link() . 'removeCampaignItem/:id/:itemId',
                 'method' => 'post'
             ],
             'treeClass' => $this->config()->get('tree_class')
@@ -393,6 +403,44 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         } else {
             return $this->index($request);
         }
+    }
+
+    /**
+     * REST endpoint to delete a campaign item.
+     *
+     * @param HTTPRequest $request
+     *
+     * @return HTTPResponse
+     */
+    public function removeCampaignItem(HTTPRequest $request)
+    {
+        // Check security ID
+        if (!SecurityToken::inst()->checkRequest($request)) {
+            return new HTTPResponse(null, 400);
+        }
+
+        $campaignID = $request->param('CampaignID');
+        $itemID = $request->param('ItemID');
+
+        if (
+            !$campaignID ||
+            !is_numeric($campaignID) ||
+            !$itemID ||
+            !is_numeric($itemID
+        )) {
+            return (new HTTPResponse(null, 400));
+        }
+
+        $campaign = ChangeSet::get()->byID($campaignID);
+        $item = ChangeSetItem::get()->byID($itemID);
+        if (!$campaign || !$item) {
+            return (new HTTPResponse(null, 404));
+        }
+
+
+        $campaign->removeObject($item->Object());
+
+        return (new HTTPResponse(null, 204));
     }
 
     /**

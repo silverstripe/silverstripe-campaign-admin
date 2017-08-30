@@ -292,7 +292,7 @@ class CampaignAdminList extends SilverStripeComponent {
    * @return {array}
    */
   getMoreActions() {
-    const selectedItem = this.getCurrentChangeSetItem();
+    const selectedItem = this.getSelectedItem();
 
     if (!selectedItem) {
       return null;
@@ -302,8 +302,14 @@ class CampaignAdminList extends SilverStripeComponent {
       selectedItem._links.referenced_by &&
       selectedItem._links.referenced_by.length || 0;
     const unremoveableInfoText = requiredByNum < 2 ?
-      i18n._t('CampaignAdmin.UNREMOVEABLE_INFO_SINGULAR', 'Required by %s item, and cannot be removed directly.') :
-      i18n._t('CampaignAdmin.UNREMOVEABLE_INFO_PLURAL', 'Required by %s items, and cannot be removed directly.');
+      i18n._t(
+        'CampaignAdmin.UNREMOVEABLE_INFO_SINGULAR',
+        'Required by %s item, and cannot be removed directly.'
+      ) :
+      i18n._t(
+        'CampaignAdmin.UNREMOVEABLE_INFO_PLURAL',
+        'Required by %s items, and cannot be removed directly.'
+      );
     const removeAction = selectedItem.Added === 'explicitly' ?
       (
         <button key="remove_action"
@@ -323,31 +329,12 @@ class CampaignAdminList extends SilverStripeComponent {
     return [
       removeAction,
     ];
-
-    return moreActions;
   }
 
   handleRemoveItem() {
-    console.log(`To remove: ${this.getCurrentChangeSetItem().ID}`);
-  }
-
-  /**
-   * Default to first item if none was selcted by the user.
-   *
-   * @return {object|null}
-   */
-  getCurrentChangeSetItem() {
-    const items = this.getItems();
-    const selectedItemId = this.props.campaign.changeSetItemId;
-    let selected = null;
-
-    if (selectedItemId) {
-      selected = items.find(item => item.ID === selectedItemId);
-    } else {
-      selected = items.length > 0 ? items[0] : null;
+    if (typeof this.props.onRemoveCampaignItem === 'function') {
+      this.props.onRemoveCampaignItem(this.props.campaignId, this.getSelectedItem().ID);
     }
-
-    return selected;
   }
 
   /**
@@ -475,6 +462,7 @@ CampaignAdminList.propTypes = {
   recordActions: React.PropTypes.object.isRequired,
   sectionConfig: React.PropTypes.object.isRequired,
   handleBackButtonClick: React.PropTypes.func,
+  onRemoveCampaignItem: React.PropTypes.func,
 };
 
 function mapStateToProps(state, ownProps) {

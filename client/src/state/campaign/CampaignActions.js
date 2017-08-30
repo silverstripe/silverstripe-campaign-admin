@@ -78,3 +78,34 @@ export function setNewItem(itemId) {
     payload: { newItem: itemId },
   };
 }
+
+/**
+ * Delete a campaign item
+ *
+ * @param {Function} removeCampaignItemApi See lib/Backend
+ * @param {string} recordType
+ * @param {number} campaignId
+ * @return {Object}
+ */
+export function removeCampaignItem(removeItemApi, campaignId, itemId) {
+  return (dispatch) => {
+    dispatch({
+      type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_REQUEST,
+      payload: { campaignId },
+    });
+
+    return removeItemApi({ id: campaignId, itemId })
+      .then(() => {
+        dispatch({
+          type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_SUCCESS,
+          payload: { campaignId, itemId },
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_FAILURE,
+          payload: { error },
+        });
+      });
+  };
+}
