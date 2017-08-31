@@ -228,6 +228,17 @@ class CampaignAdmin extends SilverStripeComponent {
   }
 
   handleRemoveCampaignItem(campaignId, itemId) {
+    const fallbackMsg = `Are you sure you want to remove this item?
+
+By removing this item all linked items will be removed unless used elsewhere.`;
+    const msg = i18n._t('CampaignAdmin.REMOVE_ITEM_MESSAGE', fallbackMsg);
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(msg);
+
+    if (!confirmed) {
+      return false;
+    }
+
     this.props.campaignActions.removeCampaignItem(
       this.removeCampaignItemApi,
       campaignId,
@@ -243,8 +254,12 @@ class CampaignAdmin extends SilverStripeComponent {
         )
           .then(() => {
             this.props.campaignActions.selectChangeSetItem(null);
+            // Workaround to hide more actions popover
+            window.document.body.click();
           });
       });
+
+    return true;
   }
 
   /**

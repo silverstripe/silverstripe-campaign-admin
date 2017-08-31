@@ -422,12 +422,10 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $campaignID = $request->param('CampaignID');
         $itemID = $request->param('ItemID');
 
-        if (
-            !$campaignID ||
+        if (!$campaignID ||
             !is_numeric($campaignID) ||
             !$itemID ||
-            !is_numeric($itemID
-        )) {
+            !is_numeric($itemID)) {
             return (new HTTPResponse(null, 400));
         }
 
