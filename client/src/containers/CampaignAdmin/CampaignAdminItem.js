@@ -104,7 +104,7 @@ class CampaignAdminItem extends SilverStripeComponent {
       <div className="fill-width">
         {thumbnail}
         <div className="list-group-item__details">
-          <h4 className="list-group-item__heading">{item.Title}</h4>
+          <h4 className="list-group-item__heading" title={item.Title}>{item.Title}</h4>
           {links}
           {badge.className && badge.Title &&
             <span className={badge.className}>{badge.Title}</span>
