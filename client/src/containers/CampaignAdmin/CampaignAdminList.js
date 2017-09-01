@@ -305,14 +305,9 @@ class CampaignAdminList extends SilverStripeComponent {
     const requiredByNum =
       selectedItem._links.referenced_by &&
       selectedItem._links.referenced_by.length || 0;
-    const unremoveableInfoText = requiredByNum < 2 ?
-      i18n._t(
-        'CampaignAdmin.UNREMOVEABLE_INFO_SINGULAR',
-        'Required by %s item, and cannot be removed directly.'
-      ) :
-      i18n._t(
-        'CampaignAdmin.UNREMOVEABLE_INFO_PLURAL',
-        'Required by %s items, and cannot be removed directly.'
+    const unremoveableInfoText = i18n._t(
+        'CampaignAdmin.UNREMOVEABLE_INFO',
+        'Required by {number} item(s), and cannot be removed directly.'
       );
     const removeAction = selectedItem.Added === 'explicitly' ?
       (
@@ -326,7 +321,7 @@ class CampaignAdminList extends SilverStripeComponent {
       (
         <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
           <span className="font-icon-link"></span>
-          {i18n.sprintf(unremoveableInfoText, requiredByNum)}
+          {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
         </p>
       );
 

@@ -23,19 +23,18 @@ class CampaignAdmin extends SilverStripeComponent {
   constructor(props) {
     super(props);
 
+    const defaultData = { SecurityID: this.props.securityId };
     this.publishApi = backend.createEndpointFetcher({
-      url: this.props.sectionConfig.publishEndpoint.url,
-      method: this.props.sectionConfig.publishEndpoint.method,
-      defaultData: { SecurityID: this.props.securityId },
+      ...this.props.sectionConfig.publishEndpoint,
+      defaultData,
       payloadSchema: {
         id: { urlReplacement: ':id', remove: true },
       },
     });
 
     this.removeCampaignItemApi = backend.createEndpointFetcher({
-      url: this.props.sectionConfig.removeCampaignItemEndpoint.url,
-      method: this.props.sectionConfig.removeCampaignItemEndpoint.method,
-      defaultData: { SecurityID: this.props.securityId },
+      ...this.props.sectionConfig.removeCampaignItemEndpoint,
+      defaultData,
       payloadSchema: {
         id: { urlReplacement: ':id', remove: true },
         itemId: { urlReplacement: ':itemId', remove: true },
@@ -227,6 +226,11 @@ class CampaignAdmin extends SilverStripeComponent {
     );
   }
 
+  /**
+   * @param {number} campaignId
+   * @param {number} itemId
+   * @return {Promise|null}
+   */
   handleRemoveCampaignItem(campaignId, itemId) {
     const fallbackMsg = `Are you sure you want to remove this item?
 
@@ -236,30 +240,34 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     const confirmed = window.confirm(msg);
 
     if (!confirmed) {
-      return false;
+      return null;
     }
 
-    this.props.campaignActions.removeCampaignItem(
+    return this.removeCampaignItem(campaignId, itemId)
+      .then(this.fetchCampaignsList.bind(this))
+      .then(() => {
+        this.props.campaignActions.selectChangeSetItem(null);
+        // Workaround to hide more actions popover
+        window.document.body.click();
+      });
+  }
+
+  removeCampaignItem(campaignId, itemId) {
+    return this.props.campaignActions.removeCampaignItem(
       this.removeCampaignItemApi,
       campaignId,
       itemId
-    )
-      .then(() => {
-        const endpoint = this.props.sectionConfig.readCampaignsEndpoint;
-        const fetchURL = endpoint.url;
-        this.props.recordActions.fetchRecords(
-          this.props.sectionConfig.treeClass,
-          endpoint.method,
-          fetchURL
-        )
-          .then(() => {
-            this.props.campaignActions.selectChangeSetItem(null);
-            // Workaround to hide more actions popover
-            window.document.body.click();
-          });
-      });
+    );
+  }
 
-    return true;
+  fetchCampaignsList() {
+    const endpoint = this.props.sectionConfig.readCampaignsEndpoint;
+    const fetchURL = endpoint.url;
+    return this.props.recordActions.fetchRecords(
+      this.props.sectionConfig.treeClass,
+      endpoint.method,
+      fetchURL
+    );
   }
 
   /**
