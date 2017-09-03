@@ -100,12 +100,17 @@ class CampaignAdminList extends SilverStripeComponent {
       selected = items.find(item => itemId === item.ID);
     }
 
+    // If there's no user-selected item, select the first item in the first
+    // display group
     if (!selected) {
-      // Select the first item in the first display group
-      const groupItems = this.groupItemsForSet();
-      const groupItemsKeys = Object.keys(groupItems);
-      const group = groupItemsKeys.length > 0 ? groupItems[groupItemsKeys[0]] : null;
-      selected = group && group.items.length > 0 ? group.items[0] : null;
+      const groups = this.groupItemsForSet();
+
+      // Find the first group name that has at least one item
+      const nonEmptyGroupName = Object.keys(groups).find(name =>
+        groups[name] && groups[name].items.length > 0
+      );
+
+      selected = nonEmptyGroupName && groups[nonEmptyGroupName].items[0];
     }
 
     return selected;
