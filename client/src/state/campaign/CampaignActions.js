@@ -91,7 +91,7 @@ export function removeCampaignItem(removeItemApi, campaignId, itemId) {
   return (dispatch) => {
     dispatch({
       type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_REQUEST,
-      payload: { campaignId },
+      payload: { campaignId, itemId },
     });
 
     return removeItemApi({ id: campaignId, itemId })

@@ -101,7 +101,7 @@ class CampaignAdminList extends SilverStripeComponent {
     }
 
     // If there's no user-selected item, select the first item in the first
-    // display group
+    // non-empty display group
     if (!selected) {
       const groups = this.groupItemsForSet();
 
@@ -110,7 +110,7 @@ class CampaignAdminList extends SilverStripeComponent {
         groups[name] && groups[name].items.length > 0
       );
 
-      selected = nonEmptyGroupName && groups[nonEmptyGroupName].items[0];
+      selected = nonEmptyGroupName ? groups[nonEmptyGroupName].items[0] : null;
     }
 
     return selected;
@@ -493,4 +493,5 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+export { CampaignAdminList };
 export default connect(mapStateToProps, mapDispatchToProps)(CampaignAdminList);
