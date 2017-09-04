@@ -23,6 +23,10 @@ class CampaignAdmin extends SilverStripeComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      loading: false,
+    };
+
     const defaultData = { SecurityID: this.props.securityId };
     this.publishApi = backend.createEndpointFetcher({
       ...this.props.sectionConfig.publishEndpoint,
@@ -219,6 +223,7 @@ class CampaignAdmin extends SilverStripeComponent {
       publishApi: this.publishApi,
       handleBackButtonClick: this.handleBackButtonClick.bind(this),
       onRemoveCampaignItem: this.handleRemoveCampaignItem,
+      loading: this.state.loading,
     };
 
     return (
@@ -243,8 +248,10 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       return null;
     }
 
+    this.setState({ loading: true });
     return this.removeCampaignItem(campaignId, itemId)
       .then(this.fetchCampaignsList.bind(this))
+      .then(() => this.setState({ loading: false }))
       .then(() => {
         this.props.campaignActions.selectChangeSetItem(null);
         // Workaround to hide more actions popover

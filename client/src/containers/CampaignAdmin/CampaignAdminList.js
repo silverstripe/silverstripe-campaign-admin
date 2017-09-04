@@ -235,8 +235,14 @@ class CampaignAdminList extends SilverStripeComponent {
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
     ];
 
+    const loading = this.props.loading && [
+      <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light"></div>,
+      <div key="spinner" className="cms-content-loading-spinner"></div>,
+    ];
+
     return (
       <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
+        {loading}
         <div className="fill-height campaign-admin__campaign-items" aria-expanded="true">
           <Toolbar showBackButton handleBackButtonClick={this.props.handleBackButtonClick}>
             <Breadcrumb multiline />
