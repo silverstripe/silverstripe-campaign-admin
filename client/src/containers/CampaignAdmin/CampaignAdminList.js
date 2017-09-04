@@ -28,6 +28,7 @@ class CampaignAdminList extends SilverStripeComponent {
     this.handleItemSelected = this.handleItemSelected.bind(this);
     this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
     this.handleCloseItem = this.handleCloseItem.bind(this);
+    this.handleRemoveItem = this.handleRemoveItem.bind(this);
 
     if (!this.isRecordLoaded(props)) {
       this.state = {
@@ -99,8 +100,17 @@ class CampaignAdminList extends SilverStripeComponent {
       selected = items.find(item => itemId === item.ID);
     }
 
-    if (!selected && items.length > 0) {
-      selected = items[0];
+    // If there's no user-selected item, select the first item in the first
+    // non-empty display group
+    if (!selected) {
+      const groups = this.groupItemsForSet();
+
+      // Find the first group name that has at least one item
+      const nonEmptyGroupName = Object.keys(groups).find(name =>
+        groups[name] && groups[name].items.length > 0
+      );
+
+      selected = nonEmptyGroupName ? groups[nonEmptyGroupName].items[0] : null;
     }
 
     return selected;
@@ -225,8 +235,14 @@ class CampaignAdminList extends SilverStripeComponent {
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
     ];
 
+    const loading = this.props.loading && [
+      <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light"></div>,
+      <div key="spinner" className="cms-content-loading-spinner"></div>,
+    ];
+
     return (
       <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
+        {loading}
         <div className="fill-height campaign-admin__campaign-items" aria-expanded="true">
           <Toolbar showBackButton handleBackButtonClick={this.props.handleBackButtonClick}>
             <Breadcrumb multiline />
@@ -274,10 +290,61 @@ class CampaignAdminList extends SilverStripeComponent {
         </div>
       );
     } else {
-      preview = <Preview itemLinks={itemLinks} itemId={itemId} onBack={this.handleCloseItem} />;
+      preview = (
+        <Preview
+          itemLinks={itemLinks}
+          itemId={itemId}
+          onBack={this.handleCloseItem}
+          moreActions={this.getMoreActions()}
+        />
+      );
     }
 
     return preview;
+  }
+
+  /**
+   * @return {array}
+   */
+  getMoreActions() {
+    const selectedItem = this.getSelectedItem();
+
+    if (!selectedItem) {
+      return null;
+    }
+
+    const requiredByNum =
+      selectedItem._links.referenced_by &&
+      selectedItem._links.referenced_by.length || 0;
+    const unremoveableInfoText = i18n._t(
+        'CampaignAdmin.UNREMOVEABLE_INFO',
+        'Required by {number} item(s), and cannot be removed directly.'
+      );
+    const removeAction = selectedItem.Added === 'explicitly' ?
+      (
+        <button key="remove_action"
+          className="btn btn-secondary action"
+          onClick={this.handleRemoveItem}
+        >
+          Remove
+        </button>
+      ) :
+      (
+        <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
+          <span className="font-icon-link"></span>
+          {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
+        </p>
+      );
+
+    return [
+      removeAction,
+    ];
+  }
+
+  handleRemoveItem() {
+    if (typeof this.props.onRemoveCampaignItem === 'function') {
+      this.props.onRemoveCampaignItem(this.props.campaignId, this.getSelectedItem().ID);
+    }
   }
 
   /**
@@ -405,6 +472,7 @@ CampaignAdminList.propTypes = {
   recordActions: React.PropTypes.object.isRequired,
   sectionConfig: React.PropTypes.object.isRequired,
   handleBackButtonClick: React.PropTypes.func,
+  onRemoveCampaignItem: React.PropTypes.func,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -431,4 +499,5 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
+export { CampaignAdminList };
 export default connect(mapStateToProps, mapDispatchToProps)(CampaignAdminList);

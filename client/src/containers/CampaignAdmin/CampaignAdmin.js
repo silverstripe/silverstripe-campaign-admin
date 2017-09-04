@@ -7,6 +7,7 @@ import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
 import * as campaignActions from 'state/campaign/CampaignActions';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
+import * as recordActions from 'state/records/RecordsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import SilverStripeComponent from 'lib/SilverStripeComponent';
 import FormAction from 'components/FormAction/FormAction';
@@ -22,12 +23,25 @@ class CampaignAdmin extends SilverStripeComponent {
   constructor(props) {
     super(props);
 
+    this.state = {
+      loading: false,
+    };
+
+    const defaultData = { SecurityID: this.props.securityId };
     this.publishApi = backend.createEndpointFetcher({
-      url: this.props.sectionConfig.publishEndpoint.url,
-      method: this.props.sectionConfig.publishEndpoint.method,
-      defaultData: { SecurityID: this.props.securityId },
+      ...this.props.sectionConfig.publishEndpoint,
+      defaultData,
       payloadSchema: {
         id: { urlReplacement: ':id', remove: true },
+      },
+    });
+
+    this.removeCampaignItemApi = backend.createEndpointFetcher({
+      ...this.props.sectionConfig.removeCampaignItemEndpoint,
+      defaultData,
+      payloadSchema: {
+        id: { urlReplacement: ':id', remove: true },
+        itemId: { urlReplacement: ':itemId', remove: true },
       },
     });
 
@@ -36,6 +50,7 @@ class CampaignAdmin extends SilverStripeComponent {
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
     this.handleFormAction = this.handleFormAction.bind(this);
     this.detectErrors = this.detectErrors.bind(this);
+    this.handleRemoveCampaignItem = this.handleRemoveCampaignItem.bind(this);
   }
 
   componentWillMount() {
@@ -207,10 +222,58 @@ class CampaignAdmin extends SilverStripeComponent {
       itemListViewEndpoint: this.props.sectionConfig.itemListViewEndpoint,
       publishApi: this.publishApi,
       handleBackButtonClick: this.handleBackButtonClick.bind(this),
+      onRemoveCampaignItem: this.handleRemoveCampaignItem,
+      loading: this.state.loading,
     };
 
     return (
       <CampaignAdminList {...props} />
+    );
+  }
+
+  /**
+   * @param {number} campaignId
+   * @param {number} itemId
+   * @return {Promise|null}
+   */
+  handleRemoveCampaignItem(campaignId, itemId) {
+    const fallbackMsg = `Are you sure you want to remove this item?
+
+By removing this item all linked items will be removed unless used elsewhere.`;
+    const msg = i18n._t('CampaignAdmin.REMOVE_ITEM_MESSAGE', fallbackMsg);
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(msg);
+
+    if (!confirmed) {
+      return null;
+    }
+
+    this.setState({ loading: true });
+    return this.removeCampaignItem(campaignId, itemId)
+      .then(this.fetchCampaignsList.bind(this))
+      .then(() => this.setState({ loading: false }))
+      .then(() => {
+        this.props.campaignActions.selectChangeSetItem(null);
+        // Workaround to hide more actions popover
+        window.document.body.click();
+      });
+  }
+
+  removeCampaignItem(campaignId, itemId) {
+    return this.props.campaignActions.removeCampaignItem(
+      this.removeCampaignItemApi,
+      campaignId,
+      itemId
+    );
+  }
+
+  fetchCampaignsList() {
+    const endpoint = this.props.sectionConfig.readCampaignsEndpoint;
+    const fetchURL = endpoint.url;
+    return this.props.recordActions.fetchRecords(
+      this.props.sectionConfig.treeClass,
+      endpoint.method,
+      fetchURL
     );
   }
 
@@ -436,6 +499,7 @@ function mapDispatchToProps(dispatch) {
   return {
     breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
     campaignActions: bindActionCreators(campaignActions, dispatch),
+    recordActions: bindActionCreators(recordActions, dispatch),
   };
 }
 
