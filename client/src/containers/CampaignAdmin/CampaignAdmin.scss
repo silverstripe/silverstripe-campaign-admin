@@ -87,17 +87,33 @@
   }
 }
 
-.list-group-item.active {
-  .campaign-admin__item-links--has-links {
-    @include media-breakpoint-up(lg) {
-      color: $white;
-    }
+.list-group-item {
 
-    opacity: 1;
+  &:hover {
+    .campaign-admin__item-links--is-linked {
+      opacity: 1;
+    }
   }
 
-  .campaign-admin__item-links__number {
-    opacity: 1;
+  &.active {
+    .campaign-admin__item-links--has-links {
+      @include media-breakpoint-up(lg) {
+        color: $white;
+      }
+
+      opacity: 1;
+    }
+
+    .campaign-admin__item-links__number {
+      opacity: 1;
+    }
+  }
+
+  .list-group-item__heading {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
