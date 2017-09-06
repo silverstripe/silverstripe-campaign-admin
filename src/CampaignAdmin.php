@@ -18,6 +18,7 @@ use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\SS_List;
 use SilverStripe\ORM\UnexpectedDataException;
 use SilverStripe\ORM\ValidationResult;
@@ -49,11 +50,40 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
     private static $menu_priority = 3;
 
+    /**
+     * When listing campaigns, re-sync items automatically after this many seconds.
+     * This can prevent unnecessary and expensive database requests on every view.
+     *
+     * @config
+     * @var int
+     */
+    private static $sync_expires = 300;
+
     private static $menu_title = 'Campaigns';
 
     private static $menu_icon_class = 'font-icon-page-multiple';
 
     private static $tree_class = ChangeSet::class;
+
+    /**
+     * Show published changesets
+     *
+     * Note: Experimental API (will be changed in the near future)
+     *
+     * @config
+     * @var bool
+     */
+    private static $show_published = true;
+
+    /**
+     * Show inferred changesets (automatically created when you publish a page)
+     *
+     * Note: Experimental API (will be changed in the near future)
+     *
+     * @config
+     * @var bool
+     */
+    private static $show_inferred = false;
 
     private static $url_handlers = [
         'GET sets' => 'readCampaigns',
@@ -219,9 +249,10 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             ],
             '_embedded' => [$treeClass => []]
         ];
+        /** @var ChangeSet $item */
         foreach ($items as $item) {
-            /** @var ChangeSet $item */
-            $resource = $this->getChangeSetResource($item);
+            $sync = $this->shouldCampaignSync($item);
+            $resource = $this->getChangeSetResource($item, $sync);
             $hal['_embedded'][$treeClass][] = $resource;
         }
         return $hal;
@@ -231,9 +262,10 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      * Build item resource from a changeset
      *
      * @param ChangeSet $changeSet
+     * @param bool $sync Set to true to force async of this changeset
      * @return array
      */
-    protected function getChangeSetResource(ChangeSet $changeSet)
+    protected function getChangeSetResource(ChangeSet $changeSet, $sync = false)
     {
         $hal = [
             '_links' => [
@@ -257,7 +289,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         // Before presenting the changeset to the client,
         // synchronise it with new changes.
         try {
-            $changeSet->sync();
+            if ($sync) {
+                $changeSet->sync();
+            }
             $hal['PublishedLabel'] = $changeSet->getPublishedLabel() ?: '-';
             $hal['Details'] = $changeSet->getDetails();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
@@ -362,7 +396,16 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      */
     protected function getListItems()
     {
-        return ChangeSet::get()
+        $changesets = ChangeSet::get();
+        // Filter out published items if disabled
+        if (!$this->config()->get('show_published')) {
+            $changesets = $changesets->filter('State', ChangeSet::STATE_OPEN);
+        }
+        // Filter out automatically created changesets
+        if (!$this->config()->get('show_inferred')) {
+            $changesets = $changesets->filter('IsInferred', 0);
+        }
+        return $changesets
             ->filterByCallback(function ($item) {
                 /** @var ChangeSet $item */
                 return ($item->canView());
@@ -397,7 +440,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 return (new HTTPResponse(null, 403));
             }
 
-            $body = Convert::raw2json($this->getChangeSetResource($changeSet));
+            $body = Convert::raw2json($this->getChangeSetResource($changeSet, true));
             return (new HTTPResponse($body, 200))
                 ->addHeader('Content-Type', 'application/json');
         } else {
@@ -429,7 +472,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             return (new HTTPResponse(null, 400));
         }
 
+        /** @var ChangeSet $campaign */
         $campaign = ChangeSet::get()->byID($campaignID);
+        /** @var ChangeSetItem $item */
         $item = ChangeSetItem::get()->byID($itemID);
         if (!$campaign || !$item) {
             return (new HTTPResponse(null, 404));
@@ -769,5 +814,25 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 )
             )
         );
+    }
+
+    /**
+     * Check if the given campaign should be synced before view
+     *
+     * @param ChangeSet $item
+     * @return bool
+     */
+    protected function shouldCampaignSync(ChangeSet $item)
+    {
+        // Don't sync published changesets
+        if ($item->State !== ChangeSet::STATE_OPEN) {
+            return false;
+        }
+
+        // Get sync threshold
+        $syncOlderThan = DBDatetime::now()->getTimestamp() - $this->config()->get('sync_expires');
+        /** @var DBDatetime $lastSynced */
+        $lastSynced = $item->dbObject('LastSynced');
+        return $lastSynced->getTimestamp() < $syncOlderThan;
     }
 }
