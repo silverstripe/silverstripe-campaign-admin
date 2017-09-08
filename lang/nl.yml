@@ -1,6 +1,4 @@
 nl:
-  LeftAndMain:
-    SAVEDERROR: Fout.
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     AddToCampaignAddAction: Toevoegen
     AddToCampaignAvailableLabel: 'Beschikbare campagnes'
@@ -19,5 +17,4 @@ nl:
     CANCEL: Annuleren
     ERROR_DUPLICATE_NAME: 'De naam "{Name}" bestaat al'
     MENUTITLE: Campagnes
-    SAVE: Opslaan
     SAVEDUP: Opgeslagen.

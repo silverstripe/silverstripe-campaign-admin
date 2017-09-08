@@ -15,8 +15,6 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
-    "CampaignAdmin.REMOVE_ITEM_MESSAGE": "Are you sure you want to remove this item?\n\nBy removing this item all linked items will be removed unless used elsewhere.",
-    "CampaignAdmin.UNREMOVEABLE_INFO": "Required by {number} item(s), and cannot be removed directly.",
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
 });
 }

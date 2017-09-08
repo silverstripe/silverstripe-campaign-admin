@@ -1,6 +1,7 @@
 fi:
-  LeftAndMain:
-    SAVEDERROR: Virhe.
+  CampaignAdmin:
+    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Tallenna
+    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Tallennettu
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     AddToCampaignAddAction: Lisää
     AddToCampaignAvailableLabel: 'Valittavissa olevat kampanjat'
@@ -17,7 +18,9 @@ fi:
   SilverStripe\CampaignAdmin\CampaignAdmin:
     ACCESS_HELP: 'Salli kampanjan tarkastelut julkaisuosiossa.'
     CANCEL: Peruuta
+    CREATE: Luo
     ERROR_DUPLICATE_NAME: 'Nimi "{Name}" on jo olemassa'
     MENUTITLE: Kampanjat
-    SAVE: Tallenna
+    NOITEMSTEXT: 'Lisää kohteet osiosta: {section}'
+    SAVEDERROR: Virhe
     SAVEDUP: Tallennettu.
