@@ -3,7 +3,9 @@
 jest.mock('components/Breadcrumb/Breadcrumb');
 jest.mock('state/records/RecordsActions');
 
-import { CampaignAdminList } from '../CampaignAdminList';
+import React from 'react';
+import ReactTestUtils from 'react-addons-test-utils';
+import { Component as CampaignAdminList } from '../CampaignAdminList';
 
 describe('CampaignAdminList', () => {
   let props = null;
@@ -34,6 +36,16 @@ describe('CampaignAdminList', () => {
         },
       },
       campaign: {},
+      breadcrumbsActions: {
+        setBreadcrumbs: jest.fn(),
+      },
+      campaignActions: {
+        setNewItem: jest.fn(),
+      },
+      recordActions: {
+        fetchRecord: jest.fn(),
+      },
+      publishApi: jest.fn(),
     };
   });
 
@@ -41,7 +53,7 @@ describe('CampaignAdminList', () => {
     let cmp = null;
 
     it('should return null if there\'s no items at all', () => {
-      cmp = new CampaignAdminList(props);
+      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...props} />);
       expect(cmp.getSelectedItem()).toBe(null);
     });
 
@@ -58,7 +70,7 @@ describe('CampaignAdminList', () => {
         },
 
       ];
-      cmp = new CampaignAdminList(modProps);
+      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...modProps} />);
       expect(cmp.getSelectedItem().Title).toBe('Page one');
     });
 
@@ -71,7 +83,7 @@ describe('CampaignAdminList', () => {
         },
 
       ];
-      cmp = new CampaignAdminList(modProps);
+      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...modProps} />);
       expect(cmp.getSelectedItem().Title).toBe('File one');
     });
 
@@ -96,7 +108,7 @@ describe('CampaignAdminList', () => {
 
       ];
       modProps.campaign.changeSetItemId = 12;
-      cmp = new CampaignAdminList(modProps);
+      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...modProps} />);
       expect(cmp.getSelectedItem().Title).toBe('Page two');
     });
   });

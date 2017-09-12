@@ -1,5 +1,4 @@
-import React from 'react';
-import SilverStripeComponent from 'lib/SilverStripeComponent';
+import React, { Component } from 'react';
 import i18n from 'i18n';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap-ss';
 import formatWrittenNumber from 'lib/formatWrittenNumber';
@@ -7,8 +6,7 @@ import formatWrittenNumber from 'lib/formatWrittenNumber';
 /**
  * Describes an individual campaign item
  */
-class CampaignAdminItem extends SilverStripeComponent {
-
+class CampaignAdminItem extends Component {
   /**
    * @return integer
    */
@@ -56,6 +54,54 @@ class CampaignAdminItem extends SilverStripeComponent {
       i18n._t('CampaignAdmin.LINKED_FROM', 'Required by %s item(s)'),
       formatWrittenNumber(numReferredBy)
     );
+  }
+
+  renderLinks() {
+    const numReferTo = this.getNumReferTo();
+    const numReferredBy = this.getNumReferredBy();
+
+    const tooltipTexts = [];
+    if (numReferTo > 0) {
+      tooltipTexts.push(this.getReferToTooltipText());
+    }
+    if (numReferredBy > 0) {
+      tooltipTexts.push(i18n.sprintf(
+        tooltipTexts.length === 0 ?
+          this.getReferredByTooltipText() :
+          this.getReferredByTooltipText().toLocaleLowerCase(),
+        formatWrittenNumber(numReferredBy)
+      ));
+    }
+
+    const tooltip = (<Tooltip id={`campaign-tooltip-${this.props.item.ID}`}>{
+      tooltipTexts.join(', ')
+    }</Tooltip>);
+
+    let links = null;
+    if ((this.props.selected && numReferTo + numReferredBy > 0) || this.props.isLinked) {
+      const linksClasses = [
+        'list-group-item__info',
+        'campaign-admin__item-links',
+        this.props.isLinked ?
+          'campaign-admin__item-links--is-linked' :
+          'campaign-admin__item-links--has-links',
+      ];
+
+      links = (
+        <div className={linksClasses.join(' ')}>
+          <OverlayTrigger placement="left" overlay={tooltip}>
+            <span>
+              <span className="campaign-admin__item-links__number">
+                {numReferTo + numReferredBy}
+              </span>
+              <span className="font-icon-link" />
+            </span>
+          </OverlayTrigger>
+        </div>
+      );
+    }
+
+    return links;
   }
 
   render() {
@@ -112,54 +158,6 @@ class CampaignAdminItem extends SilverStripeComponent {
         </div>
       </div>
     );
-  }
-
-  renderLinks() {
-    const numReferTo = this.getNumReferTo();
-    const numReferredBy = this.getNumReferredBy();
-
-    const tooltipTexts = [];
-    if (numReferTo > 0) {
-      tooltipTexts.push(this.getReferToTooltipText());
-    }
-    if (numReferredBy > 0) {
-      tooltipTexts.push(i18n.sprintf(
-        tooltipTexts.length === 0 ?
-          this.getReferredByTooltipText() :
-          this.getReferredByTooltipText().toLocaleLowerCase(),
-        formatWrittenNumber(numReferredBy)
-      ));
-    }
-
-    const tooltip = (<Tooltip id={`campaign-tooltip-${this.props.item.ID}`}>{
-      tooltipTexts.join(', ')
-    }</Tooltip>);
-
-    let links = null;
-    if ((this.props.selected && numReferTo + numReferredBy > 0) || this.props.isLinked) {
-      const linksClasses = [
-        'list-group-item__info',
-        'campaign-admin__item-links',
-        this.props.isLinked ?
-          'campaign-admin__item-links--is-linked' :
-          'campaign-admin__item-links--has-links',
-      ];
-
-      links = (
-        <div className={linksClasses.join(' ')}>
-          <OverlayTrigger placement="left" overlay={tooltip}>
-            <span>
-              <span className="campaign-admin__item-links__number">
-                {numReferTo + numReferredBy}
-              </span>
-              <span className="font-icon-link" />
-            </span>
-          </OverlayTrigger>
-        </div>
-      );
-    }
-
-    return links;
   }
 }
 

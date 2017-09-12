@@ -11,7 +11,6 @@ const initialState = deepFreeze({
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-
     case ACTION_TYPES.SET_CAMPAIGN_SELECTED_CHANGESETITEM:
       return deepFreeze(Object.assign({}, state, {
         changeSetItemId: action.payload.changeSetItemId,
@@ -43,7 +42,6 @@ function reducer(state = initialState, action) {
 
     default:
       return state;
-
   }
 }
 

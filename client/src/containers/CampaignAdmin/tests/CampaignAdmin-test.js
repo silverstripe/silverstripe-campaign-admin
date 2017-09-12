@@ -1,23 +1,35 @@
 /* global jest, describe, beforeEach, it, expect */
 
-jest.mock('react-bootstrap-ss');
-jest.mock('lib/Backend');
+jest.mock('components/Breadcrumb/Breadcrumb');
+jest.mock('containers/FormBuilderLoader/FormBuilderLoader');
 
-import { CampaignAdminBase } from '../CampaignAdmin';
+import React from 'react';
+import ReactTestUtils from 'react-addons-test-utils';
+import { Component as CampaignAdmin } from '../CampaignAdmin';
 
 describe('CampaignAdminItem', () => {
   describe('detectErrors', () => {
     let admin = null;
+    let props = null;
     beforeEach(() => {
-      admin = new CampaignAdminBase({
+      props = {
         sectionConfig: {
           publishEndpoint: {
             url: '/',
             method: 'get',
           },
+          form: {
+            EditForm: {
+              schemaUrl: 'schemaEditForm',
+            },
+          },
         },
-        securityId: null,
-      });
+        breadcrumbsActions: {
+          setBreadcrumbs: jest.fn(),
+        },
+        securityId: 'secured',
+      };
+      admin = ReactTestUtils.renderIntoDocument(<CampaignAdmin {...props} />);
     });
     it('detects errors in errors property', () => {
       const result = admin.detectErrors({
