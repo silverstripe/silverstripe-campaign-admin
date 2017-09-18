@@ -806,7 +806,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     {
         return array(
             "CMS_ACCESS_CampaignAdmin" => array(
-                'name' => _t('SilverStripe\\CMS\\Controllers\\CMSMain.ACCESS', "Access to '{title}' section", array('title' => static::menu_title())),
+                'name' => _t(
+                    'SilverStripe\\CMS\\Controllers\\CMSMain.ACCESS',
+                    "Access to '{title}' section",
+                    array('title' => static::menu_title())
+                ),
                 'category' => _t('SilverStripe\\Security\\Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
                 'help' => _t(
                     __CLASS__.'.ACCESS_HELP',
@@ -833,6 +837,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $syncOlderThan = DBDatetime::now()->getTimestamp() - $this->config()->get('sync_expires');
         /** @var DBDatetime $lastSynced */
         $lastSynced = $item->dbObject('LastSynced');
-        return $lastSynced->getTimestamp() < $syncOlderThan;
+        return !$lastSynced || $lastSynced->getTimestamp() < $syncOlderThan;
     }
 }
