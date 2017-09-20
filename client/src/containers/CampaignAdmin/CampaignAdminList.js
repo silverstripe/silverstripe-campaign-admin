@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
 import * as recordActions from 'state/records/RecordsActions';
 import * as campaignActions from 'state/campaign/CampaignActions';
-import SilverStripeComponent from 'lib/SilverStripeComponent';
 import Accordion from 'components/Accordion/Accordion';
 import AccordionBlock from 'components/Accordion/AccordionBlock';
 import ListGroupItem from 'components/ListGroup/ListGroupItem';
@@ -19,8 +18,7 @@ import classnames from 'classnames';
 /**
  * Represents a campaign list view
  */
-class CampaignAdminList extends SilverStripeComponent {
-
+class CampaignAdminList extends Component {
   constructor(props) {
     super(props);
 
@@ -43,7 +41,7 @@ class CampaignAdminList extends SilverStripeComponent {
 
   componentDidMount() {
     const fetchURL = this.props.itemListViewEndpoint.url.replace(/:id/, this.props.campaignId);
-    super.componentDidMount();
+
     this.setBreadcrumbs();
 
     // Only load record if not already present
@@ -60,13 +58,6 @@ class CampaignAdminList extends SilverStripeComponent {
   componentWillUnmount() {
     // Reset new create flag
     this.props.campaignActions.setNewItem(null);
-  }
-
-  /**
-   * @return {boolean}
-   */
-  isRecordLoaded(props = this.props) {
-    return Object.keys(props.record).length !== 0;
   }
 
   /**
@@ -117,6 +108,211 @@ class CampaignAdminList extends SilverStripeComponent {
   }
 
   /**
+   * @return {array}
+   */
+  getMoreActions() {
+    const selectedItem = this.getSelectedItem();
+
+    if (!selectedItem) {
+      return null;
+    }
+
+    const referencedBy = selectedItem._links && selectedItem._links.referenced_by;
+    const requiredByNum = (referencedBy && referencedBy.length) || 0;
+    const unremoveableInfoText = i18n._t(
+        'CampaignAdmin.UNREMOVEABLE_INFO',
+        'Required by {number} item(s), and cannot be removed directly.'
+      );
+    const removeAction = selectedItem.Added === 'explicitly'
+      ? (
+        <button
+          key="remove_action"
+          className="btn btn-secondary action"
+          onClick={this.handleRemoveItem}
+        >
+          Remove
+        </button>
+      )
+      : (
+        <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
+          <span className="font-icon-link" />
+          {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
+        </p>
+      );
+
+    return [
+      removeAction,
+    ];
+  }
+
+  /**
+   * @return {array}
+   */
+  getItems() {
+    if (this.props.record && this.props.record._embedded) {
+      return this.props.record._embedded.items;
+    }
+
+    return null;
+  }
+
+  getPlaceholderGroups() {
+    const groups = {};
+
+    if (this.props.record && this.props.record.placeholderGroups) {
+      this.props.record.placeholderGroups.forEach((group) => {
+        groups[group.baseClass] = { ...group };
+        groups[group.baseClass].items = [...group.items];
+      });
+    }
+
+    return groups;
+  }
+
+  /**
+   * Group items for changeset display
+   *
+   * @return {object}
+   */
+  groupItemsForSet() {
+    const groups = this.getPlaceholderGroups();
+    const items = this.getItems();
+    if (!items) {
+      return groups;
+    }
+
+    // group by whatever
+    items.forEach(item => {
+      // Create new group if needed
+      const classname = item.BaseClass;
+
+      if (!groups[classname]) {
+        groups[classname] = {
+          singular: item.Singular,
+          plural: item.Plural,
+          items: [],
+        };
+      }
+
+      // Push items
+      groups[classname].items.push(item);
+    });
+
+    return groups;
+  }
+
+  /**
+   * @return {boolean}
+   */
+  isRecordLoaded(props = this.props) {
+    return Object.keys(props.record).length !== 0;
+  }
+
+  handleRemoveItem() {
+    if (typeof this.props.onRemoveCampaignItem === 'function') {
+      this.props.onRemoveCampaignItem(this.props.campaignId, this.getSelectedItem().ID);
+    }
+  }
+
+  /**
+   * Callback for items being clicked on
+   *
+   * @param {object} event
+   * @param {number} itemId
+   */
+  handleItemSelected(event, itemId) {
+    this.props.campaignActions.selectChangeSetItem(itemId);
+  }
+
+  handleCloseItem() {
+    this.props.campaignActions.selectChangeSetItem(null);
+  }
+
+  handlePublish(e) {
+    e.preventDefault();
+    this.props.campaignActions.publishCampaign(
+      this.props.publishApi,
+      this.props.treeClass,
+      this.props.campaignId
+    );
+  }
+
+  renderButtonToolbar() {
+    const items = this.getItems();
+
+    let actionProps = null;
+
+    if (!items || items.length === 0) {
+      actionProps = {
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
+        buttonStyle: 'secondary-outline',
+        icon: 'rocket',
+        disabled: true,
+      };
+    } else if (this.props.record.State === 'open') {
+      actionProps = {
+        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
+        buttonStyle: 'primary',
+        loading: this.props.campaign.isPublishing,
+        onClick: this.handlePublish,
+        icon: 'rocket',
+      };
+    }
+
+    if (!actionProps) {
+      return null;
+    }
+    return (
+      <div className="btn-toolbar">
+        <FormAction {...actionProps} />
+      </div>
+    );
+  }
+
+  renderPreview(itemLinks, itemId) {
+    let preview = null;
+    const previewClasses = classnames([
+      'flexbox-area-grow',
+      'fill-height',
+      'preview',
+      'campaign-admin__campaign-preview',
+      'campaign-admin__campaign-preview--empty',
+    ]);
+
+    if (this.state.loading) {
+      preview = (
+        <div className={previewClasses}>
+          <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
+        </div>
+      );
+    } else if (!this.getItems() || this.getItems().length === 0) {
+      const message = i18n._t(
+        'CampaignAdmin.SELECTFROMSECTIONS',
+        'Select "Add to Campaign" from pages, files, and other admin sections with content types'
+      );
+      preview = (
+        <div className={previewClasses}>
+          <h2 className="campaign-admin__empty-heading">Getting started</h2>
+          <p className="campaign-admin__empty-info">
+            {message}
+          </p>
+        </div>
+      );
+    } else {
+      preview = (
+        <Preview
+          itemLinks={itemLinks}
+          itemId={itemId}
+          onBack={this.handleCloseItem}
+          moreActions={this.getMoreActions()}
+        />
+      );
+    }
+
+    return preview;
+  }
+
+  /**
    * Renders a list of items in a Campaign.
    *
    * @return object
@@ -134,14 +330,14 @@ class CampaignAdminList extends SilverStripeComponent {
     const itemGroups = this.groupItemsForSet();
 
     // Get items in this set
-    let accordionBlocks = [];
+    const accordionBlocks = [];
 
     const selectedItem = this.getSelectedItem();
     const selectedItemsLinkedTo = (
-      selectedItem && selectedItem._links && selectedItem._links.references
+        selectedItem && selectedItem._links && selectedItem._links.references
       ) || [];
     const selectedItemsLinkedFrom = (
-      selectedItem && selectedItem._links && selectedItem._links.referenced_by
+        selectedItem && selectedItem._links && selectedItem._links.referenced_by
       ) || [];
 
     Object.keys(itemGroups).forEach(className => {
@@ -156,7 +352,7 @@ class CampaignAdminList extends SilverStripeComponent {
       const groupid = `Set_${campaignId}_Group_${className}`;
 
       // Create items for this group
-      group.items.forEach(item => {
+      group.items.forEach((item, index) => {
         // Auto-select first item
         if (!itemId) {
           itemId = item.ID;
@@ -178,18 +374,18 @@ class CampaignAdminList extends SilverStripeComponent {
         }
 
         let isLinked = !!selectedItemsLinkedTo.find(
-            linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
+          linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
 
         isLinked = isLinked || selectedItemsLinkedFrom.find(linkFromObj => (
-          linkFromObj.ChangeSetItemID === item.ID
-        ));
+            linkFromObj.ChangeSetItemID === item.ID
+          ));
 
         listGroupItems.push(
           <ListGroupItem
-            key={item.ID}
+            key={item.ID || index}
             className={itemClassNames.join(' ')}
-            handleClick={this.handleItemSelected}
-            handleClickArg={item.ID}
+            onClick={this.handleItemSelected}
+            onClickArg={item.ID}
           >
             <CampaignAdminItem
               item={item}
@@ -236,15 +432,15 @@ class CampaignAdminList extends SilverStripeComponent {
     ];
 
     const loading = this.props.loading && [
-      <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light"></div>,
-      <div key="spinner" className="cms-content-loading-spinner"></div>,
+      <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light" />,
+      <div key="spinner" className="cms-content-loading-spinner" />,
     ];
 
     return (
       <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
         {loading}
         <div className="fill-height campaign-admin__campaign-items" aria-expanded="true">
-          <Toolbar showBackButton handleBackButtonClick={this.props.handleBackButtonClick}>
+          <Toolbar showBackButton onBackButtonClick={this.props.handleBackButtonClick}>
             <Breadcrumb multiline />
           </Toolbar>
           {newItemInfo}
@@ -259,220 +455,25 @@ class CampaignAdminList extends SilverStripeComponent {
       </div>
     );
   }
-
-  renderPreview(itemLinks, itemId) {
-    let preview = null;
-    let previewClasses = classnames([
-      'flexbox-area-grow',
-      'fill-height',
-      'preview',
-      'campaign-admin__campaign-preview',
-      'campaign-admin__campaign-preview--empty',
-    ]);
-
-    if (this.state.loading) {
-      preview = (
-        <div className={previewClasses}>
-          <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
-        </div>
-      );
-    } else if (!this.getItems() || this.getItems().length === 0) {
-      const message = i18n._t(
-        'CampaignAdmin.SELECTFROMSECTIONS',
-        'Select "Add to Campaign" from pages, files, and other admin sections with content types'
-      );
-      preview = (
-        <div className={previewClasses}>
-          <h2 className="campaign-admin__empty-heading">Getting started</h2>
-          <p className="campaign-admin__empty-info">
-            {message}
-          </p>
-        </div>
-      );
-    } else {
-      preview = (
-        <Preview
-          itemLinks={itemLinks}
-          itemId={itemId}
-          onBack={this.handleCloseItem}
-          moreActions={this.getMoreActions()}
-        />
-      );
-    }
-
-    return preview;
-  }
-
-  /**
-   * @return {array}
-   */
-  getMoreActions() {
-    const selectedItem = this.getSelectedItem();
-
-    if (!selectedItem) {
-      return null;
-    }
-
-    const requiredByNum =
-      selectedItem._links.referenced_by &&
-      selectedItem._links.referenced_by.length || 0;
-    const unremoveableInfoText = i18n._t(
-        'CampaignAdmin.UNREMOVEABLE_INFO',
-        'Required by {number} item(s), and cannot be removed directly.'
-      );
-    const removeAction = selectedItem.Added === 'explicitly' ?
-      (
-        <button key="remove_action"
-          className="btn btn-secondary action"
-          onClick={this.handleRemoveItem}
-        >
-          Remove
-        </button>
-      ) :
-      (
-        <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
-          <span className="font-icon-link"></span>
-          {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
-        </p>
-      );
-
-    return [
-      removeAction,
-    ];
-  }
-
-  handleRemoveItem() {
-    if (typeof this.props.onRemoveCampaignItem === 'function') {
-      this.props.onRemoveCampaignItem(this.props.campaignId, this.getSelectedItem().ID);
-    }
-  }
-
-  /**
-   * Callback for items being clicked on
-   *
-   * @param {object} event
-   * @param {number} itemId
-   */
-  handleItemSelected(event, itemId) {
-    this.props.campaignActions.selectChangeSetItem(itemId);
-  }
-
-  handleCloseItem() {
-    this.props.campaignActions.selectChangeSetItem(null);
-  }
-
-  renderButtonToolbar() {
-    const items = this.getItems();
-
-    let actionProps = null;
-
-    if (!items || items.length === 0) {
-      actionProps = {
-        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
-        buttonStyle: 'secondary-outline',
-        icon: 'rocket',
-        disabled: true,
-      };
-    } else if (this.props.record.State === 'open') {
-      actionProps = {
-        title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
-        buttonStyle: 'primary',
-        loading: this.props.campaign.isPublishing,
-        handleClick: this.handlePublish,
-        icon: 'rocket',
-      };
-    }
-
-    if (!actionProps) {
-      return null;
-    }
-    return (
-      <div className="btn-toolbar">
-        <FormAction {...actionProps} />
-      </div>
-    );
-  }
-
-  /**
-   * @return {array}
-   */
-  getItems() {
-    if (this.props.record && this.props.record._embedded) {
-      return this.props.record._embedded.items;
-    }
-
-    return null;
-  }
-
-  /**
-   * Group items for changeset display
-   *
-   * @return {object}
-   */
-  groupItemsForSet() {
-    const groups = this.getPlaceholderGroups();
-    const items = this.getItems();
-    if (!items) {
-      return groups;
-    }
-
-    // group by whatever
-    items.forEach(item => {
-      // Create new group if needed
-      const classname = item.BaseClass;
-
-      if (!groups[classname]) {
-        groups[classname] = {
-          singular: item.Singular,
-          plural: item.Plural,
-          items: [],
-        };
-      }
-
-      // Push items
-      groups[classname].items.push(item);
-    });
-
-    return groups;
-  }
-
-  getPlaceholderGroups() {
-    const groups = {};
-
-    if (this.props.record && this.props.record.placeholderGroups) {
-      this.props.record.placeholderGroups.forEach((group) => {
-        groups[group.baseClass] = { ...group };
-        groups[group.baseClass].items = [...group.items];
-      });
-    }
-
-    return groups;
-  }
-
-  handlePublish(e) {
-    e.preventDefault();
-    this.props.campaignActions.publishCampaign(
-      this.props.publishApi,
-      this.props.treeClass,
-      this.props.campaignId
-    );
-  }
-
 }
 
 CampaignAdminList.propTypes = {
   campaign: React.PropTypes.shape({
-    isPublishing: React.PropTypes.bool.isRequired,
+    isPublishing: React.PropTypes.bool,
     changeSetItemId: React.PropTypes.number,
   }),
-  breadcrumbsActions: React.PropTypes.object.isRequired,
-  campaignActions: React.PropTypes.object.isRequired,
   publishApi: React.PropTypes.func.isRequired,
   record: React.PropTypes.object.isRequired,
-  recordActions: React.PropTypes.object.isRequired,
   sectionConfig: React.PropTypes.object.isRequired,
-  handleBackButtonClick: React.PropTypes.func,
+  onBackButtonClick: React.PropTypes.func,
   onRemoveCampaignItem: React.PropTypes.func,
+  breadcrumbsActions: React.PropTypes.object.isRequired,
+  campaignActions: React.PropTypes.object.isRequired,
+  recordActions: React.PropTypes.object.isRequired,
+};
+
+CampaignAdminList.defaultProps = {
+
 };
 
 function mapStateToProps(state, ownProps) {
@@ -499,5 +500,5 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export { CampaignAdminList };
+export { CampaignAdminList as Component };
 export default connect(mapStateToProps, mapDispatchToProps)(CampaignAdminList);

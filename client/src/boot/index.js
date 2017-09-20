@@ -1,3 +1,4 @@
+/* global document */
 import { withRouter } from 'react-router';
 import ConfigHelpers from 'lib/Config';
 import Injector from 'lib/Injector';
