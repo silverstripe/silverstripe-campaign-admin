@@ -254,7 +254,7 @@ class AddToCampaignHandler
             $fields->push($createBox);
         }
 
-        $actions = new FieldList();
+        $actions = FieldList::create();
         if ($canCreate || $showSelect) {
             $actions->push(
                 AddToCampaignHandler_FormAction::create()
@@ -432,7 +432,7 @@ class AddToCampaignHandler
             if ($hasExistingName) {
                 throw $this->validationResult(
                     _t(
-                        CampaignAdmin::class . '.ERROR_DUPLICATE_NAME',
+                        'SilverStripe\\CampaignAdmin\\CampaignAdmin.ERROR_DUPLICATE_NAME',
                         'Name "{Name}" already exists',
                         ['Name' => $data['Name']]
                     ),
