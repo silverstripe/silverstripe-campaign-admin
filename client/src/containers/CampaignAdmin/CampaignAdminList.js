@@ -440,7 +440,7 @@ class CampaignAdminList extends Component {
       <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
         {loading}
         <div className="fill-height campaign-admin__campaign-items" aria-expanded="true">
-          <Toolbar showBackButton onBackButtonClick={this.props.handleBackButtonClick}>
+          <Toolbar showBackButton onBackButtonClick={this.props.onBackButtonClick}>
             <Breadcrumb multiline />
           </Toolbar>
           {newItemInfo}
