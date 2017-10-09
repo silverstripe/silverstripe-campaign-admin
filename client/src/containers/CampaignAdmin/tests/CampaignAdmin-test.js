@@ -2,6 +2,7 @@
 
 jest.mock('components/Breadcrumb/Breadcrumb');
 jest.mock('containers/FormBuilderLoader/FormBuilderLoader');
+jest.mock('lib/dependency-injection/MiddlewareRegistry');
 
 import React from 'react';
 import ReactTestUtils from 'react-addons-test-utils';
