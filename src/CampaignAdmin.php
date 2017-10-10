@@ -11,7 +11,6 @@ use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Core\Manifest\ModuleLoader;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
@@ -154,8 +153,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     public function init()
     {
         parent::init();
-        $module = ModuleLoader::getModule('silverstripe/campaign-admin');
-        Requirements::add_i18n_javascript($module->getRelativeResourcePath('client/lang'), false, true);
+        Requirements::add_i18n_javascript('silverstripe/campaign-admin: client/lang', false, true);
         Requirements::javascript('silverstripe/campaign-admin: client/dist/js/bundle.js');
         Requirements::css('silverstripe/campaign-admin: client/dist/styles/bundle.css');
     }
