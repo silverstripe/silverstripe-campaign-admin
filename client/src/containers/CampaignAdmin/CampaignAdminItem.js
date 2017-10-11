@@ -1,5 +1,4 @@
-import React from 'react';
-import SilverStripeComponent from 'lib/SilverStripeComponent';
+import React, { Component } from 'react';
 import i18n from 'i18n';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap-ss';
 import formatWrittenNumber from 'lib/formatWrittenNumber';
@@ -7,8 +6,7 @@ import formatWrittenNumber from 'lib/formatWrittenNumber';
 /**
  * Describes an individual campaign item
  */
-class CampaignAdminItem extends SilverStripeComponent {
-
+class CampaignAdminItem extends Component {
   /**
    * @return integer
    */
@@ -58,62 +56,6 @@ class CampaignAdminItem extends SilverStripeComponent {
     );
   }
 
-  render() {
-    let thumbnail = null;
-    const badge = {};
-    const item = this.props.item;
-    const campaign = this.props.campaign;
-
-    // @todo customise these status messages for already-published changesets
-
-    // Change badge. If the campaign has been published,
-    // don't apply a badge at all
-    if (campaign.State === 'open') {
-      switch (item.ChangeType) {
-        case 'created':
-          badge.className = 'label label-warning list-group-item__status';
-          badge.Title = i18n._t('CampaignAdmin.DRAFT', 'Draft');
-          break;
-        case 'modified':
-          badge.className = 'label label-warning list-group-item__status';
-          badge.Title = i18n._t('CampaignAdmin.MODIFIED', 'Modified');
-          break;
-        case 'deleted':
-          badge.className = 'label label-error list-group-item__status';
-          badge.Title = i18n._t('CampaignAdmin.REMOVED', 'Removed');
-          break;
-        case 'none':
-        default:
-          badge.className = 'label label-success list-group-item__status';
-          badge.Title = i18n._t('CampaignAdmin.NO_CHANGES', 'No changes');
-          break;
-      }
-    }
-
-    const links = this.renderLinks();
-
-    if (item.Thumbnail) {
-      thumbnail = (
-        <span className="list-group-item__thumbnail">
-          <img alt={item.Title} src={item.Thumbnail} />
-        </span>
-      );
-    }
-
-    return (
-      <div className="fill-width">
-        {thumbnail}
-        <div className="list-group-item__details">
-          <h4 className="list-group-item__heading">{item.Title}</h4>
-          {links}
-          {badge.className && badge.Title &&
-            <span className={badge.className}>{badge.Title}</span>
-          }
-        </div>
-      </div>
-    );
-  }
-
   renderLinks() {
     const numReferTo = this.getNumReferTo();
     const numReferredBy = this.getNumReferredBy();
@@ -160,6 +102,62 @@ class CampaignAdminItem extends SilverStripeComponent {
     }
 
     return links;
+  }
+
+  render() {
+    let thumbnail = null;
+    const badge = {};
+    const item = this.props.item;
+    const campaign = this.props.campaign;
+
+    // @todo customise these status messages for already-published changesets
+
+    // Change badge. If the campaign has been published,
+    // don't apply a badge at all
+    if (campaign.State === 'open') {
+      switch (item.ChangeType) {
+        case 'created':
+          badge.className = 'badge badge-warning list-group-item__status';
+          badge.Title = i18n._t('CampaignAdmin.DRAFT', 'Draft');
+          break;
+        case 'modified':
+          badge.className = 'badge badge-warning list-group-item__status';
+          badge.Title = i18n._t('CampaignAdmin.MODIFIED', 'Modified');
+          break;
+        case 'deleted':
+          badge.className = 'badge badge-error list-group-item__status';
+          badge.Title = i18n._t('CampaignAdmin.REMOVED', 'Removed');
+          break;
+        case 'none':
+        default:
+          badge.className = 'badge badge-success list-group-item__status';
+          badge.Title = i18n._t('CampaignAdmin.NO_CHANGES', 'No changes');
+          break;
+      }
+    }
+
+    const links = this.renderLinks();
+
+    if (item.Thumbnail) {
+      thumbnail = (
+        <span className="list-group-item__thumbnail">
+          <img alt={item.Title} src={item.Thumbnail} />
+        </span>
+      );
+    }
+
+    return (
+      <div className="fill-width">
+        {thumbnail}
+        <div className="list-group-item__details">
+          <h4 className="list-group-item__heading" title={item.Title}>{item.Title}</h4>
+          {links}
+          {badge.className && badge.Title &&
+            <span className={badge.className}>{badge.Title}</span>
+          }
+        </div>
+      </div>
+    );
   }
 }
 

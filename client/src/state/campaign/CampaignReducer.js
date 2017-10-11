@@ -6,11 +6,11 @@ const initialState = deepFreeze({
   changeSetItemId: null,
   isPublishing: false,
   view: null,
+  newItem: null,
 });
 
 function reducer(state = initialState, action) {
   switch (action.type) {
-
     case ACTION_TYPES.SET_CAMPAIGN_SELECTED_CHANGESETITEM:
       return deepFreeze(Object.assign({}, state, {
         changeSetItemId: action.payload.changeSetItemId,
@@ -34,9 +34,14 @@ function reducer(state = initialState, action) {
         isPublishing: false,
       }));
 
+    case ACTION_TYPES.SET_NEW_CAMPAIGN:
+      return deepFreeze({
+        ...state,
+        newItem: action.payload.newItem,
+      });
+
     default:
       return state;
-
   }
 }
 

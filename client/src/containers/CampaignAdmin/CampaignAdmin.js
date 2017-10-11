@@ -1,13 +1,15 @@
-import React from 'react';
+/* global window */
+import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'react-router';
 import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
+import * as campaignActions from 'state/campaign/CampaignActions';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
+import * as recordActions from 'state/records/RecordsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
-import SilverStripeComponent from 'lib/SilverStripeComponent';
 import FormAction from 'components/FormAction/FormAction';
 import i18n from 'i18n';
 import Toolbar from 'components/Toolbar/Toolbar';
@@ -16,17 +18,29 @@ import CampaignAdminList from './CampaignAdminList';
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
-class CampaignAdmin extends SilverStripeComponent {
-
+class CampaignAdmin extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      loading: false,
+    };
+
+    const defaultData = { SecurityID: props.securityId };
     this.publishApi = backend.createEndpointFetcher({
-      url: this.props.sectionConfig.publishEndpoint.url,
-      method: this.props.sectionConfig.publishEndpoint.method,
-      defaultData: { SecurityID: this.props.securityId },
+      ...props.sectionConfig.publishEndpoint,
+      defaultData,
       payloadSchema: {
         id: { urlReplacement: ':id', remove: true },
+      },
+    });
+
+    this.removeCampaignItemApi = backend.createEndpointFetcher({
+      ...props.sectionConfig.removeCampaignItemEndpoint,
+      defaultData,
+      payloadSchema: {
+        id: { urlReplacement: ':id', remove: true },
+        itemId: { urlReplacement: ':itemId', remove: true },
       },
     });
 
@@ -34,6 +48,9 @@ class CampaignAdmin extends SilverStripeComponent {
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
     this.handleFormAction = this.handleFormAction.bind(this);
+    this.detectErrors = this.detectErrors.bind(this);
+    this.handleRemoveCampaignItem = this.handleRemoveCampaignItem.bind(this);
+    this.addCampaign = this.addCampaign.bind(this);
   }
 
   componentWillMount() {
@@ -87,6 +104,17 @@ class CampaignAdmin extends SilverStripeComponent {
     this.props.breadcrumbsActions.setBreadcrumbs(breadcrumbs);
   }
 
+  /**
+   * Generate route with the given id and view
+   *
+   * @param {Number} id
+   * @param {String} view
+   * @return {String}
+   */
+  getActionRoute(id, view) {
+    return `${this.props.sectionConfig.url}/set/${id}/${view}`;
+  }
+
   handleBackButtonClick(event) {
     // Go back to second from last breadcrumb (where last item is current)
     if (this.props.breadcrumbs.length > 1) {
@@ -114,12 +142,13 @@ class CampaignAdmin extends SilverStripeComponent {
     }
     return promise
       .then((response) => {
-        const hasErrors = response.errors && response.errors.length > 0;
+        const hasErrors = this.detectErrors(response);
         if (action === 'action_save' && !hasErrors) {
           // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
           const id = response.record.id;
-          this.props.router.push(`${sectionUrl}/set/${id}/edit`);
+          this.props.campaignActions.setNewItem(id);
+          this.props.router.push(`${sectionUrl}/set/${id}/show`);
         }
 
         return response;
@@ -136,24 +165,208 @@ class CampaignAdmin extends SilverStripeComponent {
     }
   }
 
-  render() {
-    let view = null;
+  /**
+   * @param {number} campaignId
+   * @param {number} itemId
+   * @return {Promise|null}
+   */
+  handleRemoveCampaignItem(campaignId, itemId) {
+    const fallbackMsg = `Are you sure you want to remove this item?
 
-    switch (this.props.params.view) {
-      case 'show':
-        view = this.renderItemListView();
-        break;
-      case 'edit':
-        view = this.renderDetailEditView();
-        break;
-      case 'create':
-        view = this.renderCreateView();
-        break;
-      default:
-        view = this.renderIndexView();
+By removing this item all linked items will be removed unless used elsewhere.`;
+    const msg = i18n._t('CampaignAdmin.REMOVE_ITEM_MESSAGE', fallbackMsg);
+    // eslint-disable-next-line no-alert
+    const confirmed = window.confirm(msg);
+
+    if (!confirmed) {
+      return null;
     }
 
-    return view;
+    this.setState({ loading: true });
+    return this.removeCampaignItem(campaignId, itemId)
+      .then(this.fetchCampaignsList.bind(this))
+      .then(() => this.setState({ loading: false }))
+      .then(() => {
+        this.props.campaignActions.selectChangeSetItem(null);
+        // Workaround to hide more actions popover
+        window.document.body.click();
+      });
+  }
+
+  removeCampaignItem(campaignId, itemId) {
+    return this.props.campaignActions.removeCampaignItem(
+      this.removeCampaignItemApi,
+      campaignId,
+      itemId
+    );
+  }
+
+  fetchCampaignsList() {
+    const endpoint = this.props.sectionConfig.readCampaignsEndpoint;
+    const fetchURL = endpoint.url;
+    return this.props.recordActions.fetchRecords(
+      this.props.sectionConfig.treeClass,
+      endpoint.method,
+      fetchURL
+    );
+  }
+
+  detectErrors(response) {
+    if (response.errors && response.errors.length) {
+      return true;
+    }
+    const state = response.state;
+
+    if (!state) {
+      return false;
+    }
+    // Check global messages
+    if (state.messages) {
+      return true;
+    }
+    // Find first field message
+    const message = state.fields && state.fields.find((field) => field.message);
+
+    return Boolean(message);
+  }
+
+  /**
+   * Hook to allow customisation of components being constructed
+   * by the Campaign DetailEdit FormBuilderLoader.
+   *
+   * @param {Object} Custom - Component constructor.
+   * @param {Object} props - Props passed from FormBuilderLoader.
+   *
+   * @return {Object} - Instanciated React component
+   */
+  campaignEditCreateFn(Custom, props) {
+    const url = this.props.sectionConfig.url;
+
+    // Route to the Campaigns index view when 'Cancel' is clicked.
+    if (props.name === 'action_cancel') {
+      const extendedProps = Object.assign({}, props, {
+        onClick: (event) => {
+          event.preventDefault();
+          this.props.router.push(url);
+        },
+      });
+
+      return <Custom key={props.id} {...extendedProps} />;
+    }
+
+    return <Custom key={props.id} {...props} />;
+  }
+
+  /**
+   * Hook to allow customisation of components being constructed
+   * by the Campaign creation FormBuilderLoader.
+   *
+   * @param {Object} Custom - Component constructor.
+   * @param {Object} props - Props passed from FormBuilderLoader.
+   *
+   * @return {Object} - Instanciated React component
+   */
+  campaignAddCreateFn(Custom, props) {
+    const url = this.props.sectionConfig.url;
+
+    // Route to the Campaigns index view when 'Cancel' is clicked.
+    if (props.name === 'action_cancel') {
+      const extendedProps = Object.assign({}, props, {
+        onClick: (event) => {
+          event.preventDefault();
+          this.props.router.push(url);
+        },
+      });
+
+      return <Custom key={props.name} {...extendedProps} />;
+    }
+
+    return <Custom key={props.name} {...props} />;
+  }
+
+  /**
+   * Hook to allow customisation of components being constructed
+   * by the Campaign list FormBuilderLoader.
+   *
+   * @param {Object} Custom - Component constructor.
+   * @param {Object} props - Props passed from FormBuilderLoader.
+   *
+   * @return object - Instanciated React component
+   */
+  campaignListCreateFn(Custom, props) {
+    const sectionUrl = this.props.sectionConfig.url;
+    const typeUrlParam = 'set';
+
+    if (props.schemaComponent === 'GridField') {
+      const extendedProps = Object.assign({}, props, {
+        data: Object.assign({}, props.data, {
+          onDrillDown: (event, record) => {
+            this.props.router.push(`${sectionUrl}/${typeUrlParam}/${record.ID}/show`);
+          },
+          onEditRecord: (event, id) => {
+            this.props.router.push(`${sectionUrl}/${typeUrlParam}/${id}/edit`);
+          },
+        }),
+      });
+
+      return <Custom key={extendedProps.name} {...extendedProps} />;
+    }
+
+    return <Custom key={props.name} {...props} />;
+  }
+
+  addCampaign() {
+    const path = this.getActionRoute(0, 'create');
+    this.props.router.push(path);
+  }
+
+  /**
+   * Renders the Detail Edit Form for a Campaign.
+   */
+  renderDetailEditView() {
+    if (this.props.params.id <= 0) {
+      return this.renderCreateView();
+    }
+    const baseSchemaUrl = this.props.sectionConfig.form.campaignEditForm.schemaUrl;
+    const schemaUrl = `${baseSchemaUrl}/${this.props.params.id}`;
+
+    return (
+      <div className="fill-height">
+        <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
+          <Breadcrumb multiline />
+        </Toolbar>
+
+        <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
+          <FormBuilderLoader
+            onAction={this.handleFormAction}
+            schemaUrl={schemaUrl}
+            identifier="Campaign.EditView"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  /**
+   * Render the view for creating a new Campaign.
+   */
+  renderCreateView() {
+    const schemaUrl = this.props.sectionConfig.form.campaignCreateForm.schemaUrl;
+    return (
+      <div className="fill-height">
+        <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
+          <Breadcrumb multiline />
+        </Toolbar>
+        <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
+          <FormBuilderLoader
+            onSubmit={this.handleCreateCampaignSubmit}
+            onAction={this.handleFormAction}
+            schemaUrl={schemaUrl}
+            identifier="Campaign.CreateView"
+          />
+        </div>
+      </div>
+    );
   }
 
   /**
@@ -166,7 +379,8 @@ class CampaignAdmin extends SilverStripeComponent {
     const formActionProps = {
       title: i18n._t('CampaignAdmin.ADDCAMPAIGN'),
       icon: 'plus',
-      handleClick: this.addCampaign.bind(this),
+      extraClass: 'btn-primary',
+      onClick: this.addCampaign,
     };
     const formBuilderProps = {
       createFn: this.campaignListCreateFn.bind(this),
@@ -202,7 +416,9 @@ class CampaignAdmin extends SilverStripeComponent {
       campaignId: this.props.params.id,
       itemListViewEndpoint: this.props.sectionConfig.itemListViewEndpoint,
       publishApi: this.publishApi,
-      handleBackButtonClick: this.handleBackButtonClick.bind(this),
+      onBackButtonClick: this.handleBackButtonClick,
+      onRemoveCampaignItem: this.handleRemoveCampaignItem,
+      loading: this.state.loading,
     };
 
     return (
@@ -210,179 +426,60 @@ class CampaignAdmin extends SilverStripeComponent {
     );
   }
 
-  /**
-   * Renders the Detail Edit Form for a Campaign.
-   */
-  renderDetailEditView() {
-    if (this.props.params.id <= 0) {
-      return this.renderCreateView();
-    }
-    const baseSchemaUrl = this.props.sectionConfig.form.campaignEditForm.schemaUrl;
-    const schemaUrl = `${baseSchemaUrl}/${this.props.params.id}`;
+  render() {
+    let view = null;
 
-    return (
-      <div className="fill-height">
-        <Toolbar showBackButton handleBackButtonClick={this.handleBackButtonClick}>
-          <Breadcrumb multiline />
-        </Toolbar>
-
-        <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
-          <FormBuilderLoader
-            handleAction={this.handleFormAction}
-            schemaUrl={schemaUrl}
-            identifier="Campaign.EditView"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  /**
-   * Render the view for creating a new Campaign.
-   */
-  renderCreateView() {
-    const schemaUrl = this.props.sectionConfig.form.campaignCreateForm.schemaUrl;
-    return (
-      <div className="fill-height">
-        <Toolbar showBackButton handleBackButtonClick={this.handleBackButtonClick}>
-          <Breadcrumb multiline />
-        </Toolbar>
-        <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
-          <FormBuilderLoader
-            handleSubmit={this.handleCreateCampaignSubmit}
-            handleAction={this.handleFormAction}
-            schemaUrl={schemaUrl}
-            identifier="Campaign.CreateView"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  /**
-   * Hook to allow customisation of components being constructed
-   * by the Campaign DetailEdit FormBuilderLoader.
-   *
-   * @param {Object} Component - Component constructor.
-   * @param {Object} props - Props passed from FormBuilderLoader.
-   *
-   * @return {Object} - Instanciated React component
-   */
-  campaignEditCreateFn(Component, props) {
-    const url = this.props.sectionConfig.url;
-
-    // Route to the Campaigns index view when 'Cancel' is clicked.
-    if (props.name === 'action_cancel') {
-      const extendedProps = Object.assign({}, props, {
-        handleClick: (event) => {
-          event.preventDefault();
-          this.props.router.push(url);
-        },
-      });
-
-      return <Component key={props.id} {...extendedProps} />;
+    switch (this.props.params.view) {
+      case 'show':
+        view = this.renderItemListView();
+        break;
+      case 'edit':
+        view = this.renderDetailEditView();
+        break;
+      case 'create':
+        view = this.renderCreateView();
+        break;
+      default:
+        view = this.renderIndexView();
     }
 
-    return <Component key={props.id} {...props} />;
-  }
-
-  /**
-   * Hook to allow customisation of components being constructed
-   * by the Campaign creation FormBuilderLoader.
-   *
-   * @param {Object} Component - Component constructor.
-   * @param {Object} props - Props passed from FormBuilderLoader.
-   *
-   * @return {Object} - Instanciated React component
-   */
-  campaignAddCreateFn(Component, props) {
-    const url = this.props.sectionConfig.url;
-
-    // Route to the Campaigns index view when 'Cancel' is clicked.
-    if (props.name === 'action_cancel') {
-      const extendedProps = Object.assign({}, props, {
-        handleClick: (event) => {
-          event.preventDefault();
-          this.props.router.push(url);
-        },
-      });
-
-      return <Component key={props.name} {...extendedProps} />;
-    }
-
-    return <Component key={props.name} {...props} />;
-  }
-
-  /**
-   * Hook to allow customisation of components being constructed
-   * by the Campaign list FormBuilderLoader.
-   *
-   * @param {Object} Component - Component constructor.
-   * @param {Object} props - Props passed from FormBuilderLoader.
-   *
-   * @return object - Instanciated React component
-   */
-  campaignListCreateFn(Component, props) {
-    const sectionUrl = this.props.sectionConfig.url;
-    const typeUrlParam = 'set';
-
-    if (props.schemaComponent === 'GridField') {
-      const extendedProps = Object.assign({}, props, {
-        data: Object.assign({}, props.data, {
-          handleDrillDown: (event, record) => {
-            this.props.router.push(`${sectionUrl}/${typeUrlParam}/${record.ID}/show`);
-          },
-          handleEditRecord: (event, id) => {
-            this.props.router.push(`${sectionUrl}/${typeUrlParam}/${id}/edit`);
-          },
-        }),
-      });
-
-      return <Component key={extendedProps.name} {...extendedProps} />;
-    }
-
-    return <Component key={props.name} {...props} />;
-  }
-
-  addCampaign() {
-    const path = this.getActionRoute(0, 'create');
-    this.props.router.push(path);
-  }
-
-  /**
-   * Generate route with the given id and view
-   *
-   * @param {Number} id
-   * @param {String} view
-   * @return {String}
-   */
-  getActionRoute(id, view) {
-    return `${this.props.sectionConfig.url}/set/${id}/${view}`;
+    return view;
   }
 }
 
 CampaignAdmin.propTypes = {
-  breadcrumbsActions: React.PropTypes.object.isRequired,
-  campaignId: React.PropTypes.string,
-  sectionConfig: React.PropTypes.shape({
-    publishEndpoint: React.PropTypes.shape({
-      url: React.PropTypes.string,
-      method: React.PropTypes.string,
+  breadcrumbsActions: PropTypes.object.isRequired,
+  campaignId: PropTypes.string,
+  sectionConfig: PropTypes.shape({
+    publishEndpoint: PropTypes.shape({
+      url: PropTypes.string,
+      method: PropTypes.string,
     }),
-    form: React.PropTypes.shape({
-      EditForm: React.PropTypes.shape({
-        schemaUrl: React.PropTypes.string,
+    form: PropTypes.shape({
+      EditForm: PropTypes.shape({
+        schemaUrl: PropTypes.string,
       }),
-      campaignEditForm: React.PropTypes.shape({
-        schemaUrl: React.PropTypes.string,
+      campaignEditForm: PropTypes.shape({
+        schemaUrl: PropTypes.string,
       }),
-      campaignCreateForm: React.PropTypes.shape({
-        schemaUrl: React.PropTypes.string,
+      campaignCreateForm: PropTypes.shape({
+        schemaUrl: PropTypes.string,
       }),
     }),
   }),
-  securityId: React.PropTypes.string.isRequired,
-  view: React.PropTypes.string,
+  securityId: PropTypes.string.isRequired,
+  view: PropTypes.string,
+  params: PropTypes.shape({
+    view: PropTypes.string,
+    id: PropTypes.number,
+  }),
+};
+
+CampaignAdmin.defaultProps = {
+  sectionConfig: {},
+  params: {},
+  view: 'show',
+  breadcrumbs: [],
 };
 
 function mapStateToProps(state, ownProps) {
@@ -392,8 +489,11 @@ function mapStateToProps(state, ownProps) {
   ));
 
   if (ownProps.params.id > 0) {
-    const selector = formValueSelector('Campaign.EditView', getFormState);
-    title = selector(state, 'Name');
+    const schemaUrl = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
+    const schema = state.form.formSchemas[schemaUrl];
+    const schemaName = schema && schema.name;
+    const selector = schemaName && formValueSelector(schema.name, getFormState);
+    title = selector && selector(state, 'Name');
   }
 
   return {
@@ -410,7 +510,11 @@ function mapStateToProps(state, ownProps) {
 function mapDispatchToProps(dispatch) {
   return {
     breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
+    campaignActions: bindActionCreators(campaignActions, dispatch),
+    recordActions: bindActionCreators(recordActions, dispatch),
   };
 }
+
+export { CampaignAdmin as Component };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CampaignAdmin));

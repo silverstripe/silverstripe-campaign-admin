@@ -65,3 +65,47 @@ export function publishCampaign(publishApi, recordType, campaignId) {
       });
   };
 }
+
+/**
+ * Set new campaign
+ *
+ * @param {Number|null} itemId
+ * @return {Object}
+ */
+export function setNewItem(itemId) {
+  return {
+    type: ACTION_TYPES.SET_NEW_CAMPAIGN,
+    payload: { newItem: itemId },
+  };
+}
+
+/**
+ * Delete a campaign item
+ *
+ * @param {Function} removeCampaignItemApi See lib/Backend
+ * @param {string} recordType
+ * @param {number} campaignId
+ * @return {Object}
+ */
+export function removeCampaignItem(removeItemApi, campaignId, itemId) {
+  return (dispatch) => {
+    dispatch({
+      type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_REQUEST,
+      payload: { campaignId, itemId },
+    });
+
+    return removeItemApi({ id: campaignId, itemId })
+      .then(() => {
+        dispatch({
+          type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_SUCCESS,
+          payload: { campaignId, itemId },
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: ACTION_TYPES.REMOVE_CAMPAIGN_ITEM_FAILURE,
+          payload: { error },
+        });
+      });
+  };
+}

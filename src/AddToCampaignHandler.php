@@ -8,14 +8,19 @@ use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injectable;
+use SilverStripe\Dev\Deprecation;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
+use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\ORM\ValidationException;
+use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
 use SilverStripe\Versioned\Versioned;
@@ -93,6 +98,7 @@ class AddToCampaignHandler
      */
     public function handle()
     {
+        Deprecation::notice('5.0', 'handle() will be removed. Use addToCampaign or Form directly');
         $object = $this->getObject($this->data['ID'], $this->data['ClassName']);
 
         if (empty($this->data['Campaign'])) {
@@ -105,7 +111,7 @@ class AddToCampaignHandler
     /**
      * Get what ChangeSets are available for an item to be added to by this user
      *
-     * @return ArrayList[ChangeSet]
+     * @return ArrayList|ChangeSet[]
      */
     protected function getAvailableChangeSets()
     {
@@ -127,7 +133,10 @@ class AddToCampaignHandler
     {
         $inChangeSetIDs = array_unique(ChangeSetItem::get_for_object($object)->column('ChangeSetID'));
         if ($inChangeSetIDs > 0) {
-            $changeSets = $this->getAvailableChangeSets()->filter(['ID' => $inChangeSetIDs, 'State' => ChangeSet::STATE_OPEN]);
+            $changeSets = $this->getAvailableChangeSets()->filter([
+                'ID' => $inChangeSetIDs,
+                'State' => ChangeSet::STATE_OPEN
+            ]);
         } else {
             $changeSets = new ArrayList();
         }
@@ -149,9 +158,12 @@ class AddToCampaignHandler
         $id = (int)$id;
         $class = ClassInfo::class_name($class);
 
-        if (!$class || !is_subclass_of($class, DataObject::class) || !DataObject::has_extension($class, Versioned::class)) {
+        if (!$class
+            || !is_subclass_of($class, DataObject::class)
+            || !DataObject::has_extension($class, Versioned::class)
+        ) {
             $this->controller->httpError(400, _t(
-                __CLASS__.'.ErrorGeneral',
+                __CLASS__ . '.ErrorGeneral',
                 'We apologise, but there was an error'
             ));
             return null;
@@ -161,7 +173,7 @@ class AddToCampaignHandler
 
         if (!$object) {
             $this->controller->httpError(404, _t(
-                __CLASS__.'.ErrorNotFound',
+                __CLASS__ . '.ErrorNotFound',
                 'That {Type} couldn\'t be found',
                 '',
                 ['Type' => $class]
@@ -171,7 +183,7 @@ class AddToCampaignHandler
 
         if (!$object->canView()) {
             $this->controller->httpError(403, _t(
-                __CLASS__.'.ErrorItemPermissionDenied',
+                __CLASS__ . '.ErrorItemPermissionDenied',
                 'It seems you don\'t have the necessary permissions to add {ObjectTitle} to a campaign',
                 '',
                 ['ObjectTitle' => $object->Title]
@@ -191,75 +203,75 @@ class AddToCampaignHandler
     public function Form($object)
     {
         $inChangeSets = $this->getInChangeSets($object);
-        $changeSets = $this->getAvailableChangeSets();
+        $inChangeSetIDs = $inChangeSets->column('ID');
 
-        // Remove campaigns that the $object is already in
-        foreach ($inChangeSets as $cs) {
-            $changeSets->remove($changeSets->find('ID', $cs->ID));
+        // Get changesets that can be added to
+        $candidateChangeSets = $this->getAvailableChangeSets();
+        if ($inChangeSetIDs) {
+            $candidateChangeSets = $candidateChangeSets->exclude('ID', $inChangeSetIDs);
         }
 
-        $inChangeSetsText = "";
-        if ($inChangeSets->count() > 0) {
-            $inChangeSetNames = implode(', ', $inChangeSets->column('Name'));
-            $inChageSetsLabel = _t(
-                __CLASS__.'.AddToCampaignInChangsetLabel',
-                'Heads up, this item is already in campaign(s):'
-            );
-            $inChangeSetsText = sprintf(
-                '<div class="alert alert-info"><p><strong>%s</strong><br/> %s</p></div>',
-                $inChageSetsLabel,
-                $inChangeSetNames
+        $canCreate = ChangeSet::singleton()->canCreate();
+        $message = $this->getFormAlert($inChangeSets, $candidateChangeSets, $canCreate);
+        $fields = new FieldList(array_filter([
+            $message ? LiteralField::create("AlertMessages", $message) : null,
+            HiddenField::create('ID', null, $object->ID),
+            HiddenField::create('ClassName', null, $object->baseClass())
+        ]));
+
+        // Add fields based on available options
+        $showSelect = $candidateChangeSets->count() > 0;
+        if ($showSelect) {
+            $campaignDropdown = DropdownField::create(
+                'Campaign',
+                _t(__CLASS__ . '.AddToCampaignAvailableLabel', 'Available campaigns'),
+                $candidateChangeSets
+            )
+                ->setEmptyString(_t(__CLASS__ . '.AddToCampaignFormFieldLabel', 'Select a Campaign'))
+                ->addExtraClass('noborder')
+                ->addExtraClass('no-chosen');
+            $fields->push($campaignDropdown);
+
+            // Show visibilty toggle of other create field
+            if ($canCreate) {
+                $addCampaignSelect = CheckboxField::create('AddNewSelect', _t(
+                    __CLASS__ . '.ADD_TO_A_NEW_CAMPAIGN',
+                    'Add to a new campaign'
+                ))
+                    ->setAttribute('data-shows', 'NewTitle')
+                    ->setSchemaData(['data' => ['shows' => 'NewTitle']]);
+                $fields->push($addCampaignSelect);
+            }
+        }
+        if ($canCreate) {
+            $placeholder = _t(__CLASS__ . '.CREATE_NEW_PLACEHOLDER', 'Enter campaign name');
+            $createBox = TextField::create(
+                'NewTitle',
+                _t(__CLASS__ . '.CREATE_NEW', 'Create a new campaign')
+            )
+                ->setAttribute('placeholder', $placeholder)
+                ->setSchemaData(['attributes' => ['placeholder' => $placeholder]]);
+            $fields->push($createBox);
+        }
+
+        $actions = FieldList::create();
+        if ($canCreate || $showSelect) {
+            $actions->push(
+                AddToCampaignHandler_FormAction::create()
+                    ->setTitle(_t(__CLASS__ . '.AddToCampaignAddAction', 'Add'))
+                    ->addExtraClass('add-to-campaign__action')
             );
         }
 
-        $campaignDropdown = DropdownField::create(
-            'Campaign',
-            _t(__CLASS__.'.AddToCampaignAvailableLabel', 'Available campaigns'),
-            $changeSets
-        );
-        $campaignDropdown->setEmptyString(_t(__CLASS__.'.AddToCampaignFormFieldLabel', 'Select a Campaign'));
-        $campaignDropdown->addExtraClass('noborder');
-        $campaignDropdown->addExtraClass('no-chosen');
-
-        $fields = new FieldList([
-            LiteralField::create("InChangeSetsText", $inChangeSetsText),
-            $campaignDropdown,
-            HiddenField::create('ID', null, $this->data['ID']),
-            HiddenField::create('ClassName', null, $this->data['ClassName'])
-        ]);
-
-        $form = new Form(
+        $form = Form::create(
             $this->controller,
             $this->name,
             $fields,
-            new FieldList(
-                $action = AddToCampaignHandler_FormAction::create()
-                    ->setTitle(_t(__CLASS__.'.AddToCampaignAddAction', 'Add'))
-            )
+            $actions,
+            AddToCampaignValidator::create()
         );
 
-        // If there's no campaigns to add to, we shouldn't have the dropdown
-        // and add button
-        if ($changeSets->count() === 0 && $inChangeSets->count() > 0) {
-            $campaignAdminUrl = CampaignAdmin::singleton()->config()->get('url_segment');
-            $link = Controller::join_links('admin', $campaignAdminUrl);
-            $noCampaingsText = _t(
-                __CLASS__.'.AddToCampaignNoCampaignsToAdd',
-                '<p class="lead text-xs-center">This item has been added to all available campaigns.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Create a new campaign?</a></p>',
-                null,
-                [ 'campaignSectionLink' => $link ]
-            );
-            $fields->push(LiteralField::create('NoCampaignsText', $noCampaingsText));
-            $fields->removeByName('Campaign');
-            $form->setActions([]);
-        }
-
-        $action->addExtraClass('add-to-campaign__action');
-
         $form->setHTMLID('Form_EditForm_AddToCampaign');
-
-        $form->loadDataFrom($this->data);
-        $form->getValidator()->addRequiredField('Campaign');
         $form->addExtraClass('form--no-dividers add-to-campaign__form');
 
         return $form;
@@ -269,42 +281,43 @@ class AddToCampaignHandler
      * Performs the actual action of adding the object to the ChangeSet, once the ChangeSet ID is known
      *
      * @param DataObject $object The object to add to the ChangeSet
-     * @param int $campaignID The ID of the ChangeSet to add $object to
+     * @param array|int $data Post data for this campaign form, or the ID of the campaign to add to
      * @return HTTPResponse
-     * @throws HTTPResponse_Exception
+     * @throws ValidationException
      */
-    public function addToCampaign($object, $campaignID)
+    public function addToCampaign($object, $data)
     {
+        // Extract $campaignID from $data
+        $campaignID = $this->getOrCreateCampaign($data);
+
         /** @var ChangeSet $changeSet */
         $changeSet = ChangeSet::get()->byID($campaignID);
 
         if (!$changeSet) {
-            $this->controller->httpError(404, _t(
-                __CLASS__.'.ErrorNotFound',
+            throw new ValidationException(_t(
+                __CLASS__ . '.ErrorNotFound',
                 'That {Type} couldn\'t be found',
-                '',
                 ['Type' => 'Campaign']
             ));
-            return null;
         }
 
         if (!$changeSet->canEdit()) {
-            $this->controller->httpError(403, _t(
-                __CLASS__.'.ErrorCampaignPermissionDenied',
+            throw new ValidationException(_t(
+                __CLASS__ . '.ErrorCampaignPermissionDenied',
                 'It seems you don\'t have the necessary permissions to add {ObjectTitle} to {CampaignTitle}',
-                '',
-                ['ObjectTitle' => $object->Title, 'CampaignTitle' => $changeSet->Title]
+                [
+                    'ObjectTitle' => $object->Title,
+                    'CampaignTitle' => $changeSet->Title
+                ]
             ));
-            return null;
         }
 
         $changeSet->addObject($object);
 
         $request = $this->controller->getRequest();
         $message = _t(
-            __CLASS__.'.Success',
+            __CLASS__ . '.Success',
             'Successfully added <strong>{ObjectTitle}</strong> to <strong>{CampaignTitle}</strong>',
-            '',
             [
                 'ObjectTitle' => Convert::raw2xml($object->Title),
                 'CampaignTitle' => Convert::raw2xml($changeSet->Title)
@@ -318,7 +331,146 @@ class AddToCampaignHandler
             $response->addHeader('Content-Type', 'text/html; charset=utf-8');
             return $response;
         } else {
-            return $this->controller->getController()->redirectBack();
+            return $this->controller->redirectBack();
         }
+    }
+
+    /**
+     * Get descriptive alert to display at the top of the form
+     *
+     * @param ArrayList $inChangeSets List of changesets this item exists in
+     * @param ArrayList $candidateChangeSets List of changesets this item could be added to
+     * @param bool $canCreate
+     * @return string
+     */
+    protected function getFormAlert($inChangeSets, $candidateChangeSets, $canCreate)
+    {
+        // In a subset of changesets
+        if ($inChangeSets->count() > 0 && $candidateChangeSets->count() > 0) {
+            return sprintf(
+                '<div class="alert alert-info"><strong>%s</strong><br/>%s</div>',
+                _t(
+                    __CLASS__ . '.AddToCampaignInChangsetLabel',
+                    'Heads up, this item is already in campaign(s):'
+                ),
+                Convert::raw2xml(implode(', ', $inChangeSets->column('Name')))
+            );
+        }
+
+        // In all changesets
+        if ($inChangeSets->count() > 0) {
+            return sprintf(
+                '<div class="alert alert-info"><strong>%s</strong><br/>%s</div>',
+                _t(
+                    __CLASS__ . '.AddToCampaignInChangsetLabelAll',
+                    'Heads up, this item is already in ALL campaign(s):'
+                ),
+                Convert::raw2xml(implode(', ', $inChangeSets->column('Name')))
+            );
+        }
+
+        // Create only
+        if ($candidateChangeSets->count() === 0 && $canCreate) {
+            return sprintf(
+                '<div class="alert alert-info">%s</div>',
+                _t(
+                    __CLASS__ . '.NO_CAMPAIGNS',
+                    "You currently don't have any campaigns. "
+                    . "You can edit campaign details later in the Campaigns section."
+                )
+            );
+        }
+
+        // Can't select or create
+        if ($candidateChangeSets->count() === 0 && !$canCreate) {
+            return sprintf(
+                '<div class="alert alert-warning">%s</div>',
+                _t(
+                    __CLASS__ . '.NO_CREATE',
+                    "Oh no! You currently don't have any campaigns created. "
+                    . "Your current login does not have privileges to create campaigns. "
+                    . "Campaigns can only be created by users with Campaigns section rights."
+                )
+            );
+        }
+        return null;
+    }
+
+    /**
+     * Find or build campaign from posted data
+     *
+     * @param array|int $data
+     * @return int
+     * @throws ValidationException
+     */
+    protected function getOrCreateCampaign($data)
+    {
+        // Create new campaign if selected
+        if (is_array($data) && !empty($data['AddNewSelect']) // Explicitly click "Add to a new campaign"
+            || (is_array($data) && !isset($data['Campaign']) && isset($data['NewTitle'])) // This is the only option
+        ) {
+            // Permission
+            if (!ChangeSet::singleton()->canCreate()) {
+                throw $this->validationResult(
+                    _t(__CLASS__ . '.CREATE_DENIED', 'You do not have permission to create campaigns')
+                );
+            }
+
+            // Check title is valid
+            $title = $data['NewTitle'];
+            if (empty($title)) {
+                throw $this->validationResult(
+                    _t(__CLASS__ . '.MISSING_TITLE', 'Campaign name is required'),
+                    'NewTitle'
+                );
+            }
+
+            // Prevent duplicates
+            $hasExistingName = Changeset::get()
+                    ->filter('Name:nocase', $title)
+                    ->count() > 0;
+            if ($hasExistingName) {
+                throw $this->validationResult(
+                    _t(
+                        'SilverStripe\\CampaignAdmin\\CampaignAdmin.ERROR_DUPLICATE_NAME',
+                        'Name "{Name}" already exists',
+                        ['Name' => $data['Name']]
+                    ),
+                    'NewTitle'
+                );
+            }
+
+            // Create and return
+            $campaign = ChangeSet::create();
+            $campaign->Name = $title;
+            $campaign->write();
+            return $campaign->ID;
+        }
+
+        // Get selected campaign ID
+        $campaignID = null;
+        if (is_array($data) && !empty($data['Campaign'])) {
+            $campaignID = $data['Campaign'];
+        } elseif (is_numeric($data)) {
+            $campaignID = (int)$data;
+        }
+        if (empty($campaignID)) {
+            throw $this->validationResult(_t(__CLASS__ . '.NONE_SELECTED', 'No campaign selected'));
+        }
+        return $campaignID;
+    }
+
+    /**
+     * Raise validation error
+     *
+     * @param string $message
+     * @param string $field
+     * @return ValidationException
+     */
+    protected function validationResult($message, $field = null)
+    {
+        $error = ValidationResult::create()
+            ->addFieldError($field, $message);
+        return new ValidationException($error);
     }
 }

@@ -1,6 +1,7 @@
 en:
-  LeftAndMain:
-    SAVEDERROR: Error.
+  CampaignAdmin:
+    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Save
+    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Saved
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     AddToCampaignAddAction: Add
     AddToCampaignAvailableLabel: 'Available campaigns'
@@ -17,7 +18,9 @@ en:
   SilverStripe\CampaignAdmin\CampaignAdmin:
     ACCESS_HELP: 'Allow viewing of the campaign publishing section.'
     CANCEL: Cancel
+    CREATE: Create
     ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists'
     MENUTITLE: Campaigns
-    SAVE: Save
+    NOITEMSTEXT: 'Add items from the {section} section'
+    SAVEDERROR: Error.
     SAVEDUP: Saved.

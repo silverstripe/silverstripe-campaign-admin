@@ -2,28 +2,30 @@
 
 namespace SilverStripe\CampaignAdmin;
 
+use LogicException;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Admin\LeftAndMainFormRequestHandler;
 use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Convert;
-use SilverStripe\Core\Manifest\ModuleLoader;
-use SilverStripe\Forms\HiddenField;
-use SilverStripe\Forms\FormAction;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormAction;
+use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\RequiredFields;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\SS_List;
+use SilverStripe\ORM\UnexpectedDataException;
 use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
+use SilverStripe\Security\SecurityToken;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
-use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\UnexpectedDataException;
-use SilverStripe\Security\SecurityToken;
-use SilverStripe\Security\PermissionProvider;
-use LogicException;
 use SilverStripe\View\Requirements;
 
 /**
@@ -42,15 +44,45 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         'readCampaign',
         'deleteCampaign',
         'publishCampaign',
+        'removeCampaignItem'
     ];
 
     private static $menu_priority = 3;
+
+    /**
+     * When listing campaigns, re-sync items automatically after this many seconds.
+     * This can prevent unnecessary and expensive database requests on every view.
+     *
+     * @config
+     * @var int
+     */
+    private static $sync_expires = 300;
 
     private static $menu_title = 'Campaigns';
 
     private static $menu_icon_class = 'font-icon-page-multiple';
 
     private static $tree_class = ChangeSet::class;
+
+    /**
+     * Show published changesets
+     *
+     * Note: Experimental API (will be changed in the near future)
+     *
+     * @config
+     * @var bool
+     */
+    private static $show_published = true;
+
+    /**
+     * Show inferred changesets (automatically created when you publish a page)
+     *
+     * Note: Experimental API (will be changed in the near future)
+     *
+     * @config
+     * @var bool
+     */
+    private static $show_inferred = false;
 
     private static $url_handlers = [
         'GET sets' => 'readCampaigns',
@@ -59,6 +91,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         'DELETE set/$ID' => 'deleteCampaign',
         'campaignEditForm/$ID' => 'campaignEditForm',
         'campaignCreateForm' => 'campaignCreateForm',
+        'POST removeCampaignItem/$CampaignID/$ItemID' => 'removeCampaignItem',
     ];
 
     private static $url_segment = 'campaigns';
@@ -97,12 +130,20 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                     'schemaUrl' => $this->Link('schema/campaignCreateForm')
                 ],
             ],
+            'readCampaignsEndpoint' => [
+                'url' => $this->Link() . 'sets',
+                'method' => 'get'
+            ],
             'itemListViewEndpoint' => [
                 'url' => $this->Link() . 'set/:id/show',
                 'method' => 'get'
             ],
             'publishEndpoint' => [
                 'url' => $this->Link() . 'set/:id/publish',
+                'method' => 'post'
+            ],
+            'removeCampaignItemEndpoint' => [
+                'url' => $this->Link() . 'removeCampaignItem/:id/:itemId',
                 'method' => 'post'
             ],
             'treeClass' => $this->config()->get('tree_class')
@@ -112,8 +153,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     public function init()
     {
         parent::init();
-        $module = ModuleLoader::getModule('silverstripe/campaign-admin');
-        Requirements::add_i18n_javascript($module->getRelativeResourcePath('client/lang'), false, true);
+        Requirements::add_i18n_javascript('silverstripe/campaign-admin: client/lang', false, true);
         Requirements::javascript('silverstripe/campaign-admin: client/dist/js/bundle.js');
         Requirements::css('silverstripe/campaign-admin: client/dist/styles/bundle.css');
     }
@@ -156,6 +196,37 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     }
 
     /**
+     * @return array
+     */
+    protected function getPlaceholderGroups()
+    {
+        $groups = [];
+
+        $classes = Config::inst()->get(ChangeSet::class, 'important_classes');
+
+        foreach ($classes as $class) {
+            if (!class_exists($class)) {
+                continue;
+            }
+            /** @var DataObject $item */
+            $item = Injector::inst()->get($class);
+            $groups[] = [
+                'baseClass' => DataObject::getSchema()->baseDataClass($class),
+                'singular' => $item->i18n_singular_name(),
+                'plural' => $item->i18n_plural_name(),
+                'noItemsText' => _t(__CLASS__.'.NOITEMSTEXT', 'Add items from the {section} section', [
+                    'section' => $item->i18n_plural_name(),
+                ]),
+                'items' => []
+            ];
+        }
+
+        $this->extend('updatePlaceholderGroups', $groups);
+
+        return $groups;
+    }
+
+    /**
      * Get list contained as a hal wrapper
      *
      * @return array
@@ -176,9 +247,10 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             ],
             '_embedded' => [$treeClass => []]
         ];
+        /** @var ChangeSet $item */
         foreach ($items as $item) {
-            /** @var ChangeSet $item */
-            $resource = $this->getChangeSetResource($item);
+            $sync = $this->shouldCampaignSync($item);
+            $resource = $this->getChangeSetResource($item, $sync);
             $hal['_embedded'][$treeClass][] = $resource;
         }
         return $hal;
@@ -188,9 +260,10 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      * Build item resource from a changeset
      *
      * @param ChangeSet $changeSet
+     * @param bool $sync Set to true to force async of this changeset
      * @return array
      */
-    protected function getChangeSetResource(ChangeSet $changeSet)
+    protected function getChangeSetResource(ChangeSet $changeSet, $sync = false)
     {
         $hal = [
             '_links' => [
@@ -203,16 +276,21 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'Created' => $changeSet->Created,
             'LastEdited' => $changeSet->LastEdited,
             'State' => $changeSet->State,
+            'StateLabel' => $changeSet->getStateLabel(),
             'IsInferred' => $changeSet->IsInferred,
             'canEdit' => $changeSet->canEdit(),
             'canPublish' => false,
-            '_embedded' => ['items' => []]
+            '_embedded' => ['items' => []],
+            'placeholderGroups' => $this->getPlaceholderGroups(),
         ];
 
         // Before presenting the changeset to the client,
         // synchronise it with new changes.
         try {
-            $changeSet->sync();
+            if ($sync) {
+                $changeSet->sync();
+            }
+            $hal['PublishedLabel'] = $changeSet->getPublishedLabel() ?: '-';
             $hal['Details'] = $changeSet->getDetails();
             $hal['canPublish'] = $changeSet->canPublish() && $changeSet->hasChanges();
 
@@ -225,12 +303,12 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 $resource = $this->getChangeSetItemResource($changeSetItem);
                 $hal['_embedded']['items'][] = $resource;
             }
-            $hal['ChangesCount'] = count($hal['_embedded']['items']);
 
         // An unexpected data exception means that the database is corrupt
         } catch (UnexpectedDataException $e) {
+            $hal['PublishedLabel'] = '-';
             $hal['Details'] = 'Corrupt database! ' . $e->getMessage();
-            $hal['ChangesCount'] = '-';
+            $hal['canPublish'] = false;
         }
         return $hal;
     }
@@ -316,8 +394,16 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      */
     protected function getListItems()
     {
-        return ChangeSet::get()
-            ->filter('State', ChangeSet::STATE_OPEN)
+        $changesets = ChangeSet::get();
+        // Filter out published items if disabled
+        if (!$this->config()->get('show_published')) {
+            $changesets = $changesets->filter('State', ChangeSet::STATE_OPEN);
+        }
+        // Filter out automatically created changesets
+        if (!$this->config()->get('show_inferred')) {
+            $changesets = $changesets->filter('IsInferred', 0);
+        }
+        return $changesets
             ->filterByCallback(function ($item) {
                 /** @var ChangeSet $item */
                 return ($item->canView());
@@ -352,12 +438,50 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 return (new HTTPResponse(null, 403));
             }
 
-            $body = Convert::raw2json($this->getChangeSetResource($changeSet));
+            $body = Convert::raw2json($this->getChangeSetResource($changeSet, true));
             return (new HTTPResponse($body, 200))
                 ->addHeader('Content-Type', 'application/json');
         } else {
             return $this->index($request);
         }
+    }
+
+    /**
+     * REST endpoint to delete a campaign item.
+     *
+     * @param HTTPRequest $request
+     *
+     * @return HTTPResponse
+     */
+    public function removeCampaignItem(HTTPRequest $request)
+    {
+        // Check security ID
+        if (!SecurityToken::inst()->checkRequest($request)) {
+            return new HTTPResponse(null, 400);
+        }
+
+        $campaignID = $request->param('CampaignID');
+        $itemID = $request->param('ItemID');
+
+        if (!$campaignID ||
+            !is_numeric($campaignID) ||
+            !$itemID ||
+            !is_numeric($itemID)) {
+            return (new HTTPResponse(null, 400));
+        }
+
+        /** @var ChangeSet $campaign */
+        $campaign = ChangeSet::get()->byID($campaignID);
+        /** @var ChangeSetItem $item */
+        $item = ChangeSetItem::get()->byID($itemID);
+        if (!$campaign || !$item) {
+            return (new HTTPResponse(null, 404));
+        }
+
+
+        $campaign->removeObject($item->Object());
+
+        return (new HTTPResponse(null, 204));
     }
 
     /**
@@ -485,8 +609,18 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignEditForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
-                    ->setIcon('save'),
+                FormAction::create('save', _t(__CLASS__.'SAVE', 'Save'))
+                    ->setIcon('save')
+                    ->setSchemaState([
+                        'data' => [
+                            'pristineTitle' => _t(__CLASS__.'SAVED', 'Saved'),
+                            'pristineIcon' => 'tick',
+                            'dirtyTitle' => _t(__CLASS__.'SAVE', 'Save'),
+                            'dirtyIcon' => 'save',
+                            'pristineClass' => 'btn-outline-primary',
+                            'dirtyClass' => '',
+                        ],
+                    ]),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
@@ -550,8 +684,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignCreateForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
-                    ->setIcon('save'),
+                FormAction::create('save', _t(__CLASS__.'.CREATE', 'Create'))
+                    ->setIcon('plus'),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
@@ -584,7 +718,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      */
     public function save($data, $form)
     {
-        $request = $this->getRequest();
         $errors = null;
 
         // Existing or new record?
@@ -620,7 +753,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $nameDuplicateMsg = _t(__CLASS__ . '.ERROR_DUPLICATE_NAME', 'Name "{Name}" already exists', '', [ 'Name' => $data['Name']]);
             $errors = new ValidationResult();
             $errors->addFieldMessage('Name', $nameDuplicateMsg);
-            $message = _t('LeftAndMain.SAVEDERROR', 'Error.');
+            $message = _t(__CLASS__.'.SAVEDERROR', 'Error.');
             // Need to set the form message or the field message won't show up at all
             $form->setMessage($message, ValidationResult::TYPE_ERROR);
         }
@@ -671,7 +804,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     {
         return array(
             "CMS_ACCESS_CampaignAdmin" => array(
-                'name' => _t('SilverStripe\\CMS\\Controllers\\CMSMain.ACCESS', "Access to '{title}' section", array('title' => static::menu_title())),
+                'name' => _t(
+                    'SilverStripe\\CMS\\Controllers\\CMSMain.ACCESS',
+                    "Access to '{title}' section",
+                    array('title' => static::menu_title())
+                ),
                 'category' => _t('SilverStripe\\Security\\Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
                 'help' => _t(
                     __CLASS__.'.ACCESS_HELP',
@@ -679,5 +816,25 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 )
             )
         );
+    }
+
+    /**
+     * Check if the given campaign should be synced before view
+     *
+     * @param ChangeSet $item
+     * @return bool
+     */
+    protected function shouldCampaignSync(ChangeSet $item)
+    {
+        // Don't sync published changesets
+        if ($item->State !== ChangeSet::STATE_OPEN) {
+            return false;
+        }
+
+        // Get sync threshold
+        $syncOlderThan = DBDatetime::now()->getTimestamp() - $this->config()->get('sync_expires');
+        /** @var DBDatetime $lastSynced */
+        $lastSynced = $item->dbObject('LastSynced');
+        return !$lastSynced || $lastSynced->getTimestamp() < $syncOlderThan;
     }
 }
