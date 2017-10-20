@@ -3,7 +3,7 @@
 # ========================================================================= #
 # vendor/bin/selenium-server-standalone -Dwebdriver.firefox.bin="/Applications/Firefox31.app/Contents/MacOS/firefox-bin"
 # vendor/bin/serve --bootstrap-file vendor/silverstripe/cms/tests/behat/serve-bootstrap.php
-# vendor/bin/behat @asset-admin
+# vendor/bin/behat @campaign-admin
 # ========================================================================= #
 default:
   suites:

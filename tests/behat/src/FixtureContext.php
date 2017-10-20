@@ -63,7 +63,7 @@ class FixtureContext extends BaseFixtureContext
         $item = $this->getCampaign($name);
         assertNotNull($item, sprintf('Campaign %s not found', $name));
 
-        $item->click();
+        $item->find('css', 'td')->click();
     }
 
     /**

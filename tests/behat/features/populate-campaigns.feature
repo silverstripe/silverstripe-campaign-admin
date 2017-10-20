@@ -47,7 +47,7 @@ Feature: Populate campaigns
     And I wait until I see the ".grid-field__table" element
     Then I should see "2 total (2 changes)" in column 2 of the "Empty Campaign" campaign
     When I view the campaign "Empty Campaign"
-    Then I should see the "About us changedbout Us" campaign item
+    Then I should see the "About us changed" campaign item
     And I should see the "renamedfile" campaign item
     And the "Publish campaign" button should not be disabled
 
