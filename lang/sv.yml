@@ -4,7 +4,6 @@ sv:
     AddToCampaignAvailableLabel: 'Tillgängliga kampanjer'
     AddToCampaignFormFieldLabel: 'Välj kampanj'
     AddToCampaignInChangsetLabel: 'Obs! Detta objekt är redan tillagt:'
-    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Det här objektet har lagts till för alla aktiva kampanjer.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Skapa ny kampanj?</a></p>'
     ErrorCampaignPermissionDenied: 'Det verkar som du inte har tillräckliga rättigheter för att lägga till {ObjectTitle} till {CampaignTitle}'
     ErrorGeneral: 'Ett fel har uppstått'
     ErrorItemPermissionDenied: 'Det verkar som du inte har tillräckliga rättigheter för att lägga till {ObjectTitle} till en kampanj.'

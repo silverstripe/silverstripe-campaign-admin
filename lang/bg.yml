@@ -4,7 +4,6 @@ bg:
     AddToCampaignAvailableLabel: 'Налични кампании'
     AddToCampaignFormFieldLabel: 'Избери кампания'
     AddToCampaignInChangsetLabel: 'Внимание, този елемент вече е в кампания(и):'
-    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Този елемент вече е добавен във всички налични кампании.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Създай нова кампания?</a></p>'
     ErrorCampaignPermissionDenied: 'Нямате необходимите права, за да добавите {ObjectTitle} към {CampaignTitle}'
     ErrorGeneral: 'Извиняваме се, че възникна грешка.'
     ErrorItemPermissionDenied: 'Нямате необходимите права, за да добавите {ObjectTitle} към кампания'

@@ -4,7 +4,6 @@ de:
     AddToCampaignAvailableLabel: 'Verfügbare Kampagnen'
     AddToCampaignFormFieldLabel: 'Kampagne auswählen'
     AddToCampaignInChangsetLabel: 'Achtung, dieses Element ist bereits in Kampagne(n):'
-    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Dieses Element wurde zu allen verfügbaren Kampagnen hinzugefügt.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Neue Kampagne erstellen?</a></p>'
     ErrorCampaignPermissionDenied: 'Es scheint, als ob Sie nicht über die erforderlichen Berechtigungen verfügen, um {Object Title} zu {Campaign Title} hinzuzufügen'
     ErrorGeneral: 'Wir entschuldigen uns, aber es gab einen Fehler'
     ErrorItemPermissionDenied: 'Es scheint, als ob Sie nicht über die erforderlichen Berechtigungen verfügen, um {ObjectTitle} zu einer Kampagne hinzuzufügen'
