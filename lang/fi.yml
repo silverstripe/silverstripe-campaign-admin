@@ -7,7 +7,6 @@ fi:
     AddToCampaignAvailableLabel: 'Valittavissa olevat kampanjat'
     AddToCampaignFormFieldLabel: 'Valitse kampanja'
     AddToCampaignInChangsetLabel: 'Herätys, tämä kohde on jo kampanjoissa (kampanjassa):'
-    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Tämä kohde on lisätty kaikkiin valittaviin kampanjoihin.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Luodaanko uusi kampanja?</a></p>'
     ErrorCampaignPermissionDenied: 'Sinulta ei ilmeisesti ole oikeutta lisätä {ObjectTitle} kohteeseen {CampaignTitle}'
     ErrorGeneral: 'Pahoittelut, mutta tapahtui virhe'
     ErrorItemPermissionDenied: 'Sinulta ei ilmeisesti ole oikeutta lisätä {ObjectTitle} kampanjaan.'

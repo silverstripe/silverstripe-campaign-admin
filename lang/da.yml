@@ -4,7 +4,6 @@ da:
     AddToCampaignAvailableLabel: 'Tilgængelige kampagner'
     AddToCampaignFormFieldLabel: 'Vælg en kampagne'
     AddToCampaignInChangsetLabel: 'OBS, dette element er allerede i en kampagne'
-    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Dette element er tilføjet alle tilgængelige kampagner.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Opret ny kampagne?</a></p>'
     ErrorCampaignPermissionDenied: 'Det ser ikke ud til at du har de nødvendige tilladelser til at tilføje {ObjectTitle} til {CampaignTitle}'
     ErrorGeneral: 'Vi beklager, men der skete en fejl'
     ErrorItemPermissionDenied: 'Det ser ud til at du ikke har de nødvendige tilladelser til at tilføje {ObjectTitle} til en kampagne'

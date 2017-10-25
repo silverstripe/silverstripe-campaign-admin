@@ -4,7 +4,6 @@ nl:
     AddToCampaignAvailableLabel: 'Beschikbare campagnes'
     AddToCampaignFormFieldLabel: 'Selecteer een campagne'
     AddToCampaignInChangsetLabel: 'Let op, dit item is al opgenomen in de campagne(s):'
-    AddToCampaignNoCampaignsToAdd: '<p class="lead text-xs-center">Dit item is al opgenomen in alle beschikbare campagnes.<br/><a href="{campaignSectionLink}" class="add-to-campaign-modal__nav-link">Wilt u een nieuwe campagne aanmaken?</a></p>'
     ErrorCampaignPermissionDenied: 'U heeft waarschijnlijk niet de juiste rechten om {ObjectTitle} aan {CampaignTitle} toe te voegen'
     ErrorGeneral: 'Onze excuses: er is iets fout gegaan'
     ErrorItemPermissionDenied: 'U heeft waarschijnlijk niet de juiste rechten om {ObjectTitle} aan een campagne toe te voegen'
