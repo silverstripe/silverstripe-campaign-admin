@@ -1,12 +1,16 @@
+/* global window */
 import deepFreeze from 'deep-freeze-strict';
 import ACTION_TYPES from './CampaignActionTypes';
 
+// retrieve showMessage state from user's localStorage
+const showMessage = window.localStorage.getItem('campaign.showMessage');
 const initialState = deepFreeze({
   campaignId: null,
   changeSetItemId: null,
   isPublishing: false,
   view: null,
   newItem: null,
+  showMessage: showMessage === null,
 });
 
 function reducer(state = initialState, action) {
@@ -40,6 +44,11 @@ function reducer(state = initialState, action) {
         newItem: action.payload.newItem,
       });
 
+    case ACTION_TYPES.SET_SHOW_MESSAGE:
+      return deepFreeze({
+        ...state,
+        showMessage: action.payload.show,
+      });
     default:
       return state;
   }

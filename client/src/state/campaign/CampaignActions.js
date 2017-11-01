@@ -1,6 +1,14 @@
+/* global window */
 import ACTION_TYPES from './CampaignActionTypes';
 import RECORD_ACTION_TYPES from 'state/records/RecordsActionTypes';
 
+export function setShowMessage(show, storage = window.localStorage) {
+  storage.setItem('campaign.showMessage', show);
+  return {
+    type: ACTION_TYPES.SET_SHOW_MESSAGE,
+    payload: { show },
+  };
+}
 
 /**
  * Set selected changeset item
