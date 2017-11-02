@@ -49,7 +49,7 @@ class CampaignAdmin extends Component {
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
     this.handleFormAction = this.handleFormAction.bind(this);
-    this.detectErrors = this.detectErrors.bind(this);
+    this.hasErrors = this.hasErrors.bind(this);
     this.handleRemoveCampaignItem = this.handleRemoveCampaignItem.bind(this);
     this.addCampaign = this.addCampaign.bind(this);
     this.handleHideMessage = this.handleHideMessage.bind(this);
@@ -145,7 +145,7 @@ class CampaignAdmin extends Component {
     }
     return promise
       .then((response) => {
-        const hasErrors = this.detectErrors(response);
+        const hasErrors = this.hasErrors(response);
         if (action === 'action_save' && !hasErrors) {
           // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
@@ -222,7 +222,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     );
   }
 
-  detectErrors(response) {
+  hasErrors(response) {
     if (response.errors && response.errors.length) {
       return true;
     }
@@ -232,11 +232,11 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       return false;
     }
     // Check global messages
-    if (state.messages) {
+    if (state.messages && state.messages.find((message) => message.type !== 'good')) {
       return true;
     }
     // Find first field message
-    const message = state.fields && state.fields.find((field) => field.message);
+    const message = state.fields && state.fields.find((field) => field.message && field.message.type !== 'good');
 
     return Boolean(message);
   }
