@@ -15,6 +15,7 @@ import i18n from 'i18n';
 import Toolbar from 'components/Toolbar/Toolbar';
 import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import CampaignAdminList from './CampaignAdminList';
+import IntroScreen from 'components/IntroScreen/IntroScreen';
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
@@ -48,9 +49,11 @@ class CampaignAdmin extends Component {
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
     this.handleFormAction = this.handleFormAction.bind(this);
-    this.detectErrors = this.detectErrors.bind(this);
+    this.hasErrors = this.hasErrors.bind(this);
     this.handleRemoveCampaignItem = this.handleRemoveCampaignItem.bind(this);
     this.addCampaign = this.addCampaign.bind(this);
+    this.handleHideMessage = this.handleHideMessage.bind(this);
+    this.handleToggleMessage = this.handleToggleMessage.bind(this);
   }
 
   componentWillMount() {
@@ -142,7 +145,7 @@ class CampaignAdmin extends Component {
     }
     return promise
       .then((response) => {
-        const hasErrors = this.detectErrors(response);
+        const hasErrors = this.hasErrors(response);
         if (action === 'action_save' && !hasErrors) {
           // open the new campaign in edit mode after save completes
           const sectionUrl = this.props.sectionConfig.url;
@@ -193,6 +196,14 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       });
   }
 
+  handleToggleMessage() {
+    this.props.campaignActions.setShowMessage(!this.props.showMessage);
+  }
+
+  handleHideMessage() {
+    this.props.campaignActions.setShowMessage(false);
+  }
+
   removeCampaignItem(campaignId, itemId) {
     return this.props.campaignActions.removeCampaignItem(
       this.removeCampaignItemApi,
@@ -211,7 +222,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     );
   }
 
-  detectErrors(response) {
+  hasErrors(response) {
     if (response.errors && response.errors.length) {
       return true;
     }
@@ -221,11 +232,11 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       return false;
     }
     // Check global messages
-    if (state.messages) {
+    if (state.messages && state.messages.find((message) => message.type !== 'good')) {
       return true;
     }
     // Find first field message
-    const message = state.fields && state.fields.find((field) => field.message);
+    const message = state.fields && state.fields.find((field) => field.message && field.message.type !== 'good');
 
     return Boolean(message);
   }
@@ -393,10 +404,21 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         <Toolbar>
           <Breadcrumb multiline />
         </Toolbar>
+        <IntroScreen show={this.props.showMessage} onClose={this.handleHideMessage} />
         <div className="panel panel--padded panel--scrollable flexbox-area-grow">
           <div className="toolbar toolbar--content">
-            <div className="btn-toolbar">
-              <FormAction {...formActionProps} />
+            <div className="btn-toolbar fill-width">
+              <div className="btn-toolbar__left-panel flexbox-area-grow">
+                <FormAction {...formActionProps} />
+              </div>
+              <div className="btn-toolbar__left-panel">
+                <a
+                  role="button"
+                  tabIndex={0}
+                  onClick={this.handleToggleMessage}
+                  className="btn btn-secondary font-icon-white-question btn--icon-xl"
+                />
+              </div>
             </div>
           </div>
           <FormBuilderLoader {...formBuilderProps} />
@@ -473,6 +495,7 @@ CampaignAdmin.propTypes = {
     view: PropTypes.string,
     id: PropTypes.number,
   }),
+  showMessage: PropTypes.bool,
 };
 
 CampaignAdmin.defaultProps = {
@@ -504,6 +527,7 @@ function mapStateToProps(state, ownProps) {
     sectionConfig,
     securityId: state.config.SecurityID,
     title,
+    showMessage: state.campaign.showMessage,
   };
 }
 
