@@ -1,15 +1,14 @@
 /* global jest, describe, beforeEach, it, expect */
 
 jest.mock('components/Breadcrumb/Breadcrumb');
-jest.mock('containers/FormBuilderLoader/FormBuilderLoader');
-jest.mock('lib/dependency-injection/MiddlewareRegistry');
+jest.mock('containers/FormBuilderLoader/FormBuilderLoader', () => () => null);
 
 import React from 'react';
 import ReactTestUtils from 'react-addons-test-utils';
 import { Component as CampaignAdmin } from '../CampaignAdmin';
 
 describe('CampaignAdminItem', () => {
-  describe('detectErrors', () => {
+  describe('hasErrors', () => {
     let admin = null;
     let props = null;
     beforeEach(() => {
@@ -33,7 +32,7 @@ describe('CampaignAdminItem', () => {
       admin = ReactTestUtils.renderIntoDocument(<CampaignAdmin {...props} />);
     });
     it('detects errors in errors property', () => {
-      const result = admin.detectErrors({
+      const result = admin.hasErrors({
         errors: [
           { value: 'error' },
         ],
@@ -42,14 +41,14 @@ describe('CampaignAdminItem', () => {
     });
 
     it('detects no errors in errors property', () => {
-      const result = admin.detectErrors({
+      const result = admin.hasErrors({
         errors: [],
       });
       expect(result).toBe(false);
     });
 
     it('detects errors in global messages property', () => {
-      const result = admin.detectErrors({
+      const result = admin.hasErrors({
         state: {
           messages: [
             { value: 'error' },
@@ -60,16 +59,16 @@ describe('CampaignAdminItem', () => {
     });
 
     it('detects no errors in global messages property', () => {
-      const result = admin.detectErrors({
+      const result = admin.hasErrors({
         state: {
           messages: [],
         },
       });
-      expect(result).toBe(true);
+      expect(result).toBe(false);
     });
 
     it('detects errors in field state field messages', () => {
-      const result = admin.detectErrors({
+      const result = admin.hasErrors({
         state: {
           fields: [
             { name: 'ID' },
@@ -84,7 +83,7 @@ describe('CampaignAdminItem', () => {
     });
 
     it('detects no errors in field state fields messages', () => {
-      const result = admin.detectErrors({
+      const result = admin.hasErrors({
         state: {
           fields: [
             { name: 'ID' },
