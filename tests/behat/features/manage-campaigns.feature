@@ -17,6 +17,7 @@ Feature: Manage campaigns
       And I press the "Create" button
     Then the "p.alert" element should contain "Nice one! You have successfully created a campaign."
       And the "Publish campaign" button should be disabled
+
   Scenario: I can edit campaign
     When I wait until I see the ".grid-field__table" element
       And I edit the campaign "Test Campaign"
@@ -32,6 +33,7 @@ Feature: Manage campaigns
       And I press the "Save" button
       And I press the "Campaigns" button
     Then I should see the campaign "Test campaign changed"
+
   Scenario: I can delete a campaign
     When I wait until I see the ".grid-field__table" element
       And I delete the campaign "Test Campaign"
