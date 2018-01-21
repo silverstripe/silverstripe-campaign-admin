@@ -232,8 +232,7 @@ class CampaignAdminList extends Component {
   handlePublish(e) {
     e.preventDefault();
 
-    const fallbackMsg = 'Are you sure you want to publish this campaign?';
-    const msg = i18n._t('CampaignAdmin.PUBLISH_CAMPAIGN_CONFIRM', fallbackMsg);
+    const msg = i18n._t('CampaignAdmin.PUBLISH_CAMPAIGN_CONFIRM', 'Are you sure you want to publish this campaign?');
 
     // eslint-disable-next-line no-alert
     if (window.confirm(msg)) {
