@@ -15,6 +15,7 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.PUBLISH_CAMPAIGN_CONFIRM": "Are you sure you want to publish this campaign?"
 });
 }
