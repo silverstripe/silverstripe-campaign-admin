@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import i18n from 'i18n';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap-ss';
+import { Fade, UncontrolledTooltip } from 'reactstrap';
 import formatWrittenNumber from 'lib/formatWrittenNumber';
 
 /**
@@ -73,10 +73,6 @@ class CampaignAdminItem extends Component {
       ));
     }
 
-    const tooltip = (<Tooltip id={`campaign-tooltip-${this.props.item.ID}`}>{
-      tooltipTexts.join(', ')
-    }</Tooltip>);
-
     let links = null;
     if ((this.props.selected && numReferTo + numReferredBy > 0) || this.props.isLinked) {
       const linksClasses = [
@@ -89,14 +85,17 @@ class CampaignAdminItem extends Component {
 
       links = (
         <div className={linksClasses.join(' ')}>
-          <OverlayTrigger placement="left" overlay={tooltip}>
-            <span>
-              <span className="campaign-admin__item-links__number">
-                {numReferTo + numReferredBy}
-              </span>
-              <span className="font-icon-link" />
+          <span id={`campaign-tooltip-${this.props.item.ID}`}>
+            <span className="campaign-admin__item-links__number">
+              {numReferTo + numReferredBy}
             </span>
-          </OverlayTrigger>
+            <span className="font-icon-link" />
+          </span>
+          <UncontrolledTooltip
+            placement="left"
+            target={`campaign-tooltip-${this.props.item.ID}`}>
+            {tooltipTexts.join(', ')}
+          </UncontrolledTooltip>
         </div>
       );
     }
