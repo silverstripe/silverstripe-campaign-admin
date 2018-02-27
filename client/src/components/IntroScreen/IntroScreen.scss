@@ -35,7 +35,6 @@
 }
 
 .campaign-info__content {
-  max-width: $input-max-width;
   margin-right: $panel-padding-x;
 
   @include media-breakpoint-down(xs) {
