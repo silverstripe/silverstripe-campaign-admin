@@ -312,6 +312,8 @@ class CampaignAdminList extends Component {
           itemId={itemId}
           onBack={this.handleCloseItem}
           moreActions={this.getMoreActions()}
+          className="campaign-admin__campaign-preview"
+          moreActionsPopoverId="campaign-preview-popover"
         />
       );
     }
