@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import i18n from 'i18n';
-import { Fade, UncontrolledTooltip } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 import formatWrittenNumber from 'lib/formatWrittenNumber';
 
 /**
@@ -93,7 +93,8 @@ class CampaignAdminItem extends Component {
           </span>
           <UncontrolledTooltip
             placement="left"
-            target={`campaign-tooltip-${this.props.item.ID}`}>
+            target={`campaign-tooltip-${this.props.item.ID}`}
+          >
             {tooltipTexts.join(', ')}
           </UncontrolledTooltip>
         </div>
