@@ -18,7 +18,7 @@ Feature: Populate campaigns
     Then I should see an edit page form
     When I fill in "About us changed" for "Title"
     And I fill in the "Content" HTML field with "<p>my new content</p>"
-    And I press the "Save draft" button
+    And I press the "Save" button
     Then I should see the "Saved" button
     When I click the ".notice-item-close" element
     And I click "More options" in the "#ActionMenus" element

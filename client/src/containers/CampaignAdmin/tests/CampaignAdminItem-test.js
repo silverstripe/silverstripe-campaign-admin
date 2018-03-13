@@ -1,6 +1,6 @@
 /* global jest, describe, beforeEach, it, expect */
 
-jest.mock('react-bootstrap-ss');
+jest.mock('reactstrap');
 
 import React from 'react';
 import ReactTestUtils from 'react-addons-test-utils';
