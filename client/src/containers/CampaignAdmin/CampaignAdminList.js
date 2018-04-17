@@ -7,6 +7,7 @@ import * as recordActions from 'state/records/RecordsActions';
 import * as campaignActions from 'state/campaign/CampaignActions';
 import Accordion from 'components/Accordion/Accordion';
 import AccordionBlock from 'components/Accordion/AccordionBlock';
+import Loading from 'components/Loading/Loading';
 import ListGroupItem from 'components/ListGroup/ListGroupItem';
 import Toolbar from 'components/Toolbar/Toolbar';
 import FormAction from 'components/FormAction/FormAction';
@@ -286,10 +287,12 @@ class CampaignAdminList extends Component {
       'campaign-admin__campaign-preview--empty',
     ]);
 
-    if (this.state.loading) {
+    const { loading } = this.state;
+
+    if (loading) {
       preview = (
         <div className={previewClasses}>
-          <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
+          <Loading />
         </div>
       );
     } else if (!this.getItems() || this.getItems().length === 0) {
@@ -440,14 +443,12 @@ class CampaignAdminList extends Component {
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
     ];
 
-    const loading = this.props.loading && [
-      <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light" />,
-      <div key="spinner" className="cms-content-loading-spinner" />,
-    ];
+    const { loading } = this.props;
+    const loadingIndicator = loading && <Loading containerClass="" />;
 
     return (
       <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
-        {loading}
+        {loadingIndicator}
         <div className="fill-height campaign-admin__campaign-items" aria-expanded="true">
           <Toolbar showBackButton onBackButtonClick={this.props.onBackButtonClick}>
             <Breadcrumb multiline />
