@@ -43,14 +43,15 @@ class CampaignAdminList extends Component {
   }
 
   componentDidMount() {
-    const fetchURL = this.props.itemListViewEndpoint.url.replace(/:id/, this.props.campaignId);
+    const { campaignId, itemListViewEndpoint, recordActions: actions, treeClass } = this.props;
+    const fetchURL = itemListViewEndpoint.url.replace(/:id/, campaignId);
 
     this.setBreadcrumbs();
 
     // Only load record if not already present
     if (!this.isRecordLoaded()) {
-      this.props.recordActions
-        .fetchRecord(this.props.treeClass, 'get', fetchURL)
+      actions
+        .fetchRecord(treeClass, 'get', fetchURL)
         .then(() => {
           this.setBreadcrumbs();
           this.setState({ loading: false });
@@ -67,31 +68,33 @@ class CampaignAdminList extends Component {
    * Update breadcrumbs for this view
    */
   setBreadcrumbs() {
+    const { breadcrumbsActions: actions, campaignId, record, sectionConfig: { url } } = this.props;
+
     // Setup breadcrumbs if record is loaded
-    if (!this.props.record) {
+    if (!record) {
       return;
     }
 
     // Push breadcrumb
     const breadcrumbs = [{
       text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
-      href: this.props.sectionConfig.url,
+      href: url,
     }];
     breadcrumbs.push({
-      text: this.props.record.Name,
-      href: `${this.props.sectionConfig.url}/set/${this.props.campaignId}/show`,
+      text: record.Name,
+      href: `${url}/set/${campaignId}/show`,
     });
 
-    this.props.breadcrumbsActions.setBreadcrumbs(breadcrumbs);
+    actions.setBreadcrumbs(breadcrumbs);
   }
 
   getSelectedItem() {
-    const itemId = this.props.campaign.changeSetItemId;
+    const { campaign: { changeSetItemId } } = this.props;
     const items = this.getItems() || [];
     let selected = null;
 
-    if (itemId) {
-      selected = items.find(item => itemId === item.ID);
+    if (changeSetItemId) {
+      selected = items.find(item => changeSetItemId === item.ID);
     }
 
     // If there's no user-selected item, select the first item in the first
@@ -156,21 +159,22 @@ class CampaignAdminList extends Component {
   }
 
   /**
-   * @return {array}
+   * @return {array|null}
    */
   getItems() {
-    if (this.props.record && this.props.record._embedded) {
-      return this.props.record._embedded.items;
+    const { record } = this.props;
+    if (record && record._embedded) {
+      return record._embedded.items;
     }
-
     return null;
   }
 
   getPlaceholderGroups() {
     const groups = {};
+    const { record } = this.props;
 
-    if (this.props.record && this.props.record.placeholderGroups) {
-      this.props.record.placeholderGroups.forEach((group) => {
+    if (record && record.placeholderGroups) {
+      record.placeholderGroups.forEach((group) => {
         groups[group.baseClass] = { ...group };
         groups[group.baseClass].items = [...group.items];
       });
@@ -219,8 +223,10 @@ class CampaignAdminList extends Component {
   }
 
   handleRemoveItem() {
-    if (typeof this.props.onRemoveCampaignItem === 'function') {
-      this.props.onRemoveCampaignItem(this.props.campaignId, this.getSelectedItem().ID);
+    const { campaignId, onRemoveCampaignItem } = this.props;
+
+    if (typeof onRemoveCampaignItem === 'function') {
+      onRemoveCampaignItem(campaignId, this.getSelectedItem().ID);
     }
   }
 
@@ -239,22 +245,25 @@ class CampaignAdminList extends Component {
   }
 
   handlePublish(e) {
+    const { campaignId, campaignActions: { publishCampaign }, publishApi, treeClass } = this.props;
+
     e.preventDefault();
 
     const msg = i18n._t('CampaignAdmin.PUBLISH_CAMPAIGN_CONFIRM', 'Are you sure you want to publish this campaign?');
 
     // eslint-disable-next-line no-alert
     if (window.confirm(msg)) {
-      this.props.campaignActions.publishCampaign(
-        this.props.publishApi,
-        this.props.treeClass,
-        this.props.campaignId
-      );
+      publishCampaign(publishApi, treeClass, campaignId);
     }
   }
 
   renderButtonToolbar() {
-    const { ViewModeComponent, FormActionComponent } = this.props;
+    const {
+      ViewModeComponent,
+      FormActionComponent,
+      record,
+      campaign: { isPublishing }
+    } = this.props;
 
     const items = this.getItems();
     const empty = !items || items.length === 0;
@@ -268,11 +277,11 @@ class CampaignAdminList extends Component {
         icon: 'rocket',
         disabled: true,
       };
-    } else if (this.props.record.State === 'open') {
+    } else if (record.State === 'open') {
       actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'primary',
-        loading: this.props.campaign.isPublishing,
+        loading: isPublishing,
         onClick: this.handlePublish,
         icon: 'rocket',
       };
@@ -293,6 +302,9 @@ class CampaignAdminList extends Component {
   }
 
   renderPreview(itemLinks, itemId) {
+    const { PreviewComponent, previewState } = this.props;
+    const { loading } = this.state;
+
     let previewClasses = [
       'flexbox-area-grow',
       'fill-height',
@@ -300,9 +312,6 @@ class CampaignAdminList extends Component {
       'campaign-admin__campaign-preview',
       'campaign-admin__campaign-preview--empty',
     ];
-
-    const { PreviewComponent, previewState } = this.props;
-    const { loading } = this.state;
 
     switch (previewState) {
       case 'preview':
@@ -331,7 +340,9 @@ class CampaignAdminList extends Component {
       );
       return (
         <div className={previewClasses}>
-          <h2 className="campaign-admin__empty-heading">Getting started</h2>
+          <h2 className="campaign-admin__empty-heading">
+            {i18n._t('CampaignAdmin.GETTINGSTARTED', 'Getting started')}
+          </h2>
           <p className="campaign-admin__empty-info">
             {message}
           </p>
@@ -410,12 +421,11 @@ class CampaignAdminList extends Component {
    * @return object
    */
   render() {
-    let itemId = this.props.campaign.changeSetItemId;
+    const { campaign: { changeSetItemId }, campaignId, record: campaign } = this.props;
+    let itemId = changeSetItemId;
 
     let itemLinks = null;
     const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
-    const campaignId = this.props.campaignId;
-    const campaign = this.props.record;
 
     // Trigger different layout when preview is enabled
     const itemGroups = this.groupItemsForSet();
@@ -454,7 +464,6 @@ class CampaignAdminList extends Component {
         if (selected && item._links) {
           itemLinks = item._links;
         }
-
 
         // Add extra css class for published items
         const itemClassNames = classNames({
