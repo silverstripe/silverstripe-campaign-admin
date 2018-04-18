@@ -74,7 +74,7 @@ Feature: Populate campaigns
     When I go to "admin/campaigns"
     And I view the campaign "Full Campaign"
     And I select the "About Us" campaign item
-    And I click the "#campaign-preview-popver" element
+    And I click the "#campaign-preview-popover" element
     And I press the "Remove" button, confirming the dialog
     Then I should not see the "About Us" campaign item
     When I press the "Publish campaign" button, confirming the dialog
