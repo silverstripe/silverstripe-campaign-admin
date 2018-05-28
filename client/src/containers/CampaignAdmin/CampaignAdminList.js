@@ -13,6 +13,7 @@ import FormAction from 'components/FormAction/FormAction';
 import CampaignAdminItem from './CampaignAdminItem';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import Preview from 'components/Preview/Preview';
+import { DropdownItem } from 'reactstrap';
 import i18n from 'i18n';
 import classnames from 'classnames';
 
@@ -126,19 +127,23 @@ class CampaignAdminList extends Component {
       );
     const removeAction = selectedItem.Added === 'explicitly'
       ? (
-        <button
+        <DropdownItem
           key="remove_action"
           className="btn btn-secondary action"
           onClick={this.handleRemoveItem}
         >
           Remove
-        </button>
+        </DropdownItem>
       )
       : (
-        <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
+        <DropdownItem
+          tag="p"
+          key="unremoveable_info"
+          className="alert alert-info campaign-admin__unremoveable-item"
+        >
           <span className="font-icon-link" />
           {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
-        </p>
+        </DropdownItem>
       );
 
     return [
@@ -313,7 +318,6 @@ class CampaignAdminList extends Component {
           onBack={this.handleCloseItem}
           moreActions={this.getMoreActions()}
           className="campaign-admin__campaign-preview flexbox-area-grow fill-height"
-          moreActionsPopoverId="campaign-preview-popover"
         />
       );
     }

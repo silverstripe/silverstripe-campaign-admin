@@ -2,7 +2,7 @@
 
 jest.mock('components/Breadcrumb/Breadcrumb');
 jest.mock('state/records/RecordsActions');
-jest.mock('components/PopoverField/PopoverField');
+jest.mock('components/ActionMenu/ActionMenu');
 
 import React from 'react';
 import ReactTestUtils from 'react-addons-test-utils';
