@@ -312,7 +312,7 @@ class CampaignAdminList extends Component {
           itemId={itemId}
           onBack={this.handleCloseItem}
           moreActions={this.getMoreActions()}
-          className="campaign-admin__campaign-preview"
+          className="campaign-admin__campaign-preview flexbox-area-grow fill-height"
           moreActionsPopoverId="campaign-preview-popover"
         />
       );
