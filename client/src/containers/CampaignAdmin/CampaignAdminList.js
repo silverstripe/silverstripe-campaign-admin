@@ -132,7 +132,10 @@ class CampaignAdminList extends Component {
           className="btn btn-secondary action"
           onClick={this.handleRemoveItem}
         >
-          Remove
+          {i18n._t(
+            'CampaignAdmin.REMOVE',
+            'Remove'
+          )}
         </DropdownItem>
       )
       : (
