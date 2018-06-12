@@ -7,6 +7,7 @@
     "CampaignAdmin.MODIFIED": "Modified",
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
+    "CampaignAdmin.REMOVE": "Remove",
     "CampaignAdmin.REMOVED": "Removed",
     "CampaignAdmin.REVERTCAMPAIGN": "Revert"
 }
