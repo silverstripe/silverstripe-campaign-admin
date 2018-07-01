@@ -260,7 +260,7 @@ class CampaignAdminList extends Component {
     if (!items || items.length === 0) {
       actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
-        buttonStyle: 'secondary-outline',
+        buttonStyle: 'outline-secondary',
         icon: 'rocket',
         disabled: true,
       };
