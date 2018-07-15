@@ -9,6 +9,8 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
     "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
     "CampaignAdmin.DRAFT": "Draft",
+    "CampaignAdmin.HELP_SHOW": "Show help",
+    "CampaignAdmin.HELP_HIDE": "Hide help",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
     "CampaignAdmin.MODIFIED": "Modified",
@@ -16,5 +18,5 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
     "CampaignAdmin.REVERTCAMPAIGN": "Revert"
-});
+  });
 }

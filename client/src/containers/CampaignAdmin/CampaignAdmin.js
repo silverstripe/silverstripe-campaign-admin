@@ -414,6 +414,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
               <div className="btn-toolbar__left-panel">
                 <a
                   role="button"
+                  aria-label={i18n._t('CampaignAdmin.HELP_SHOW', 'Show help')}
                   tabIndex={0}
                   onClick={this.handleToggleMessage}
                   className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
