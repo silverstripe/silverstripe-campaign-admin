@@ -50,7 +50,7 @@ class IntroScreen extends Component {
     return (
       <div className="fill-width campaign-info">
         <div className="campaign-info__icon">
-          <span className="font-icon-white-question icon btn--icon-xl" />
+          <span className="font-icon-white-question icon btn--icon-xl btn--no-text" />
         </div>
         {this.renderContent()}
         <div className="campaign-info__banner-image" />

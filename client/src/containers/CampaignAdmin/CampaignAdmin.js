@@ -416,7 +416,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
                   role="button"
                   tabIndex={0}
                   onClick={this.handleToggleMessage}
-                  className="btn btn-secondary font-icon-white-question btn--icon-xl"
+                  className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
                 />
               </div>
             </div>
