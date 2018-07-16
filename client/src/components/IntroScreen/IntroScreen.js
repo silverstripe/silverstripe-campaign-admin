@@ -50,7 +50,7 @@ class IntroScreen extends Component {
     return (
       <div className="fill-width campaign-info">
         <div className="campaign-info__icon">
-          <span className="font-icon-white-question icon btn--icon-xl" />
+          <span className="font-icon-white-question icon btn--icon-xl btn--no-text" />
         </div>
         {this.renderContent()}
         <div className="campaign-info__banner-image" />
@@ -59,6 +59,7 @@ class IntroScreen extends Component {
             className="btn campaign-info__close btn--no-text font-icon-cancel btn--icon-xl"
             onClick={this.handleClose}
             role="button"
+            aria-label={i18n._t('CampaignAdmin.HELP_HIDE', 'Hide help')}
             tabIndex={0}
           />
         </div>
