@@ -1,6 +1,6 @@
 /* global window */
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
+import React, { Component, PropTypes } from 'react';
+import { bindActionCreators, compose } from 'redux';
 import { connect } from 'react-redux';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
 import * as recordActions from 'state/records/RecordsActions';
@@ -9,12 +9,12 @@ import Accordion from 'components/Accordion/Accordion';
 import AccordionBlock from 'components/Accordion/AccordionBlock';
 import ListGroupItem from 'components/ListGroup/ListGroupItem';
 import Toolbar from 'components/Toolbar/Toolbar';
-import FormAction from 'components/FormAction/FormAction';
 import CampaignAdminItem from './CampaignAdminItem';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
-import Preview from 'components/Preview/Preview';
+import { DropdownItem } from 'reactstrap';
 import i18n from 'i18n';
-import classnames from 'classnames';
+import { inject } from 'lib/Injector';
+import classNames from 'classnames';
 
 /**
  * Represents a campaign list view
@@ -28,6 +28,7 @@ class CampaignAdminList extends Component {
     this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
     this.handleCloseItem = this.handleCloseItem.bind(this);
     this.handleRemoveItem = this.handleRemoveItem.bind(this);
+    this.renderCampaignAdminListDetail = this.renderCampaignAdminListDetail.bind(this);
 
     if (!this.isRecordLoaded(props)) {
       this.state = {
@@ -126,19 +127,26 @@ class CampaignAdminList extends Component {
       );
     const removeAction = selectedItem.Added === 'explicitly'
       ? (
-        <button
+        <DropdownItem
           key="remove_action"
           className="btn btn-secondary action"
           onClick={this.handleRemoveItem}
         >
-          Remove
-        </button>
+          {i18n._t(
+            'CampaignAdmin.REMOVE',
+            'Remove'
+          )}
+        </DropdownItem>
       )
       : (
-        <p key="unremoveable_info" className="alert alert-info campaign-admin__unremoveable-item">
+        <DropdownItem
+          tag="p"
+          key="unremoveable_info"
+          className="alert alert-info campaign-admin__unremoveable-item"
+        >
           <span className="font-icon-link" />
           {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
-        </p>
+        </DropdownItem>
       );
 
     return [
@@ -245,6 +253,8 @@ class CampaignAdminList extends Component {
   }
 
   renderButtonToolbar() {
+    const { ViewModeComponent, FormActionComponent } = this.props;
+
     const items = this.getItems();
 
     let actionProps = null;
@@ -271,33 +281,45 @@ class CampaignAdminList extends Component {
     }
     return (
       <div className="btn-toolbar">
-        <FormAction {...actionProps} />
+        <FormActionComponent {...actionProps} />
+        <ViewModeComponent
+          id="view-mode-toggle-in-edit-nb"
+          area={'edit'}
+        />
       </div>
     );
   }
 
   renderPreview(itemLinks, itemId) {
-    let preview = null;
-    const previewClasses = classnames([
+    const previewClasses = classNames(
       'flexbox-area-grow',
       'fill-height',
       'preview',
       'campaign-admin__campaign-preview',
       'campaign-admin__campaign-preview--empty',
-    ]);
+    );
 
-    if (this.state.loading) {
-      preview = (
+    const { PreviewComponent, previewState } = this.props;
+    const { loading } = this.state;
+
+    if (previewState === 'edit') {
+      return null;
+    }
+
+    if (loading) {
+      return (
         <div className={previewClasses}>
           <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
         </div>
       );
-    } else if (!this.getItems() || this.getItems().length === 0) {
+    }
+
+    if (!this.getItems() || this.getItems().length === 0) {
       const message = i18n._t(
         'CampaignAdmin.SELECTFROMSECTIONS',
         'Select "Add to Campaign" from pages, files, and other admin sections with content types'
       );
-      preview = (
+      return (
         <div className={previewClasses}>
           <h2 className="campaign-admin__empty-heading">Getting started</h2>
           <p className="campaign-admin__empty-info">
@@ -305,20 +327,71 @@ class CampaignAdminList extends Component {
           </p>
         </div>
       );
-    } else {
-      preview = (
-        <Preview
-          itemLinks={itemLinks}
-          itemId={itemId}
-          onBack={this.handleCloseItem}
-          moreActions={this.getMoreActions()}
-          className="campaign-admin__campaign-preview flexbox-area-grow fill-height"
-          moreActionsPopoverId="campaign-preview-popover"
-        />
-      );
     }
 
-    return preview;
+    return (
+      <PreviewComponent
+        itemLinks={itemLinks}
+        itemId={itemId}
+        onBack={this.handleCloseItem}
+        moreActions={this.getMoreActions()}
+        className="campaign-admin__campaign-preview flexbox-area-grow fill-height"
+      />
+    );
+  }
+
+  /**
+   * Renders the details section of the campaign list.
+   *
+   * @param body
+   * @return object
+   */
+  renderCampaignAdminListDetail(body) {
+    const { previewState, onBackButtonClick, newItem } = this.props;
+
+    const bodyClass = classNames(
+      'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
+    );
+
+    const newItemInfo = newItem
+      ? (
+        <p className="alert alert-success alert--no-border" role="alert">
+          {i18n._t(
+            'CampaignAdmin.NEWCAMPAIGNSUCCESS',
+            'Nice one! You have successfully created a campaign.'
+          )}
+        </p>
+      )
+      : null;
+
+    // Hide when the preview mode is explicitly enabled
+    if (previewState === 'preview') {
+      return null;
+    }
+
+    const itemClass = classNames(
+      'fill-height',
+      'campaign-admin__campaign-items',
+      {
+        'fill-height': (previewState === 'edit'),
+        'campaign-admin__campaign-items-edit': (previewState === 'edit'),
+      }
+    );
+
+    return (
+      <div className={itemClass} aria-expanded="true">
+        <Toolbar showBackButton onBackButtonClick={onBackButtonClick}>
+          <Breadcrumb multiline />
+        </Toolbar>
+        {newItemInfo}
+        <div className={bodyClass}>
+          {body}
+        </div>
+        <div className="toolbar toolbar--south">
+          {this.renderButtonToolbar()}
+        </div>
+      </div>
+    );
   }
 
   /**
@@ -333,7 +406,6 @@ class CampaignAdminList extends Component {
     const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
     const campaignId = this.props.campaignId;
     const campaign = this.props.record;
-    const newItem = this.props.newItem;
 
     // Trigger different layout when preview is enabled
     const itemGroups = this.groupItemsForSet();
@@ -373,14 +445,12 @@ class CampaignAdminList extends Component {
           itemLinks = item._links;
         }
 
+
         // Add extra css class for published items
-        const itemClassNames = [];
-        if (item.ChangeType === 'none' || campaign.State === 'published') {
-          itemClassNames.push('list-group-item--inactive');
-        }
-        if (selected) {
-          itemClassNames.push('active');
-        }
+        const itemClassNames = classNames({
+            'list-group-item--inactive': (item.ChangeType === 'none' || campaign.State === 'published'),
+            active: (selected),
+        });
 
         let isLinked = !!selectedItemsLinkedTo.find(
           linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
@@ -392,7 +462,7 @@ class CampaignAdminList extends Component {
         listGroupItems.push(
           <ListGroupItem
             key={item.ID || index}
-            className={itemClassNames.join(' ')}
+            className={itemClassNames}
             onClick={this.handleItemSelected}
             onClickArg={item.ID}
           >
@@ -406,7 +476,7 @@ class CampaignAdminList extends Component {
         );
       });
 
-      const wrapperClassnames = classnames('list-group-wrapper', {
+      const wrapperClassnames = classNames('list-group-wrapper', {
         'list-group-wrapper--empty': listGroupItems.length === 0,
       });
 
@@ -424,21 +494,7 @@ class CampaignAdminList extends Component {
       );
     });
 
-    const newItemInfo = newItem
-      ? (
-        <p className="alert alert-success alert--no-border" role="alert">
-          {i18n._t(
-            'CampaignAdmin.NEWCAMPAIGNSUCCESS',
-            'Nice one! You have successfully created a campaign.'
-          )}
-        </p>
-      )
-      : null;
-
     const body = <Accordion>{accordionBlocks}</Accordion>;
-    const bodyClass = [
-      'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
-    ];
 
     const loading = this.props.loading && [
       <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light" />,
@@ -448,18 +504,7 @@ class CampaignAdminList extends Component {
     return (
       <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
         {loading}
-        <div className="fill-height campaign-admin__campaign-items" aria-expanded="true">
-          <Toolbar showBackButton onBackButtonClick={this.props.onBackButtonClick}>
-            <Breadcrumb multiline />
-          </Toolbar>
-          {newItemInfo}
-          <div className={bodyClass.join(' ')}>
-            {body}
-          </div>
-          <div className="toolbar toolbar--south">
-            {this.renderButtonToolbar()}
-          </div>
-        </div>
+        {this.renderCampaignAdminListDetail(body, itemLinks)}
         {this.renderPreview(itemLinks, itemId)}
       </div>
     );
@@ -479,6 +524,10 @@ CampaignAdminList.propTypes = {
   breadcrumbsActions: React.PropTypes.object.isRequired,
   campaignActions: React.PropTypes.object.isRequired,
   recordActions: React.PropTypes.object.isRequired,
+  PreviewComponent: React.PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  ViewModeComponent: React.PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  previewState: React.PropTypes.oneOf(['edit', 'preview', 'split']),
 };
 
 CampaignAdminList.defaultProps = {
@@ -510,4 +559,15 @@ function mapDispatchToProps(dispatch) {
 }
 
 export { CampaignAdminList as Component };
-export default connect(mapStateToProps, mapDispatchToProps)(CampaignAdminList);
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  inject(
+    ['FormAction', 'ViewModeToggle', 'Preview'],
+    (FormAction, ViewModeToggle, Preview) => ({
+      FormActionComponent: FormAction,
+      ViewModeComponent: ViewModeToggle,
+      PreviewComponent: Preview,
+    }),
+    () => 'CampaignAdmin.CampaignAdmin.List'
+  )
+)(CampaignAdminList);

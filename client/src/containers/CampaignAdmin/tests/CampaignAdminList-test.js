@@ -2,11 +2,14 @@
 
 jest.mock('components/Breadcrumb/Breadcrumb');
 jest.mock('state/records/RecordsActions');
-jest.mock('components/PopoverField/PopoverField');
+jest.mock('components/ActionMenu/ActionMenu');
 
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
 import { Component as CampaignAdminList } from '../CampaignAdminList';
+import Enzyme, { shallow } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-15.4';
+
+Enzyme.configure({ adapter: new Adapter() });
 
 describe('CampaignAdminList', () => {
   let props = null;
@@ -47,6 +50,9 @@ describe('CampaignAdminList', () => {
         fetchRecord: jest.fn(),
       },
       publishApi: jest.fn(),
+      FormActionComponent: () => <div />,
+      ViewModeComponent: () => <div />,
+      PreviewComponent: () => <div />,
     };
   });
 
@@ -54,8 +60,8 @@ describe('CampaignAdminList', () => {
     let cmp = null;
 
     it('should return null if there\'s no items at all', () => {
-      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...props} />);
-      expect(cmp.getSelectedItem()).toBe(null);
+      cmp = shallow(<CampaignAdminList {...props} />);
+      expect(cmp.instance().getSelectedItem()).toBe(null);
     });
 
     it('should return the first item found if none selected by the user', () => {
@@ -71,8 +77,8 @@ describe('CampaignAdminList', () => {
         },
 
       ];
-      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...modProps} />);
-      expect(cmp.getSelectedItem().Title).toBe('Page one');
+      cmp = shallow(<CampaignAdminList {...props} />);
+      expect(cmp.instance().getSelectedItem().Title).toBe('Page one');
     });
 
     it('should return the first item in the firts non empty display groups', () => {
@@ -84,8 +90,8 @@ describe('CampaignAdminList', () => {
         },
 
       ];
-      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...modProps} />);
-      expect(cmp.getSelectedItem().Title).toBe('File one');
+      cmp = shallow(<CampaignAdminList {...props} />);
+      expect(cmp.instance().getSelectedItem().Title).toBe('File one');
     });
 
     it('should return the item selected by the user', () => {
@@ -109,8 +115,8 @@ describe('CampaignAdminList', () => {
 
       ];
       modProps.campaign.changeSetItemId = 12;
-      cmp = ReactTestUtils.renderIntoDocument(<CampaignAdminList {...modProps} />);
-      expect(cmp.getSelectedItem().Title).toBe('Page two');
+      cmp = shallow(<CampaignAdminList {...props} />);
+      expect(cmp.instance().getSelectedItem().Title).toBe('Page two');
     });
   });
 });

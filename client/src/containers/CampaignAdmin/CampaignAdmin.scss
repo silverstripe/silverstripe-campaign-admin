@@ -3,35 +3,6 @@
   position: relative;
   height: 100%;
 
-  @include media-breakpoint-up(lg) {
-    .toolbar__back-button {
-      display: none;
-    }
-  }
-
-  // On smaller screens hide the preview and show list of items with nothing selected
-  @include media-breakpoint-down(md) {
-    &.campaign-admin__campaign--hide-preview .campaign-admin__campaign-preview {
-      display: none;
-    }
-
-    .list-group-item.active {
-      background-color: $list-group-bg;
-      color: $list-group-link-color;
-      z-index: 0;
-
-      @include media-breakpoint-down(lg) {
-        border: none;
-      }
-
-      &:hover {
-        background-color: $list-group-hover-bg;
-        color: $list-group-link-color;
-        border-color: $list-group-border-color;
-      }
-    }
-  }
-
   .campaign-admin__campaign-preview--empty {
     align-items: center;
     justify-content: center;
@@ -44,7 +15,7 @@
 
   .campaign-admin__empty-info {
     padding-top: calc(270px + 0.5em);
-    background-image: url('images/empty-campaign-preview.png');
+    background-image: url("images/empty-campaign-preview.png");
     background-repeat: no-repeat;
     background-position: 50% 0;
     font-size: $font-size-lg;
@@ -52,15 +23,19 @@
 }
 
 .campaign-admin__campaign-items {
+   z-index: 1;
+   position: relative;
+
+   @include media-breakpoint-up(lg) {
+     width: $cms-panel-sm;
+   }
+ }
+
+.campaign-admin__campaign-items-edit {
   width: 100%;
   z-index: 1;
   position: relative;
-
-  @include media-breakpoint-up(lg) {
-    width: $cms-panel-sm;
-  }
 }
-
 
 // Campaign items which have linked associations
 .campaign-admin__item-links,
@@ -152,41 +127,14 @@
   }
 }
 
-#campaign-preview-popover_Popover {
+.campaign-admin__unremoveable-item {
+  margin-bottom: 0;
+  padding-left: 35px;
 
-  .alert {
-    // margin: -10px 0 -10px 0;
-    margin-bottom: 0;
-    margin-left: calc(-#{$popover-padding} + 1px);
-    margin-right: calc(-#{$popover-padding} + 1px);
-
-    &:first-child {
-      margin-top: -10px;
-    }
-
-    &:not(:first-child) {
-      border-top-left-radius: 0;
-      border-top-right-radius: 0;
-    }
-
-    &:last-child {
-      margin-bottom: -10px;
-    }
-
-    &:not(:last-child) {
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
-    }
-
-    &.campaign-admin__unremoveable-item {
-      padding-left: 35px;
-
-      .font-icon-link {
-        position: absolute;
-        top: 13px;
-        left: 15px;
-      }
-    }
+  .font-icon-link {
+    position: absolute;
+    top: 13px;
+    left: 13px;
   }
 }
 
@@ -205,5 +153,13 @@
 
   &--published {
     background-color: $brand-success;
+  }
+}
+
+.btn-toolbar {
+  .btn, .dropdown {
+    &:not(:first-child) {
+      margin-left: 5px;
+    }
   }
 }

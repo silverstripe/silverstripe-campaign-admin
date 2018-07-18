@@ -16,6 +16,9 @@ import Toolbar from 'components/Toolbar/Toolbar';
 import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import CampaignAdminList from './CampaignAdminList';
 import IntroScreen from 'components/IntroScreen/IntroScreen';
+import ResizeAware from 'react-resize-aware';
+import * as viewModeActions from 'state/viewMode/viewModeActions';
+
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
@@ -414,9 +417,10 @@ By removing this item all linked items will be removed unless used elsewhere.`;
               <div className="btn-toolbar__left-panel">
                 <a
                   role="button"
+                  aria-label={i18n._t('CampaignAdmin.HELP_SHOW', 'Show help')}
                   tabIndex={0}
                   onClick={this.handleToggleMessage}
-                  className="btn btn-secondary font-icon-white-question btn--icon-xl"
+                  className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
                 />
               </div>
             </div>
@@ -441,10 +445,13 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       onBackButtonClick: this.handleBackButtonClick,
       onRemoveCampaignItem: this.handleRemoveCampaignItem,
       loading: this.state.loading,
+      previewState: this.props.previewState,
     };
 
     return (
-      <CampaignAdminList {...props} />
+      <ResizeAware style={{ position: 'relative' }} className="flexbox-area-grow fill-height" onResize={({ width }) => this.props.onResize(width)} >
+        <CampaignAdminList {...props} />
+      </ResizeAware>
     );
   }
 
@@ -496,6 +503,8 @@ CampaignAdmin.propTypes = {
     id: PropTypes.number,
   }),
   showMessage: PropTypes.bool,
+  previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
+  onResize: React.PropTypes.func.isRequired,
 };
 
 CampaignAdmin.defaultProps = {
@@ -510,6 +519,7 @@ function mapStateToProps(state, ownProps) {
   const sectionConfig = state.config.sections.find((section) => (
     section.name === sectionConfigKey
   ));
+  const viewMode = state.viewMode;
 
   if (ownProps.params.id > 0) {
     const schemaUrl = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
@@ -520,6 +530,7 @@ function mapStateToProps(state, ownProps) {
   }
 
   return {
+    previewState: viewMode.activeState,
     config: state.config,
     campaignId: state.campaign.campaignId,
     view: state.campaign.view,
@@ -536,6 +547,9 @@ function mapDispatchToProps(dispatch) {
     breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
     campaignActions: bindActionCreators(campaignActions, dispatch),
     recordActions: bindActionCreators(recordActions, dispatch),
+    onResize(panelWidth) {
+      dispatch(viewModeActions.enableOrDisableSplitMode(panelWidth));
+    }
   };
 }
 
