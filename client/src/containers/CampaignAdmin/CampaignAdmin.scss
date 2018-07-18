@@ -3,35 +3,6 @@
   position: relative;
   height: 100%;
 
-  @include media-breakpoint-up(lg) {
-    .toolbar__back-button {
-      display: none;
-    }
-  }
-
-  // On smaller screens hide the preview and show list of items with nothing selected
-  @include media-breakpoint-down(md) {
-    &.campaign-admin__campaign--hide-preview .campaign-admin__campaign-preview {
-      display: none;
-    }
-
-    .list-group-item.active {
-      background-color: $list-group-bg;
-      color: $list-group-link-color;
-      z-index: 0;
-
-      @include media-breakpoint-down(lg) {
-        border: 0;
-      }
-
-      &:hover {
-        background-color: $list-group-hover-bg;
-        color: $list-group-link-color;
-        border-color: $list-group-border-color;
-      }
-    }
-  }
-
   .campaign-admin__campaign-preview--empty {
     align-items: center;
     justify-content: center;
@@ -52,15 +23,19 @@
 }
 
 .campaign-admin__campaign-items {
+   z-index: 1;
+   position: relative;
+
+   @include media-breakpoint-up(lg) {
+     width: $cms-panel-sm;
+   }
+ }
+
+.campaign-admin__campaign-items-edit {
   width: 100%;
   z-index: 1;
   position: relative;
-
-  @include media-breakpoint-up(lg) {
-    width: $cms-panel-sm;
-  }
 }
-
 
 // Campaign items which have linked associations
 .campaign-admin__item-links,
@@ -178,5 +153,13 @@
 
   &--published {
     background-color: $brand-success;
+  }
+}
+
+.btn-toolbar {
+  .btn, .dropdown {
+    &:not(:first-child) {
+      margin-left: 5px;
+    }
   }
 }

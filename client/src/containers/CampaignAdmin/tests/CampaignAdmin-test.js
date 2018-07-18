@@ -28,6 +28,8 @@ describe('CampaignAdminItem', () => {
           setBreadcrumbs: jest.fn(),
         },
         securityId: 'secured',
+        onResize: jest.fn(),
+
       };
       admin = ReactTestUtils.renderIntoDocument(<CampaignAdmin {...props} />);
     });
