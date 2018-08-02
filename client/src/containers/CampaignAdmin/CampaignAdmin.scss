@@ -157,8 +157,8 @@
 }
 
 .campaign-admin__campaign-preview .btn-toolbar {
-  .btn,
-  .dropdown {
+  > .btn,
+  > .dropdown {
     &:not(:first-child) {
       margin-left: 5px;
     }
