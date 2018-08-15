@@ -17,7 +17,7 @@ import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import CampaignAdminList from './CampaignAdminList';
 import IntroScreen from 'components/IntroScreen/IntroScreen';
 import ResizeAware from 'react-resize-aware';
-import * as viewModeActions from 'state/viewMode/viewModeActions';
+import * as viewModeActions from 'state/viewMode/ViewModeActions';
 
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
