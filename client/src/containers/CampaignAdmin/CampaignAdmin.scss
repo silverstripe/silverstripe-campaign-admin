@@ -156,7 +156,12 @@
   }
 }
 
-.campaign-admin__campaign-preview .btn-toolbar {
+.campaign-admin__campaign-preview{
+  &.preview-only {
+    border-left: 0;
+  }
+
+  &.btn-toolbar
   > .btn,
   > .dropdown {
     &:not(:first-child) {
