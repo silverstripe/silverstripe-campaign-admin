@@ -291,20 +291,28 @@ class CampaignAdminList extends Component {
   }
 
   renderPreview(itemLinks, itemId) {
-    const previewClasses = classNames(
+    let previewClasses = [
       'flexbox-area-grow',
       'fill-height',
       'preview',
       'campaign-admin__campaign-preview',
       'campaign-admin__campaign-preview--empty',
-    );
+    ];
 
     const { PreviewComponent, previewState } = this.props;
     const { loading } = this.state;
 
-    if (previewState === 'edit') {
-      return null;
+    switch (previewState) {
+      case 'preview':
+        previewClasses.push('preview-only');
+        break;
+      case 'edit':
+        return null;
+      default:
+        break;
     }
+
+    previewClasses = classNames(previewClasses);
 
     if (loading) {
       return (
@@ -335,7 +343,7 @@ class CampaignAdminList extends Component {
         itemId={itemId}
         onBack={this.handleCloseItem}
         moreActions={this.getMoreActions()}
-        className="campaign-admin__campaign-preview flexbox-area-grow fill-height"
+        className={previewClasses}
       />
     );
   }
