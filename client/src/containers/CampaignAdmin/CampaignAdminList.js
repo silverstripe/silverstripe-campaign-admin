@@ -256,10 +256,11 @@ class CampaignAdminList extends Component {
     const { ViewModeComponent, FormActionComponent } = this.props;
 
     const items = this.getItems();
+    const empty = !items || items.length === 0;
 
     let actionProps = null;
 
-    if (!items || items.length === 0) {
+    if (empty) {
       actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'secondary-outline',
@@ -282,10 +283,10 @@ class CampaignAdminList extends Component {
     return (
       <div className="btn-toolbar">
         <FormActionComponent {...actionProps} />
-        <ViewModeComponent
+        {!empty && <ViewModeComponent
           id="view-mode-toggle-in-edit-nb"
           area={'edit'}
-        />
+        />}
       </div>
     );
   }
