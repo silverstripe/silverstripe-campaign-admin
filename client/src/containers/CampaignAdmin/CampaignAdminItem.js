@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import i18n from 'i18n';
 import { UncontrolledTooltip } from 'reactstrap';
 import formatWrittenNumber from 'lib/formatWrittenNumber';
+import PropTypes from 'prop-types';
 
 /**
  * Describes an individual campaign item
@@ -162,9 +163,9 @@ class CampaignAdminItem extends Component {
 }
 
 CampaignAdminItem.propTypes = {
-  campaign: React.PropTypes.object.isRequired,
-  item: React.PropTypes.object.isRequired,
-  isLinked: React.PropTypes.bool,
+  campaign: PropTypes.object.isRequired,
+  item: PropTypes.object.isRequired,
+  isLinked: PropTypes.bool,
 };
 
 export default CampaignAdminItem;
