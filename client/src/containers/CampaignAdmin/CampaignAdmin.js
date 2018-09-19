@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { bindActionCreators } from 'redux';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
 import * as campaignActions from 'state/campaign/CampaignActions';
@@ -62,17 +62,17 @@ class CampaignAdmin extends Component {
 
   componentWillMount() {
     // Ensure default breadcrumbs are setup
-    const { breadcrumbs, title, params: { view, id } } = this.props;
+    const { breadcrumbs, title, match: { params: { id, view } } } = this.props;
     if (breadcrumbs.length === 0) {
       this.setBreadcrumbs(view, id, title);
     }
   }
 
   componentWillReceiveProps(props) {
-    const { title, params: { id, view } } = props;
+    const { title, match: { params: { id, view } } } = props;
     const hasChangedRoute = (
-      this.props.params.id !== id ||
-      this.props.params.view !== view ||
+      this.props.match.params.id !== id ||
+      this.props.match.params.view !== view ||
       this.props.title !== title
     );
     if (hasChangedRoute) {
@@ -119,7 +119,7 @@ class CampaignAdmin extends Component {
    * @return {String}
    */
   getActionRoute(id, view) {
-    return `${this.props.sectionConfig.url}/set/${id}/${view}`;
+    return `/${this.props.sectionConfig.url}/set/${id}/${view}`;
   }
 
   handleBackButtonClick(event) {
@@ -128,7 +128,7 @@ class CampaignAdmin extends Component {
       const last = this.props.breadcrumbs[this.props.breadcrumbs.length - 2];
       if (last && last.href) {
         event.preventDefault();
-        this.props.router.push(last.href);
+        this.props.history.push(last.href);
       }
     }
   }
@@ -155,7 +155,7 @@ class CampaignAdmin extends Component {
           const sectionUrl = this.props.sectionConfig.url;
           const id = response.record.id;
           this.props.campaignActions.setNewItem(id);
-          this.props.router.push(`${sectionUrl}/set/${id}/show`);
+          this.props.history.push(`/${sectionUrl}/set/${id}/show`);
         }
 
         return response;
@@ -167,7 +167,7 @@ class CampaignAdmin extends Component {
     // intercept the Add to Campaign submit and open the modal dialog instead
     if (name === 'action_cancel') {
       const url = this.props.sectionConfig.url;
-      this.props.router.push(url);
+      this.props.history.push(`/${url}`);
       event.preventDefault();
     }
   }
@@ -255,14 +255,14 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @return {Object} - Instanciated React component
    */
   campaignEditCreateFn(Custom, props) {
-    const url = this.props.sectionConfig.url;
+    const url = `/${this.props.sectionConfig.url}`;
 
     // Route to the Campaigns index view when 'Cancel' is clicked.
     if (props.name === 'action_cancel') {
       const extendedProps = Object.assign({}, props, {
         onClick: (event) => {
           event.preventDefault();
-          this.props.router.push(url);
+          this.props.history.push(url);
         },
       });
 
@@ -282,14 +282,14 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @return {Object} - Instanciated React component
    */
   campaignAddCreateFn(Custom, props) {
-    const url = this.props.sectionConfig.url;
+    const url = `/${this.props.sectionConfig.url}`;
 
     // Route to the Campaigns index view when 'Cancel' is clicked.
     if (props.name === 'action_cancel') {
       const extendedProps = Object.assign({}, props, {
         onClick: (event) => {
           event.preventDefault();
-          this.props.router.push(url);
+          this.props.history.push(url);
         },
       });
 
@@ -309,17 +309,17 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @return object - Instanciated React component
    */
   campaignListCreateFn(Custom, props) {
-    const sectionUrl = this.props.sectionConfig.url;
+    const sectionUrl = `/${this.props.sectionConfig.url}`;
     const typeUrlParam = 'set';
 
     if (props.schemaComponent === 'GridField') {
       const extendedProps = Object.assign({}, props, {
         data: Object.assign({}, props.data, {
           onDrillDown: (event, record) => {
-            this.props.router.push(`${sectionUrl}/${typeUrlParam}/${record.ID}/show`);
+            this.props.history.push(`${sectionUrl}/${typeUrlParam}/${record.ID}/show`);
           },
           onEditRecord: (event, id) => {
-            this.props.router.push(`${sectionUrl}/${typeUrlParam}/${id}/edit`);
+            this.props.history.push(`${sectionUrl}/${typeUrlParam}/${id}/edit`);
           },
         }),
       });
@@ -332,18 +332,18 @@ By removing this item all linked items will be removed unless used elsewhere.`;
 
   addCampaign() {
     const path = this.getActionRoute(0, 'create');
-    this.props.router.push(path);
+    this.props.history.push(path);
   }
 
   /**
    * Renders the Detail Edit Form for a Campaign.
    */
   renderDetailEditView() {
-    if (this.props.params.id <= 0) {
+    if (this.props.match.params.id <= 0) {
       return this.renderCreateView();
     }
     const baseSchemaUrl = this.props.sectionConfig.form.campaignEditForm.schemaUrl;
-    const schemaUrl = `${baseSchemaUrl}/${this.props.params.id}`;
+    const schemaUrl = `${baseSchemaUrl}/${this.props.match.params.id}`;
 
     return (
       <div className="fill-height">
@@ -440,7 +440,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
   renderItemListView() {
     const props = {
       sectionConfig: this.props.sectionConfig,
-      campaignId: this.props.params.id,
+      campaignId: this.props.match.params.id,
       itemListViewEndpoint: this.props.sectionConfig.itemListViewEndpoint,
       publishApi: this.publishApi,
       onBackButtonClick: this.handleBackButtonClick,
@@ -459,7 +459,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
   render() {
     let view = null;
 
-    switch (this.props.params.view) {
+    switch (this.props.match.params.view) {
       case 'show':
         view = this.renderItemListView();
         break;
@@ -522,8 +522,8 @@ function mapStateToProps(state, ownProps) {
   ));
   const viewMode = state.viewMode;
 
-  if (ownProps.params.id > 0) {
-    const schemaUrl = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.params.id}`;
+  if (ownProps.match.params.id > 0) {
+    const schemaUrl = `${sectionConfig.form.campaignEditForm.schemaUrl}/${ownProps.match.params.id}`;
     const schema = state.form.formSchemas[schemaUrl];
     const schemaName = schema && schema.name;
     const selector = schemaName && formValueSelector(schema.name, getFormState);
