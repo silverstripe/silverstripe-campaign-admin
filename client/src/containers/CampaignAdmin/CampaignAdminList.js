@@ -1,5 +1,6 @@
 /* global window */
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { bindActionCreators, compose } from 'redux';
 import { connect } from 'react-redux';
 import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
@@ -256,10 +257,11 @@ class CampaignAdminList extends Component {
     const { ViewModeComponent, FormActionComponent } = this.props;
 
     const items = this.getItems();
+    const empty = !items || items.length === 0;
 
     let actionProps = null;
 
-    if (!items || items.length === 0) {
+    if (empty) {
       actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'secondary-outline',
@@ -282,29 +284,37 @@ class CampaignAdminList extends Component {
     return (
       <div className="btn-toolbar">
         <FormActionComponent {...actionProps} />
-        <ViewModeComponent
+        {!empty && <ViewModeComponent
           id="view-mode-toggle-in-edit-nb"
           area={'edit'}
-        />
+        />}
       </div>
     );
   }
 
   renderPreview(itemLinks, itemId) {
-    const previewClasses = classNames(
+    let previewClasses = [
       'flexbox-area-grow',
       'fill-height',
       'preview',
       'campaign-admin__campaign-preview',
       'campaign-admin__campaign-preview--empty',
-    );
+    ];
 
     const { PreviewComponent, previewState } = this.props;
     const { loading } = this.state;
 
-    if (previewState === 'edit') {
-      return null;
+    switch (previewState) {
+      case 'preview':
+        previewClasses.push('preview-only');
+        break;
+      case 'edit':
+        return null;
+      default:
+        break;
     }
+
+    previewClasses = classNames(previewClasses);
 
     if (loading) {
       return (
@@ -335,7 +345,7 @@ class CampaignAdminList extends Component {
         itemId={itemId}
         onBack={this.handleCloseItem}
         moreActions={this.getMoreActions()}
-        className="campaign-admin__campaign-preview flexbox-area-grow fill-height"
+        className={previewClasses}
       />
     );
   }
@@ -512,22 +522,22 @@ class CampaignAdminList extends Component {
 }
 
 CampaignAdminList.propTypes = {
-  campaign: React.PropTypes.shape({
-    isPublishing: React.PropTypes.bool,
-    changeSetItemId: React.PropTypes.number,
+  campaign: PropTypes.shape({
+    isPublishing: PropTypes.bool,
+    changeSetItemId: PropTypes.number,
   }),
-  publishApi: React.PropTypes.func.isRequired,
-  record: React.PropTypes.object.isRequired,
-  sectionConfig: React.PropTypes.object.isRequired,
-  onBackButtonClick: React.PropTypes.func,
-  onRemoveCampaignItem: React.PropTypes.func,
-  breadcrumbsActions: React.PropTypes.object.isRequired,
-  campaignActions: React.PropTypes.object.isRequired,
-  recordActions: React.PropTypes.object.isRequired,
-  PreviewComponent: React.PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-  ViewModeComponent: React.PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  publishApi: PropTypes.func.isRequired,
+  record: PropTypes.object.isRequired,
+  sectionConfig: PropTypes.object.isRequired,
+  onBackButtonClick: PropTypes.func,
+  onRemoveCampaignItem: PropTypes.func,
+  breadcrumbsActions: PropTypes.object.isRequired,
+  campaignActions: PropTypes.object.isRequired,
+  recordActions: PropTypes.object.isRequired,
+  PreviewComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  ViewModeComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
   FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-  previewState: React.PropTypes.oneOf(['edit', 'preview', 'split']),
+  previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
 };
 
 CampaignAdminList.defaultProps = {

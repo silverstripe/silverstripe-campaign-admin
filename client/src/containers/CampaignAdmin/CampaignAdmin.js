@@ -1,5 +1,6 @@
 /* global window */
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { bindActionCreators } from 'redux';
@@ -504,7 +505,7 @@ CampaignAdmin.propTypes = {
   }),
   showMessage: PropTypes.bool,
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
-  onResize: React.PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
 };
 
 CampaignAdmin.defaultProps = {
