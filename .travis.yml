@@ -18,7 +18,7 @@ addons:
 env:
   global:
     - DB=MYSQL
-    - COMPOSER_ROOT_VERSION=1.3.x-dev
+    - COMPOSER_ROOT_VERSION=1.4.x-dev
     - DISPLAY=":99"
     - XVFBARGS=":99 -ac -screen 0 1024x768x16"
     - TRAVIS_NODE_VERSION="6"
@@ -51,7 +51,7 @@ before_script:
 
 # Install composer
   - composer validate
-  - composer require --prefer-dist --no-update silverstripe/recipe-testing:^1 silverstripe/recipe-cms:4.3.x-dev
+  - composer require --prefer-dist --no-update silverstripe/recipe-testing:^1 silverstripe/recipe-cms:4.4.x-dev
   - if [[ $DB == PGSQL ]]; then composer require --prefer-dist --no-update silverstripe/postgresql:2.1.x-dev; fi
   - if [[ $DB == SQLITE ]]; then composer require --prefer-dist --no-update silverstripe/sqlite3:2.0.x-dev; fi
   - composer install --prefer-source --no-interaction --no-progress --no-suggest --optimize-autoloader --verbose --profile
