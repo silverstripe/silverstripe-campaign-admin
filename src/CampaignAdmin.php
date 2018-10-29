@@ -192,7 +192,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $response = new HTTPResponse();
         $response->addHeader('Content-Type', 'application/json');
         $hal = $this->getListResource();
-        $response->setBody(Convert::array2json($hal));
+        $response->setBody(json_encode($hal));
         return $response;
     }
 
@@ -447,7 +447,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 return (new HTTPResponse(null, 403));
             }
 
-            $body = Convert::raw2json($this->getChangeSetResource($changeSet, true));
+            $body = json_encode($this->getChangeSetResource($changeSet, true));
             return (new HTTPResponse($body, 200))
                 ->addHeader('Content-Type', 'application/json');
         } else {
@@ -563,7 +563,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         }
 
         return (new HTTPResponse(
-            Convert::raw2json($this->getChangeSetResource($record)),
+            json_encode($this->getChangeSetResource($record)),
             200
         ))->addHeader('Content-Type', 'application/json');
     }
