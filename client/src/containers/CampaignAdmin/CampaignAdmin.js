@@ -351,13 +351,13 @@ By removing this item all linked items will be removed unless used elsewhere.`;
           <Breadcrumb multiline />
         </Toolbar>
 
-        <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
-          <FormBuilderLoader
-            onAction={this.handleFormAction}
-            schemaUrl={schemaUrl}
-            identifier="Campaign.EditView"
-          />
-        </div>
+        <FormBuilderLoader
+          fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
+          actionHolder={{ className: 'toolbar--south' }}
+          onAction={this.handleFormAction}
+          schemaUrl={schemaUrl}
+          identifier="Campaign.EditView"
+        />
       </div>
     );
   }
@@ -372,14 +372,14 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
           <Breadcrumb multiline />
         </Toolbar>
-        <div className="panel panel--padded panel--scrollable flexbox-area-grow form--inline">
-          <FormBuilderLoader
-            onSubmit={this.handleCreateCampaignSubmit}
-            onAction={this.handleFormAction}
-            schemaUrl={schemaUrl}
-            identifier="Campaign.CreateView"
-          />
-        </div>
+        <FormBuilderLoader
+          fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
+          actionHolder={{ className: 'toolbar--south' }}
+          onSubmit={this.handleCreateCampaignSubmit}
+          onAction={this.handleFormAction}
+          schemaUrl={schemaUrl}
+          identifier="Campaign.CreateView"
+        />
       </div>
     );
   }
