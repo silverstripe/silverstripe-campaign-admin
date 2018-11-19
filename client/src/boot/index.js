@@ -1,5 +1,4 @@
 /* global document */
-import { withRouter } from 'react-router';
 import ConfigHelpers from 'lib/Config';
 import Injector from 'lib/Injector';
 import reactRouteRegister from 'lib/ReactRouteRegister';
@@ -10,11 +9,11 @@ import applyConditionals from 'boot/applyConditionals';
 document.addEventListener('DOMContentLoaded', () => {
   const sectionConfig = ConfigHelpers.getSection('SilverStripe\\CampaignAdmin\\CampaignAdmin');
   reactRouteRegister.add({
-    path: sectionConfig.url,
-    component: withRouter(CampaignAdmin),
-    childRoutes: [
-      { path: ':type/:id/:view', component: CampaignAdmin },
-      { path: 'set/:id/:view', component: CampaignAdmin },
+    path: '/',
+    routes: [
+      { path: `/${sectionConfig.url}/set/:id/:view`, component: CampaignAdmin },
+      { path: `/${sectionConfig.url}/:type/:id/:view`, component: CampaignAdmin },
+      { path: `/${sectionConfig.url}`, component: CampaignAdmin },
     ],
   });
 

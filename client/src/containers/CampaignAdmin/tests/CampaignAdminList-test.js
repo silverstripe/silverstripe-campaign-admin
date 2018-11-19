@@ -7,7 +7,7 @@ jest.mock('components/ActionMenu/ActionMenu');
 import React from 'react';
 import { Component as CampaignAdminList } from '../CampaignAdminList';
 import Enzyme, { shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-15.4';
+import Adapter from 'enzyme-adapter-react-16';
 
 Enzyme.configure({ adapter: new Adapter() });
 
