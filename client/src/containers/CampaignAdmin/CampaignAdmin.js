@@ -408,25 +408,27 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         <Toolbar>
           <Breadcrumb multiline />
         </Toolbar>
-        <IntroScreen show={this.props.showMessage} onClose={this.handleHideMessage} />
-        <div className="panel panel--padded panel--scrollable flexbox-area-grow">
-          <div className="toolbar toolbar--content">
-            <div className="btn-toolbar fill-width">
-              <div className="btn-toolbar__left-panel flexbox-area-grow">
-                <FormAction {...formActionProps} />
-              </div>
-              <div className="btn-toolbar__left-panel">
-                <a
-                  role="button"
-                  aria-label={i18n._t('CampaignAdmin.HELP_SHOW', 'Show help')}
-                  tabIndex={0}
-                  onClick={this.handleToggleMessage}
-                  className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
-                />
+        <div className="panel panel--scrollable flexbox-area-grow">
+          <IntroScreen show={this.props.showMessage} onClose={this.handleHideMessage} />
+          <div className="panel panel--padded flexbox-area-grow">
+            <div className="toolbar toolbar--content">
+              <div className="btn-toolbar fill-width">
+                <div className="btn-toolbar__left-panel flexbox-area-grow">
+                  <FormAction {...formActionProps} />
+                </div>
+                <div className="btn-toolbar__left-panel">
+                  <a
+                    role="button"
+                    aria-label={i18n._t('CampaignAdmin.HELP_SHOW', 'Show help')}
+                    tabIndex={0}
+                    onClick={this.handleToggleMessage}
+                    className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
+                  />
+                </div>
               </div>
             </div>
+            <FormBuilderLoader {...formBuilderProps} />
           </div>
-          <FormBuilderLoader {...formBuilderProps} />
         </div>
       </div>
     );
