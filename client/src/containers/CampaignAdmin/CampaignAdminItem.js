@@ -12,10 +12,11 @@ class CampaignAdminItem extends Component {
    * @return integer
    */
   getNumReferTo() {
+    const { item } = this.props;
     const numReferTo = (
-      this.props.item._links &&
-      this.props.item._links.references &&
-      this.props.item._links.references.length
+      item._links &&
+      item._links.references &&
+      item._links.references.length
     );
 
     return numReferTo || 0;
@@ -25,10 +26,11 @@ class CampaignAdminItem extends Component {
    * @return integer
    */
   getNumReferredBy() {
+    const { item } = this.props;
     const numReferredBy = (
-      this.props.item._links &&
-      this.props.item._links.referenced_by &&
-      this.props.item._links.referenced_by.length
+      item._links &&
+      item._links.referenced_by &&
+      item._links.referenced_by.length
     );
 
     return numReferredBy || 0;
@@ -39,9 +41,9 @@ class CampaignAdminItem extends Component {
    */
   getReferToTooltipText() {
     const numReferTo = this.getNumReferTo();
-    return i18n.sprintf(
-      i18n._t('CampaignAdmin.LINKED_TO', 'Requires %s item(s)'),
-      formatWrittenNumber(numReferTo)
+    return i18n.inject(
+      i18n._t('CampaignAdmin.LINKED_TO', 'Requires {number} item(s)'),
+      { number: formatWrittenNumber(numReferTo) }
     );
   }
 
@@ -51,13 +53,15 @@ class CampaignAdminItem extends Component {
   getReferredByTooltipText() {
     const numReferredBy = this.getNumReferredBy();
 
-    return i18n.sprintf(
-      i18n._t('CampaignAdmin.LINKED_FROM', 'Required by %s item(s)'),
-      formatWrittenNumber(numReferredBy)
+    return i18n.inject(
+      i18n._t('CampaignAdmin.LINKED_FROM', 'Required by {number} item(s)'),
+      { number: formatWrittenNumber(numReferredBy) }
     );
   }
 
   renderLinks() {
+    const { isLinked, selected, item: { ID: itemID } } = this.props;
+
     const numReferTo = this.getNumReferTo();
     const numReferredBy = this.getNumReferredBy();
 
@@ -75,18 +79,18 @@ class CampaignAdminItem extends Component {
     }
 
     let links = null;
-    if ((this.props.selected && numReferTo + numReferredBy > 0) || this.props.isLinked) {
+    if ((selected && numReferTo + numReferredBy > 0) || isLinked) {
       const linksClasses = [
         'list-group-item__info',
         'campaign-admin__item-links',
-        this.props.isLinked ?
+        isLinked ?
           'campaign-admin__item-links--is-linked' :
           'campaign-admin__item-links--has-links',
       ];
 
       links = (
         <div className={linksClasses.join(' ')}>
-          <span id={`campaign-tooltip-${this.props.item.ID}`}>
+          <span id={`campaign-tooltip-${itemID}`}>
             <span className="campaign-admin__item-links__number">
               {numReferTo + numReferredBy}
             </span>
@@ -94,7 +98,7 @@ class CampaignAdminItem extends Component {
           </span>
           <UncontrolledTooltip
             placement="left"
-            target={`campaign-tooltip-${this.props.item.ID}`}
+            target={`campaign-tooltip-${itemID}`}
           >
             {tooltipTexts.join(', ')}
           </UncontrolledTooltip>
@@ -108,8 +112,7 @@ class CampaignAdminItem extends Component {
   render() {
     let thumbnail = null;
     const badge = {};
-    const item = this.props.item;
-    const campaign = this.props.campaign;
+    const { campaign, item } = this.props;
 
     // @todo customise these status messages for already-published changesets
 
@@ -166,6 +169,7 @@ CampaignAdminItem.propTypes = {
   campaign: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
   isLinked: PropTypes.bool,
+  selected: PropTypes.bool,
 };
 
 export default CampaignAdminItem;

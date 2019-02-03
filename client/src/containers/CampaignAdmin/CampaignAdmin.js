@@ -20,7 +20,6 @@ import IntroScreen from 'components/IntroScreen/IntroScreen';
 import ResizeAware from 'react-resize-aware';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 
-
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
 class CampaignAdmin extends Component {
@@ -81,10 +80,12 @@ class CampaignAdmin extends Component {
   }
 
   setBreadcrumbs(view, id, title) {
+    const { sectionConfig: { url } } = this.props;
+
     // Set root breadcrumb
     const breadcrumbs = [{
       text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
-      href: this.props.sectionConfig.url,
+      href: url,
     }];
     switch (view) {
       case 'show':
@@ -99,7 +100,7 @@ class CampaignAdmin extends Component {
         break;
       case 'create':
         breadcrumbs.push({
-          text: i18n._t('CampaignAdmin.ADD_CAMPAIGN', 'Add Campaign'),
+          text: i18n._t('CampaignAdmin.ADDCAMPAIGN', 'Add campaign'),
           href: this.getActionRoute(id, view),
         });
         break;
@@ -114,21 +115,23 @@ class CampaignAdmin extends Component {
   /**
    * Generate route with the given id and view
    *
-   * @param {Number} id
-   * @param {String} view
-   * @return {String}
+   * @param {number} id
+   * @param {string} view
+   * @return {string}
    */
   getActionRoute(id, view) {
     return `/${this.props.sectionConfig.url}/set/${id}/${view}`;
   }
 
   handleBackButtonClick(event) {
+    const { breadcrumbs, history } = this.props;
+
     // Go back to second from last breadcrumb (where last item is current)
-    if (this.props.breadcrumbs.length > 1) {
-      const last = this.props.breadcrumbs[this.props.breadcrumbs.length - 2];
+    if (breadcrumbs.length > 1) {
+      const last = breadcrumbs[breadcrumbs.length - 2];
       if (last && last.href) {
         event.preventDefault();
-        this.props.history.push(last.href);
+        history.push(last.href);
       }
     }
   }
@@ -163,11 +166,11 @@ class CampaignAdmin extends Component {
   }
 
   handleFormAction(event) {
+    const { history, sectionConfig: { url } } = this.props;
     const name = event.currentTarget.name;
     // intercept the Add to Campaign submit and open the modal dialog instead
     if (name === 'action_cancel') {
-      const url = this.props.sectionConfig.url;
-      this.props.history.push(`/${url}`);
+      history.push(`/${url}`);
       event.preventDefault();
     }
   }
@@ -175,7 +178,7 @@ class CampaignAdmin extends Component {
   /**
    * @param {number} campaignId
    * @param {number} itemId
-   * @return {Promise|null}
+   * @returns {Promise|null}
    */
   handleRemoveCampaignItem(campaignId, itemId) {
     const fallbackMsg = `Are you sure you want to remove this item?
@@ -226,6 +229,10 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     );
   }
 
+  /**
+   * @param {object} response
+   * @returns {boolean}
+   */
   hasErrors(response) {
     if (response.errors && response.errors.length) {
       return true;
@@ -249,22 +256,23 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * Hook to allow customisation of components being constructed
    * by the Campaign DetailEdit FormBuilderLoader.
    *
-   * @param {Object} Custom - Component constructor.
-   * @param {Object} props - Props passed from FormBuilderLoader.
+   * @param {object} Custom Component constructor.
+   * @param {object} props Props passed from FormBuilderLoader.
    *
-   * @return {Object} - Instanciated React component
+   * @return {object} Instantiated React component
    */
   campaignEditCreateFn(Custom, props) {
-    const url = `/${this.props.sectionConfig.url}`;
+    const { sectionConfig: { url }, history } = this.props;
 
     // Route to the Campaigns index view when 'Cancel' is clicked.
     if (props.name === 'action_cancel') {
-      const extendedProps = Object.assign({}, props, {
+      const extendedProps = {
+        ...props,
         onClick: (event) => {
           event.preventDefault();
-          this.props.history.push(url);
+          history.push(`/${url}`);
         },
-      });
+      };
 
       return <Custom key={props.id} {...extendedProps} />;
     }
@@ -276,22 +284,23 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * Hook to allow customisation of components being constructed
    * by the Campaign creation FormBuilderLoader.
    *
-   * @param {Object} Custom - Component constructor.
-   * @param {Object} props - Props passed from FormBuilderLoader.
+   * @param {object} Custom Component constructor.
+   * @param {object} props Props passed from FormBuilderLoader.
    *
-   * @return {Object} - Instanciated React component
+   * @return {object} Instantiated React component
    */
   campaignAddCreateFn(Custom, props) {
-    const url = `/${this.props.sectionConfig.url}`;
+    const { history, sectionConfig: { url } } = this.props;
 
     // Route to the Campaigns index view when 'Cancel' is clicked.
     if (props.name === 'action_cancel') {
-      const extendedProps = Object.assign({}, props, {
+      const extendedProps = {
+        ...props,
         onClick: (event) => {
           event.preventDefault();
-          this.props.history.push(url);
+          history.push(`/${url}`);
         },
-      });
+      };
 
       return <Custom key={props.name} {...extendedProps} />;
     }
@@ -303,26 +312,28 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * Hook to allow customisation of components being constructed
    * by the Campaign list FormBuilderLoader.
    *
-   * @param {Object} Custom - Component constructor.
-   * @param {Object} props - Props passed from FormBuilderLoader.
+   * @param {object} Custom Component constructor.
+   * @param {object} props Props passed from FormBuilderLoader.
    *
-   * @return object - Instanciated React component
+   * @return {object} Instantiated React component
    */
   campaignListCreateFn(Custom, props) {
-    const sectionUrl = `/${this.props.sectionConfig.url}`;
+    const { history, sectionConfig: { url } } = this.props;
     const typeUrlParam = 'set';
 
     if (props.schemaComponent === 'GridField') {
-      const extendedProps = Object.assign({}, props, {
-        data: Object.assign({}, props.data, {
+      const extendedProps = {
+        ...props,
+        data: {
+        ...props.data,
           onDrillDown: (event, record) => {
-            this.props.history.push(`${sectionUrl}/${typeUrlParam}/${record.ID}/show`);
+            history.push(`/${url}/${typeUrlParam}/${record.ID}/show`);
           },
           onEditRecord: (event, id) => {
-            this.props.history.push(`${sectionUrl}/${typeUrlParam}/${id}/edit`);
+            history.push(`/${url}/${typeUrlParam}/${id}/edit`);
           },
-        }),
-      });
+        },
+      };
 
       return <Custom key={extendedProps.name} {...extendedProps} />;
     }
@@ -337,6 +348,8 @@ By removing this item all linked items will be removed unless used elsewhere.`;
 
   /**
    * Renders the Detail Edit Form for a Campaign.
+   *
+   * @returns {object}
    */
   renderDetailEditView() {
     if (this.props.match.params.id <= 0) {
@@ -364,9 +377,11 @@ By removing this item all linked items will be removed unless used elsewhere.`;
 
   /**
    * Render the view for creating a new Campaign.
+   *
+   * @returns {object}
    */
   renderCreateView() {
-    const schemaUrl = this.props.sectionConfig.form.campaignCreateForm.schemaUrl;
+    const { schemaUrl } = this.props.sectionConfig.form.campaignCreateForm;
     return (
       <div className="fill-height">
         <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
@@ -387,12 +402,13 @@ By removing this item all linked items will be removed unless used elsewhere.`;
   /**
    * Renders the default view which displays a list of Campaigns.
    *
-   * @return object
+   * @returns {object}
    */
   renderIndexView() {
-    const schemaUrl = this.props.sectionConfig.form.EditForm.schemaUrl;
+    const { showMessage } = this.props;
+    const { schemaUrl } = this.props.sectionConfig.form.EditForm;
     const formActionProps = {
-      title: i18n._t('CampaignAdmin.ADDCAMPAIGN'),
+      title: i18n._t('CampaignAdmin.ADDCAMPAIGN', 'Add campaign'),
       icon: 'plus',
       extraClass: 'btn-primary',
       onClick: this.addCampaign,
@@ -408,7 +424,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         <Toolbar>
           <Breadcrumb multiline />
         </Toolbar>
-        <IntroScreen show={this.props.showMessage} onClose={this.handleHideMessage} />
+        <IntroScreen show={showMessage} onClose={this.handleHideMessage} />
         <div className="panel panel--padded panel--scrollable flexbox-area-grow">
           <div className="toolbar toolbar--content">
             <div className="btn-toolbar fill-width">
@@ -435,18 +451,21 @@ By removing this item all linked items will be removed unless used elsewhere.`;
   /**
    * Renders a list of items in a Campaign.
    *
-   * @return object
+   * @returns {object}
    */
   renderItemListView() {
+    const { sectionConfig, previewState, match: { params: { id: campaignId } } } = this.props;
+    const { loading } = this.state;
+
     const props = {
-      sectionConfig: this.props.sectionConfig,
-      campaignId: this.props.match.params.id,
-      itemListViewEndpoint: this.props.sectionConfig.itemListViewEndpoint,
+      sectionConfig,
+      campaignId,
+      itemListViewEndpoint: sectionConfig.itemListViewEndpoint,
       publishApi: this.publishApi,
       onBackButtonClick: this.handleBackButtonClick,
       onRemoveCampaignItem: this.handleRemoveCampaignItem,
-      loading: this.state.loading,
-      previewState: this.props.previewState,
+      loading,
+      previewState,
     };
 
     return (
@@ -456,6 +475,9 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     );
   }
 
+  /**
+   * @returns {object|null}
+   */
   render() {
     let view = null;
 
