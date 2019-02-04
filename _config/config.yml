@@ -4,3 +4,7 @@ Name: campaignadmin
 SilverStripe\Admin\LeftAndMain:
   extensions:
     - SilverStripe\CampaignAdmin\CampaignAdminExtension
+
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - SilverStripe\CampaignAdmin\SiteTreeExtension
