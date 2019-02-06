@@ -4,7 +4,7 @@ jest.mock('components/Breadcrumb/Breadcrumb');
 jest.mock('containers/FormBuilderLoader/FormBuilderLoader', () => () => null);
 
 import React from 'react';
-import ReactTestUtils from 'react-addons-test-utils';
+import ReactTestUtils from 'react-dom/test-utils';
 import { Component as CampaignAdmin } from '../CampaignAdmin';
 
 describe('CampaignAdminItem', () => {
@@ -29,7 +29,12 @@ describe('CampaignAdminItem', () => {
         },
         securityId: 'secured',
         onResize: jest.fn(),
-
+        match: {
+          params: {
+            id: null,
+            view: null
+          }
+        }
       };
       admin = ReactTestUtils.renderIntoDocument(<CampaignAdmin {...props} />);
     });

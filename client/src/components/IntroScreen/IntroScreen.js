@@ -29,13 +29,13 @@ class IntroScreen extends Component {
         </p>
         <div className="campaign-info__links">
           {links.map((item) => (
-            <a key={item.text} href={item.link} target="_blank">{item.text}</a>
+            <a key={item.text} href={item.link} target="_blank" rel="noopener noreferrer">{item.text}</a>
           ))
           }
         </div>
         <div className="campaign-info__content-buttons">
           {button &&
-          <a className="btn btn-outline-secondary" href={button.link} target="_blank">
+          <a className="btn btn-outline-secondary" href={button.link} target="_blank" rel="noopener noreferrer">
             {button.text}
           </a>
           }
