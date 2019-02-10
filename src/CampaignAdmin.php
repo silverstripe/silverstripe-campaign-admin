@@ -308,7 +308,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
                 /** @var ChangesetItem $changeSetItem */
                 $resource = $this->getChangeSetItemResource($changeSetItem);
-                if ($resource) {
+                if (!empty($resource)) {
                     $hal['_embedded']['items'][] = $resource;
                 }
             }
@@ -326,7 +326,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      * Build item resource from a changesetitem
      *
      * @param ChangeSetItem $changeSetItem
-     * @return array|false
+     * @return array
      */
     protected function getChangeSetItemResource(ChangeSetItem $changeSetItem)
     {
@@ -335,7 +335,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
         // Allow items to opt out of being displayed in changesets
         if ($baseSingleton->config()->get('hide_in_campaigns')) {
-            return false;
+            return [];
         }
 
         $thumbnailWidth = (int)$this->config()->get('thumbnail_width');
