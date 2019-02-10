@@ -14,11 +14,12 @@
   }
 
   .campaign-admin__empty-info {
-    padding-top: calc(270px + 0.5em);
+    padding: calc(270px + 0.5em) $panel-padding-x 0 $panel-padding-x;
     background-image: url("images/empty-campaign-preview.png");
     background-repeat: no-repeat;
     background-position: 50% 0;
     font-size: $font-size-lg;
+    text-align: center;
   }
 }
 
