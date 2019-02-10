@@ -308,7 +308,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
                 /** @var ChangesetItem $changeSetItem */
                 $resource = $this->getChangeSetItemResource($changeSetItem);
-                $hal['_embedded']['items'][] = $resource;
+                if (!empty($resource)) {
+                    $hal['_embedded']['items'][] = $resource;
+                }
             }
 
         // An unexpected data exception means that the database is corrupt
@@ -330,6 +332,12 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     {
         $baseClass = DataObject::getSchema()->baseDataClass($changeSetItem->ObjectClass);
         $baseSingleton = DataObject::singleton($baseClass);
+
+        // Allow items to opt out of being displayed in changesets
+        if ($baseSingleton->config()->get('hide_in_campaigns')) {
+            return [];
+        }
+
         $thumbnailWidth = (int)$this->config()->get('thumbnail_width');
         $thumbnailHeight = (int)$this->config()->get('thumbnail_height');
         $hal = [
