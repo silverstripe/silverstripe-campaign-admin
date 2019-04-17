@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import i18n from 'i18n';
+import { inject } from 'lib/Injector';
 import { UncontrolledTooltip } from 'reactstrap';
 import formatWrittenNumber from 'lib/formatWrittenNumber';
 import PropTypes from 'prop-types';
@@ -111,8 +112,10 @@ class CampaignAdminItem extends Component {
 
   render() {
     let thumbnail = null;
-    const badge = {};
-    const { campaign, item } = this.props;
+    const badge = {
+      status: 'none',
+    };
+    const { campaign, item, VersionedBadgeComponent } = this.props;
 
     // @todo customise these status messages for already-published changesets
 
@@ -121,20 +124,20 @@ class CampaignAdminItem extends Component {
     if (campaign.State === 'open') {
       switch (item.ChangeType) {
         case 'created':
-          badge.className = 'badge badge-warning list-group-item__status';
+          badge.status = 'draft';
           badge.Title = i18n._t('CampaignAdmin.DRAFT', 'Draft');
           break;
         case 'modified':
-          badge.className = 'badge badge-warning list-group-item__status';
+          badge.status = 'modified';
           badge.Title = i18n._t('CampaignAdmin.MODIFIED', 'Modified');
           break;
         case 'deleted':
-          badge.className = 'badge badge-error list-group-item__status';
+          badge.status = 'removed';
           badge.Title = i18n._t('CampaignAdmin.REMOVED', 'Removed');
           break;
         case 'none':
         default:
-          badge.className = 'badge badge-success list-group-item__status';
+          badge.status = 'live';
           badge.Title = i18n._t('CampaignAdmin.NO_CHANGES', 'No changes');
           break;
       }
@@ -157,7 +160,11 @@ class CampaignAdminItem extends Component {
           <h4 className="list-group-item__heading" title={item.Title}>{item.Title}</h4>
           {links}
           {badge.className && badge.Title &&
-            <span className={badge.className}>{badge.Title}</span>
+            <VersionedBadgeComponent
+              extraClass="list-group-item__status"
+              status={badge.status}
+              message={badge.Title}
+            />
           }
         </div>
       </div>
@@ -170,6 +177,15 @@ CampaignAdminItem.propTypes = {
   item: PropTypes.object.isRequired,
   isLinked: PropTypes.bool,
   selected: PropTypes.bool,
+  VersionedBadgeComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
 };
 
-export default CampaignAdminItem;
+export { CampaignAdminItem as Component };
+
+export default inject(
+  ['VersionedBadge'],
+  (VersionedBadgeComponent) => ({
+    VersionedBadgeComponent,
+  }),
+  () => 'CampaignAdmin.CampaignAdmin.ListItem'
+)(CampaignAdminItem);

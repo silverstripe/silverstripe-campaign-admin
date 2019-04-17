@@ -4,7 +4,7 @@ jest.mock('reactstrap');
 
 import React from 'react';
 import ReactTestUtils from 'react-dom/test-utils';
-import CampaignAdminItem from '../CampaignAdminItem';
+import { Component as CampaignAdminItem } from '../CampaignAdminItem';
 
 describe('CampaignAdminItem', () => {
   let props = null;

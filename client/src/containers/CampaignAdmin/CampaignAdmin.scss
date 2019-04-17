@@ -63,7 +63,6 @@
 }
 
 .list-group-item {
-
   &:hover {
     .campaign-admin__item-links--is-linked {
       opacity: 1;
@@ -81,6 +80,10 @@
 
     .campaign-admin__item-links__number {
       opacity: 1;
+    }
+
+    .versioned-badge {
+      color: $white;
     }
   }
 
