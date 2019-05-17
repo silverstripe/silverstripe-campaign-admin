@@ -17,7 +17,7 @@ import Toolbar from 'components/Toolbar/Toolbar';
 import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
 import CampaignAdminList from './CampaignAdminList';
 import IntroScreen from 'components/IntroScreen/IntroScreen';
-import ResizeAware from 'react-resize-aware';
+import ResizeAware from 'components/ResizeAware/ResizeAware';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 
 
