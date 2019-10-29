@@ -116,7 +116,10 @@ class AddToCampaignHandler
     protected function getAvailableChangeSets()
     {
         return ChangeSet::get()
-            ->filter('State', ChangeSet::STATE_OPEN)
+            ->filter([
+                'State' => ChangeSet::STATE_OPEN,
+                'IsInferred' => 0
+            ])
             ->filterByCallback(function ($item) {
                 /** @var ChangeSet $item */
                 return $item->canView();
