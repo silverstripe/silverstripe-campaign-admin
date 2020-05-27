@@ -1,12 +1,12 @@
 {
-    "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
-    "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
-    "CampaignAdmin.DRAFT": "Draft",
-    "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
-    "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
-    "CampaignAdmin.MODIFIED": "Modified",
-    "CampaignAdmin.NO_CHANGES": "No changes",
-    "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
-    "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.ADDCAMPAIGN": "Dodaj kampanjo",
+    "CampaignAdmin.DELETECAMPAIGN": "Res želite izbrisati ta zapis?",
+    "CampaignAdmin.DRAFT": "Osnutek",
+    "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s elementov",
+    "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s element",
+    "CampaignAdmin.MODIFIED": "Spremenjeno",
+    "CampaignAdmin.NO_CHANGES": "Brez sprememb",
+    "CampaignAdmin.PUBLISHCAMPAIGN": "Objavi kampanjo",
+    "CampaignAdmin.REMOVED": "Odstranjeno",
+    "CampaignAdmin.REVERTCAMPAIGN": "Povrni"
 }
