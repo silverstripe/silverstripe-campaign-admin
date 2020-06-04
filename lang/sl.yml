@@ -1,0 +1,37 @@
+sl:
+  CampaignAdmin:
+    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Shrani
+    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Shranjeno
+  SilverStripe\CampaignAdmin\AddToCampaignHandler:
+    ADD_TO_A_NEW_CAMPAIGN: 'Dodaj v novo kampanjo'
+    AddToCampaignAddAction: Dodaj
+    AddToCampaignAvailableLabel: 'Kampanje, ki so na voljo'
+    AddToCampaignFormFieldLabel: 'Izberite kampanjo'
+    AddToCampaignInChangsetLabel: 'Ta element je že vključen v kampanje:'
+    AddToCampaignInChangsetLabelAll: 'Ta element je že vključen v vse kampanje:'
+    CREATE_DENIED: 'Nimate pravic za ustvarjanje kampanj'
+    CREATE_NEW: 'Ustvari novo kampanjo'
+    CREATE_NEW_PLACEHOLDER: 'Vnesite ime za kampanjo'
+    ErrorCampaignPermissionDenied: 'Nimate pravic, da bi dodali {ObjectTitle} v kampanjo "{CampaignTitle}"'
+    ErrorGeneral: 'Prišlo je do napake'
+    ErrorItemPermissionDenied: 'Nimate pravic, da bi dodali {ObjectTitle} v kampanjo'
+    ErrorNotFound: 'Tip {Type} ni na voljo'
+    MISSING_TITLE: 'Izbrati morate ime za kampanjo'
+    NONE_SELECTED: 'Niste izbrali kampanje'
+    NO_CAMPAIGNS: 'Trenutno še ni nobene kampanje. Kasneje boste lahko v sklopu "Kampanje" urejali podrobnosti o kampanjah.'
+    NO_CREATE: 'Nimate pravic za ustvarjanje kampanj. '
+    Success: 'Dodali smo <strong>{ObjectTitle}</strong> v <strong>{CampaignTitle}</strong>'
+  SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
+    ADDTOCAMPAIGN: 'Dodaj kampanjo'
+  SilverStripe\CampaignAdmin\AddToCampaignValidator:
+    NEW_TITLE_EMPTY: 'Vnesite naslov za novo kampanjo'
+    SELECT_CAMPAIGN_EMPTY: 'Izberite kampanjo'
+  SilverStripe\CampaignAdmin\CampaignAdmin:
+    ACCESS_HELP: 'Dovoljeno ogledovanje sklopa za objavljanje kampanj.'
+    CANCEL: Prekliči
+    CREATE: Ustvari
+    ERROR_DUPLICATE_NAME: 'Ime "{Name}" je že uporabljeno'
+    MENUTITLE: Kampanje
+    NOITEMSTEXT: 'Izberite elemente iz sklopa {section}'
+    SAVEDERROR: Napaka
+    SAVEDUP: Shranjeno
