@@ -58,6 +58,10 @@
 
 .campaign-info__links {
   margin-bottom: $panel-padding-y;
+
+  a {
+    display: block;
+  }
 }
 
 .campaign-info__close {
