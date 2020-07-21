@@ -1,6 +1,9 @@
 inherit: true
 
 build:
+  environment:
+    variables:
+      COMPOSER_ROOT_VERSION: 1.x-dev
   nodes:
     analysis:
       tests:
