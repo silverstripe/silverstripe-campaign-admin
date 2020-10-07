@@ -20,7 +20,7 @@ Feature: Populate campaigns
     And I fill in the "Content" HTML field with "<p>my new content</p>"
     And I press the "Save" button
     Then I should see the "Saved" button
-    When I click the ".notice-item-close" element
+    When I click the ".toast__close" element
     And I click "More options" in the "#ActionMenus" element
     And I press the "Add to Campaign" button
     Then I should see a modal titled "Add to campaign"
