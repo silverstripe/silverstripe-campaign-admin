@@ -79,12 +79,6 @@ Feature: Populate campaigns
     And I press the "Remove" button, confirming the dialog
     Then I should not see the "About Us" campaign item
     When I press the "Publish campaign" button, confirming the dialog
-    And I press the "Campaigns" button
+    Then I should see a "Published "Full Campaign" successfully." success toast
+    When I press the "Campaigns" button
     Then I should see "Published" in column 3 of the "Full Campaign" campaign
-
-
-
-
-
-
-

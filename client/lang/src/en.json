@@ -8,5 +8,7 @@
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.PUBLISH_FAIL": "Campaign could not be published.",
+    "CampaignAdmin.PUBLISH_SUCCESS": "Published \"%s\" successfully."
 }

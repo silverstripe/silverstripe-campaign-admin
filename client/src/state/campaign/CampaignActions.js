@@ -1,6 +1,8 @@
 /* global window */
 import ACTION_TYPES from './CampaignActionTypes';
 import RECORD_ACTION_TYPES from 'state/records/RecordsActionTypes';
+import * as toastsActions from 'state/toasts/ToastsActions';
+import i18n from 'i18n';
 
 export function setShowMessage(show, storage = window.localStorage) {
   storage.setItem('campaign.showMessage', show);
@@ -64,12 +66,22 @@ export function publishCampaign(publishApi, recordType, campaignId) {
           type: RECORD_ACTION_TYPES.FETCH_RECORD_SUCCESS,
           payload: { recordType, data },
         });
+        const message = i18n._t(
+          'CampaignAdmin.PUBLISH_SUCCESS',
+          'Published "%s" successfully.'
+        );
+        dispatch(toastsActions.success(i18n.sprintf(message, data.Name)));
       })
       .catch((error) => {
         dispatch({
           type: ACTION_TYPES.PUBLISH_CAMPAIGN_FAILURE,
           payload: { error },
         });
+
+        const message = typeof error === 'string'
+          ? error
+          : i18n._t('CampaignAdmin.PUBLISH_FAIL', 'Campaign could not be published.');
+        dispatch(toastsActions.error(message));
       });
   };
 }
