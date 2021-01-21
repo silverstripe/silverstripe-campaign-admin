@@ -1,6 +1,6 @@
 # SilverStripe Campaign Admin Module
 
-[![Build Status](https://api.travis-ci.org/silverstripe/silverstripe-campaign-admin.svg?branch=master)](https://travis-ci.org/silverstripe/silverstripe-campaign-admin)
+[![Build Status](https://api.travis-ci.com/silverstripe/silverstripe-campaign-admin.svg?branch=1)](https://travis-ci.com/silverstripe/silverstripe-campaign-admin)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silverstripe/silverstripe-campaign-admin/badges/quality-score.png?b=1)](https://scrutinizer-ci.com/g/silverstripe/silverstripe-campaign-admin/?branch=1)
 [![codecov](https://codecov.io/gh/silverstripe/comment-notifications/branch/master/graph/badge.svg)](https://codecov.io/gh/silverstripe/comment-notifications)
 [![SilverStripe supported module](https://img.shields.io/badge/silverstripe-supported-0071C4.svg)](https://www.silverstripe.org/software/addons/silverstripe-commercially-supported-module-list/)
