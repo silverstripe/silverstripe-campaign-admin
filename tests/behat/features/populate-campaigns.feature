@@ -30,6 +30,7 @@ Feature: Populate campaigns
     Then I should see "Successfully added" in the ".modal-dialog" region
     When I close the modal
     And I go to "/admin/assets"
+    And I wait for 10 seconds
     And I click the "folder1" gallery item
     And I click the "file2" gallery item
     Then I should see the "Form_fileEditForm" form
