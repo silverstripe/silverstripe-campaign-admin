@@ -20,7 +20,7 @@ Feature: Populate campaigns
     And I fill in the "Content" HTML field with "<p>my new content</p>"
     And I press the "Save" button
     Then I should see the "Saved" button
-    When I click the ".toast__close" element
+    When I click on the ".toast__close" element
     And I click "More options" in the "#ActionMenus" element
     And I press the "Add to Campaign" button
     Then I should see a modal titled "Add to campaign"
@@ -75,7 +75,7 @@ Feature: Populate campaigns
     And I view the campaign "Full Campaign"
     And I select the "About Us" campaign item
     And I wait until I see the ".campaign-admin__campaign-preview .action-menu__toggle" element
-    And I click the ".campaign-admin__campaign-preview .action-menu__toggle" element
+    And I click on the ".campaign-admin__campaign-preview .action-menu__toggle" element
     And I press the "Remove" button, confirming the dialog
     Then I should not see the "About Us" campaign item
     When I press the "Publish campaign" button, confirming the dialog
