@@ -1,10 +1,22 @@
 version: ~> 1.0
 
 import:
-  - silverstripe/silverstripe-travis-shared:config/provision/standard-jobs-fixed-behat-npm.yml
+  - silverstripe/silverstripe-travis-shared:config/provision/standard.yml
+
+jobs:
+  fast_finish: true
+  include:
+    - php: 7.1
+      env:
+        - DB=MYSQL
+        - REQUIRE_INSTALLER="$REQUIRE_RECIPE"
+        - PHPCS_TEST=1
+
+before-script:
+  - if [[ "$TRAVIS_BRANCH" =~ ^([0-9\.]+)$ ]]; then export COMPOSER_ROOT_VERSION="${TRAVIS_BRANCH}.x-dev"; fi
+  - echo "$COMPOSER_ROOT_VERSION"
 
 env:
   global:
-    - COMPOSER_ROOT_VERSION="1.x-dev"
     - REQUIRE_RECIPE="4.x-dev"
     - BEHAT_SUITE=campaign-admin
