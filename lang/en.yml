@@ -21,7 +21,6 @@ en:
     NO_CAMPAIGNS: 'You currently don''t have any campaigns. You can edit campaign details later in the Campaigns section.'
     NO_CREATE: 'Oh no! You currently don''t have any campaigns created. Your current login does not have privileges to create campaigns. Campaigns can only be created by users with Campaigns section rights.'
     Success: 'Successfully added <strong>{ObjectTitle}</strong> to <strong>{CampaignTitle}</strong>'
-    UNTITLED: 'Untitled'
   SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
     ADDTOCAMPAIGN: 'Add to Campaign'
   SilverStripe\CampaignAdmin\AddToCampaignValidator:
