@@ -33,7 +33,6 @@ use SilverStripe\View\Requirements;
  */
 class CampaignAdmin extends LeftAndMain implements PermissionProvider
 {
-
     private static $allowed_actions = [
         'set',
         'sets',
@@ -313,12 +312,15 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 }
             }
 
-        // An unexpected data exception means that the database is corrupt
+            // An unexpected data exception means that the database is corrupt
         } catch (UnexpectedDataException $e) {
             $hal['PublishedLabel'] = '-';
             $hal['Details'] = 'Corrupt database! ' . $e->getMessage();
             $hal['canPublish'] = false;
         }
+
+        $this->extend('updateChangeSetResources', $hal, $changeSet);
+
         return $hal;
     }
 
