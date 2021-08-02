@@ -319,7 +319,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             $hal['canPublish'] = false;
         }
 
-        $this->extend('updateChangeSetResources', $hal, $changeSet);
+        $this->extend('updateChangeSetResource', $hal, $changeSet);
 
         return $hal;
     }
