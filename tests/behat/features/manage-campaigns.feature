@@ -38,3 +38,40 @@ Feature: Manage campaigns
     When I wait until I see the ".grid-field__table" element
       And I delete the campaign "Test Campaign"
     Then I should not see the campaign "Test Campaign"
+
+  @modal
+  Scenario: Publishing a campaign publishes associated assets
+
+    Given a "page" "My page"
+    And a "image" "assets/file2.jpg"
+
+    # Page is draft
+    When I go to "/admin/pages"
+    Then the rendered HTML should contain "badge status-addedtodraft"
+    And I follow "My page"
+    And I click on the "#tab-ActionMenus_MoreOptions" element
+    And I click on the "#Form_EditForm_action_addtocampaign" element
+    And I wait for 5 seconds
+    And I select "Test Campaign" from "Form_EditForm_AddToCampaign_Campaign"
+    And I press the "Add" button
+
+    When I go to "/admin/assets"
+    Then the rendered HTML should contain "gallery-item--draft"
+    And I click on the ".gallery__files .gallery-item" element
+    And I click on the "#Form_fileEditForm_PopoverActions" element
+    And I wait for 1 second
+    And I click on the "#Form_fileEditForm_action_addtocampaign" element
+    And I wait for 5 seconds
+    And I select "Test Campaign" from "Form_EditForm_AddToCampaign_Campaign"
+    And I press the "Add" button
+
+    When I go to "/admin/campaigns"
+    And I click on the ".grid-field__cell--drillable" element
+    And I press the "Publish campaign" button
+    And I confirm the dialog
+
+    When I go to "/admin/pages"
+    Then the rendered HTML should not contain "badge status-addedtodraft"
+
+    When I go to "/admin/assets"
+    Then the rendered HTML should not contain "gallery-item--draft"
