@@ -1,0 +1,13 @@
+name: Module CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ci:
+    uses: silverstripe/github-actions-ci-cd/.github/workflows/ci.yml@main
+    with:
+      run_endtoend: true
+      run_js: true
+      run_phpcoverage: true
