@@ -17,7 +17,7 @@ class CampaignAdminTest extends SapphireTest
 
     protected static $fixture_file = 'CampaignAdminTest.yml';
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         DBDatetime::set_mock_now('2011-09-24 11:11:00');

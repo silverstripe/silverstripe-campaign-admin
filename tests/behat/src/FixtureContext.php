@@ -4,6 +4,7 @@ namespace SilverStripe\CampaignAdmin\Tests\Behat\Context;
 
 use Behat\Mink\Element\DocumentElement;
 use Behat\Mink\Element\NodeElement;
+use PHPUnit\Framework\Assert;
 use SilverStripe\BehatExtension\Context\FixtureContext as BaseFixtureContext;
 use SilverStripe\BehatExtension\Utility\StepHelper;
 use SilverStripe\MinkFacebookWebDriver\FacebookWebDriver;
@@ -24,7 +25,7 @@ class FixtureContext extends BaseFixtureContext
     {
         $item = $this->getCampaign($name);
 
-        assertNotNull($item, "Could not find campaign \"$name\" in the list");
+        Assert::assertNotNull($item, "Could not find campaign \"$name\" in the list");
     }
 
     /**
@@ -35,7 +36,7 @@ class FixtureContext extends BaseFixtureContext
     {
         $item = $this->getCampaign($name);
 
-        assertNull($item, "Found campaign \"$name\" in the list");
+        Assert::assertNull($item, "Found campaign \"$name\" in the list");
     }
 
     /**
@@ -47,11 +48,11 @@ class FixtureContext extends BaseFixtureContext
     public function iShouldSeeInTheCampaignColumn($text, $column, $name)
     {
         $campaignRow = $this->getCampaign($name);
-        assertNotNull($campaignRow, sprintf('Could not find campaign "%s"', $name));
+        Assert::assertNotNull($campaignRow, sprintf('Could not find campaign "%s"', $name));
 
         $cell = $campaignRow->find('xpath', "/td[{$column}][contains(text(), '{$text}')]");
 
-        assertNotNull($cell, sprintf('Could not find "%s" in column %d of "%s"', $text, $column, $name));
+        Assert::assertNotNull($cell, sprintf('Could not find "%s" in column %d of "%s"', $text, $column, $name));
     }
 
     /**
@@ -61,7 +62,7 @@ class FixtureContext extends BaseFixtureContext
     public function iViewTheCampaign($name)
     {
         $item = $this->getCampaign($name);
-        assertNotNull($item, sprintf('Campaign %s not found', $name));
+        Assert::assertNotNull($item, sprintf('Campaign %s not found', $name));
 
         $item->find('css', 'td')->click();
     }
@@ -73,10 +74,10 @@ class FixtureContext extends BaseFixtureContext
     public function iEditTheCampaign($name)
     {
         $item = $this->getCampaign($name);
-        assertNotNull($item, sprintf('Campaign %s not found', $name));
+        Assert::assertNotNull($item, sprintf('Campaign %s not found', $name));
 
         $button = $item->find('css', '.font-icon-cog');
-        assertNotNull($button, sprintf('Campaign %s has no edit button', $name));
+        Assert::assertNotNull($button, sprintf('Campaign %s has no edit button', $name));
         $button->click();
     }
 
@@ -87,10 +88,10 @@ class FixtureContext extends BaseFixtureContext
     public function iDeleteTheCampaign($name)
     {
         $item = $this->getCampaign($name);
-        assertNotNull($item, sprintf('Campaign %s not found', $name));
+        Assert::assertNotNull($item, sprintf('Campaign %s not found', $name));
 
         $button = $item->find('css', '.font-icon-cancel');
-        assertNotNull($button, sprintf('Campaign %s has no delete button', $name));
+        Assert::assertNotNull($button, sprintf('Campaign %s has no delete button', $name));
         $button->click();
 
         /** @var FacebookWebDriver $driver */
@@ -108,8 +109,8 @@ class FixtureContext extends BaseFixtureContext
         /** @var DocumentElement $page */
         $page = $this->getMainContext()->getSession()->getPage();
         $form = $page->find('css', "form#{$id}");
-        assertNotNull($form, "form with id $id could not be found");
-        assertTrue($form->isVisible(), "form with id $id is not visible");
+        Assert::assertNotNull($form, "form with id $id could not be found");
+        Assert::assertTrue($form->isVisible(), "form with id $id is not visible");
     }
 
     /**
@@ -135,8 +136,8 @@ class FixtureContext extends BaseFixtureContext
     {
         $page = $this->getMainContext()->getSession()->getPage();
         $modalTitle = $page->find('css', '[role=dialog] .modal-header > .modal-title');
-        assertNotNull($modalTitle, 'No modal on the page');
-        assertTrue($modalTitle->getText() == $title);
+        Assert::assertNotNull($modalTitle, 'No modal on the page');
+        Assert::assertTrue($modalTitle->getText() == $title);
     }
 
     /**
@@ -147,7 +148,7 @@ class FixtureContext extends BaseFixtureContext
         /** @var DocumentElement $page */
         $page = $this->getMainContext()->getSession()->getPage();
         $button = $page->find('css', '.modal-header .close');
-        assertNotNull($button, 'Close button not found');
+        Assert::assertNotNull($button, 'Close button not found');
 
         $button->click();
     }
@@ -166,7 +167,7 @@ class FixtureContext extends BaseFixtureContext
             "//div[contains(@class, 'gallery-item')]//div[contains(text(), '{$name}')]"
         );
 
-        assertNotNull($cell, sprintf('Gallery item "%s" could not be found', $name));
+        Assert::assertNotNull($cell, sprintf('Gallery item "%s" could not be found', $name));
 
         $cell->click();
     }
@@ -182,12 +183,12 @@ class FixtureContext extends BaseFixtureContext
         $shouldSee = !trim($negate);
 
         if ($shouldSee) {
-            assertNotNull($item, sprintf('Item "%s" could not be found', $name));
-            assertTrue($item->isVisible(), sprintf('Item "%s" is not visible', $name));
+            Assert::assertNotNull($item, sprintf('Item "%s" could not be found', $name));
+            Assert::assertTrue($item->isVisible(), sprintf('Item "%s" is not visible', $name));
         } elseif ($item) {
-            assertFalse($item->isVisible(), sprintf('Item "%s" is visible', $name));
+            Assert::assertFalse($item->isVisible(), sprintf('Item "%s" is visible', $name));
         } else {
-            assertNull($item, sprintf('Item "%s" exists', $name));
+            Assert::assertNull($item, sprintf('Item "%s" exists', $name));
         }
     }
 
@@ -198,7 +199,7 @@ class FixtureContext extends BaseFixtureContext
     public function iSelectTheCampaignItem($name)
     {
         $item = $this->getCampaignItem($name);
-        assertNotNull($item, sprintf('Item "%s" could not be found', $name));
+        Assert::assertNotNull($item, sprintf('Item "%s" could not be found', $name));
         $item->click();
     }
 
