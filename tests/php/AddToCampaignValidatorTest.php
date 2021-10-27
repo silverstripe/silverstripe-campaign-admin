@@ -20,7 +20,7 @@ class AddToCampaignValidatorTest extends SapphireTest
      */
     protected $validator = null;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->logInWithPermission('ADMIN');
