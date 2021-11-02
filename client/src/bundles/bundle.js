@@ -1,1 +1,1 @@
-require('../boot/index.js');
+require('../boot/index');
