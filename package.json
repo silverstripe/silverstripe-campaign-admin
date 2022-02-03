@@ -62,6 +62,9 @@
     "validator": "^6.1.0",
     "webpack": "^2.0.0"
   },
+  "resolutions": {
+    "colors": "1.1.2"
+  },
   "jest": {
     "roots": [
       "client/src"
