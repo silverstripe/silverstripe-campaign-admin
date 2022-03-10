@@ -1,7 +1,8 @@
 name: Update JS deps
 on:
   # Run on a schedule once per quarter
-  cron: '0 0 1 */3 *'
+  schedule:
+    - cron:  '0 0 1 */3 *'
   workflow_dispatch:
 jobs:
   ci:
