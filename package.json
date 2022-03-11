@@ -50,7 +50,7 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
-    "@silverstripe/eslint-config": "^0.0.6",
+    "@silverstripe/eslint-config": "^0.1.0",
     "@silverstripe/webpack-config": "^1.7.0",
     "babel-core": "^6.26.3",
     "babel-jest": "^23.6.0",
