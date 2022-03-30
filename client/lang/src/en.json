@@ -8,5 +8,7 @@
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Revert"
+    "CampaignAdmin.REVERTCAMPAIGN": "Revert",
+    "CampaignAdmin.FORBIDDEN": "403 Access Forbidden",
+    "CampaignAdmin.PAGE_NOT_FOUND": "404 Page not found"
 }
