@@ -35,13 +35,13 @@ class CampaignAdminList extends Component {
       this.state = {
         loading: true,
         error: false,
-        errorMessage: '',
+        errorCode: 0,
       };
     } else {
       this.state = {
         loading: false,
         error: false,
-        errorMessage: '',
+        errorCode: 0,
       };
     }
   }
@@ -60,11 +60,11 @@ class CampaignAdminList extends Component {
           this.setBreadcrumbs();
           this.setState({ loading: false });
         })
-        // Catch error and set Error message
+        // Catch error and set Error code
         .catch((e) => {
           this.setState({ loading: false });
           this.setState({ error: true });
-          this.setState({ errorMessage: e.message });
+          this.setState({ errorCode: e.response.status });
         });
     }
   }
@@ -311,9 +311,20 @@ class CampaignAdminList extends Component {
     );
   }
 
+  renderErrorMessage(code) {
+    switch (code) {
+      case 403:
+        return (<p>{i18n._t('CampaignAdmin.FORBIDDEN', 'You do not have access to view this campaign')}</p>);
+      case 404:
+        return (<p>{i18n._t('CampaignAdmin.PAGE_NOT_FOUND', 'The campaign you are looking for can not be found')}</p>);
+      default:
+        return (<p>{i18n._t('CampaignAdmin.SOMETHING_WENT_WRONG', 'Something went wrong')}</p>);
+    }
+  }
+
   renderPreview(itemLinks, itemId) {
     const { PreviewComponent, previewState } = this.props;
-    const { loading, error, errorMessage } = this.state;
+    const { loading, error, errorCode } = this.state;
 
     let previewClasses = [
       'flexbox-area-grow',
@@ -347,9 +358,7 @@ class CampaignAdminList extends Component {
       return (
         <div className={previewClasses}>
           {
-            errorMessage === 'Forbidden'
-              ? (<p>{i18n._t('CampaignAdmin.FORBIDDEN', '403 Access Forbidden')}</p>)
-              : (<p>{i18n._t('CampaignAdmin.PAGENOTFOUND', '404 Page not found')}</p>)
+            this.renderErrorMessage(errorCode)
           }
         </div>
       );

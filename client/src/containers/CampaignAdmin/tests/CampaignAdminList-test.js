@@ -119,4 +119,52 @@ describe('CampaignAdminList', () => {
       expect(cmp.instance().getSelectedItem().Title).toBe('Page two');
     });
   });
+
+  describe('componentDidMount_set_error', () => {
+    let cmp = null;
+
+    it('should return 404 error code if server returns 404', (done) => {
+      let modProps = { ...props };
+      modProps.itemListViewEndpoint = { url: '', method: 'GET' };
+      modProps.recordActions = {
+        fetchRecord: jest.fn(() => {
+          return new Promise(() => {
+            let error = new Error('Not Found');
+            error.response = { status: 404 };
+            throw error;
+          });
+        }),
+      };
+      modProps.record = {};
+
+      cmp = shallow(<CampaignAdminList {...modProps} />);
+      cmp.instance().componentDidMount();
+      setImmediate(() => {
+        expect(cmp.state().errorCode).toBe(404);
+        done();
+      });
+    });
+
+    it('should return 403 error code if server returns 403', (done) => {
+      let modProps = { ...props };
+      modProps.itemListViewEndpoint = { url: '', method: 'GET' };
+      modProps.recordActions = {
+        fetchRecord: jest.fn(() => {
+          return new Promise(() => {
+            let error = new Error('Forbidden');
+            error.response = { status: 403 };
+            throw error;
+          });
+        }),
+      };
+      modProps.record = {};
+
+      cmp = shallow(<CampaignAdminList {...modProps} />);
+      cmp.instance().componentDidMount();
+      setImmediate(() => {
+        expect(cmp.state().errorCode).toBe(403);
+        done();
+      });
+    });
+  });
 });

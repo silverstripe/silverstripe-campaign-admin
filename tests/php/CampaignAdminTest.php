@@ -4,9 +4,14 @@ namespace SilverStripe\CampaignAdmin\Tests;
 
 use ReflectionClass;
 use SilverStripe\CampaignAdmin\CampaignAdmin;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Security\Group;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\ChangeSet;
 
 class CampaignAdminTest extends SapphireTest
@@ -128,5 +133,55 @@ class CampaignAdminTest extends SapphireTest
             ],
             $results
         );
+    }
+
+    public function testReadCampaignResponse()
+    {
+        // Login as admin user
+        $group = $this->objFromFixture(Group::class, 'admins');
+        Permission::grant($group->ID, 'ADMIN');
+
+        $admin = $this->objFromFixture(Member::class, 'admin_user');
+        $this->logInAs($admin);
+
+        $expectedStatus = [
+            '200' => [
+                'ID' => '1',
+                'Name' => 'show'
+            ],
+            '400' => [
+                'ID' => '1',
+                'Name' => ''
+            ],
+            '404' => [
+                'ID' => '12345',
+                'Name' => 'show'
+            ]
+        ];
+
+        $campaignAdmin = CampaignAdmin::create();
+
+        $request = new HTTPRequest('GET', '/admin/campaigns/set/');
+        $request->addHeader('Accept', 'application/json');
+
+        foreach ($expectedStatus as $key => $val) {
+            $request->setRouteParams($val);
+            $response = $campaignAdmin->readCampaign($request);
+            $status = $response->getStatusCode();
+
+            $this->assertInstanceOf(HTTPResponse::class, $response);
+            $this->assertEquals($key, $status);
+        }
+
+        // Login as user without admin permissions
+        $user = $this->objFromFixture(Member::class, 'mock_user');
+        $this->logInAs($user);
+
+        $request->setRouteParams([ 'ID' => '1', 'Name' => 'show']);
+        $response = $campaignAdmin->readCampaign($request);
+        $status = $response->getStatusCode();
+
+        $this->assertInstanceOf(HTTPResponse::class, $response);
+        $this->assertEquals('403', $status);
     }
 }

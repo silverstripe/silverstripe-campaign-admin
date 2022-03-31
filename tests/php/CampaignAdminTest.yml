@@ -16,3 +16,17 @@ SilverStripe\Versioned\ChangeSet:
     State: published
     IsInferred: true
 
+SilverStripe\Security\Group:
+  admins:
+    Code: admins
+    Title: Admins
+
+SilverStripe\Security\Member:
+  admin_user:
+    FirstName: Admin
+    Surname: User
+    Groups: =>SilverStripe\Security\Group.admins
+  mock_user:
+    FirstName: Mock
+    Surname: User
+
