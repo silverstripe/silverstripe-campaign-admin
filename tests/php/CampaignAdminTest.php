@@ -144,6 +144,9 @@ class CampaignAdminTest extends SapphireTest
         $admin = $this->objFromFixture(Member::class, 'admin_user');
         $this->logInAs($admin);
 
+        /** @var ChangeSet $changeset */
+        $changeset = $this->objFromFixture(ChangeSet::class, 'change1');
+
         $expectedStatus = [
             '200' => [
                 'ID' => '1',
