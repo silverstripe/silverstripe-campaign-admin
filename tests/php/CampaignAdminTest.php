@@ -194,7 +194,7 @@ class CampaignAdminTest extends SapphireTest
         // ChangeSet should not be accessable for Mock User
         $this->assertFalse($changeset->canView());
 
-        $request->setRouteParams([ 'ID' => '1', 'Name' => 'show']);
+        $request->setRouteParams([ 'ID' => '123', 'Name' => 'show']);
         $response = $campaignAdmin->readCampaign($request);
         $status = $response->getStatusCode();
 
