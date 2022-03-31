@@ -124,16 +124,14 @@ describe('CampaignAdminList', () => {
     let cmp = null;
 
     it('should return 404 error code if server returns 404', (done) => {
-      let modProps = { ...props };
+      const modProps = { ...props };
       modProps.itemListViewEndpoint = { url: '', method: 'GET' };
       modProps.recordActions = {
-        fetchRecord: jest.fn(() => {
-          return new Promise(() => {
-            let error = new Error('Not Found');
-            error.response = { status: 404 };
-            throw error;
-          });
-        }),
+        fetchRecord: jest.fn(() => new Promise(() => {
+          const error = new Error('Not Found');
+          error.response = { status: 404 };
+          throw error;
+        })),
       };
       modProps.record = {};
 
@@ -146,16 +144,14 @@ describe('CampaignAdminList', () => {
     });
 
     it('should return 403 error code if server returns 403', (done) => {
-      let modProps = { ...props };
+      const modProps = { ...props };
       modProps.itemListViewEndpoint = { url: '', method: 'GET' };
       modProps.recordActions = {
-        fetchRecord: jest.fn(() => {
-          return new Promise(() => {
-            let error = new Error('Forbidden');
-            error.response = { status: 403 };
-            throw error;
-          });
-        }),
+        fetchRecord: jest.fn(() => new Promise(() => {
+          const error = new Error('Forbidden');
+          error.response = { status: 403 };
+          throw error;
+        })),
       };
       modProps.record = {};
 
