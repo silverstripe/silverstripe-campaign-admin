@@ -450,6 +450,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             /** @var ChangeSet $changeSet */
             $changeSet = ChangeSet::get()->filter('IsInferred', 0)->byID($request->param('ID'));
 
+            var_dump($request->param('ID'), " =====",  $changeSet);
+
             if (!$changeSet) {
                 return (new HTTPResponse(null, 404));
             }
