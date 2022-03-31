@@ -144,16 +144,25 @@ class CampaignAdminTest extends SapphireTest
         $admin = $this->objFromFixture(Member::class, 'admin_user');
         $this->logInAs($admin);
 
-        /** @var ChangeSet $changeset */
-        $changeset = $this->objFromFixture(ChangeSet::class, 'change1');
+        // Create new ChangeSet object
+        $changeset = ChangeSet::create();
+        $changeset->ID = '123';
+        $changeset->Name = 'changeset 123';
+        $changeset->State = 'open';
+        $changeset->IsInferred = false;
+        
+        $changeset->write();
+
+        // ChangeSet should be accessable for Admin
+        $this->assertTrue($changeset->canView());
 
         $expectedStatus = [
             '200' => [
-                'ID' => '1',
+                'ID' => '123',
                 'Name' => 'show'
             ],
             '400' => [
-                'ID' => '1',
+                'ID' => '123',
                 'Name' => ''
             ],
             '404' => [
@@ -162,6 +171,7 @@ class CampaignAdminTest extends SapphireTest
             ]
         ];
 
+        // Create new CampaignAdmin object
         $campaignAdmin = CampaignAdmin::create();
 
         $request = new HTTPRequest('GET', '/admin/campaigns/set/');
@@ -172,6 +182,7 @@ class CampaignAdminTest extends SapphireTest
             $response = $campaignAdmin->readCampaign($request);
             $status = $response->getStatusCode();
 
+            // Method should return correct status
             $this->assertInstanceOf(HTTPResponse::class, $response);
             $this->assertEquals($key, $status);
         }
@@ -180,10 +191,14 @@ class CampaignAdminTest extends SapphireTest
         $user = $this->objFromFixture(Member::class, 'mock_user');
         $this->logInAs($user);
 
+        // ChangeSet should not be accessable for Mock User
+        $this->assertFalse($changeset->canView());
+
         $request->setRouteParams([ 'ID' => '1', 'Name' => 'show']);
         $response = $campaignAdmin->readCampaign($request);
         $status = $response->getStatusCode();
 
+        // Method should return correct status if access forbidden
         $this->assertInstanceOf(HTTPResponse::class, $response);
         $this->assertEquals('403', $status);
     }
