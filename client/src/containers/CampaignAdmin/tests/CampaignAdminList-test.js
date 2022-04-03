@@ -138,7 +138,13 @@ describe('CampaignAdminList', () => {
       cmp = shallow(<CampaignAdminList {...modProps} />);
       cmp.instance().componentDidMount();
       setImmediate(() => {
-        expect(cmp.state().errorCode).toBe(404);
+        const errorCode = cmp.state().errorCode;
+        const message = cmp.instance().renderErrorMessage(errorCode);
+
+        expect(message.props.children).toBe('The campaign you are looking for can not be found');
+        expect(cmp.state().error).toBe(true);
+        expect(errorCode).toBe(404);
+
         done();
       });
     });
@@ -158,7 +164,39 @@ describe('CampaignAdminList', () => {
       cmp = shallow(<CampaignAdminList {...modProps} />);
       cmp.instance().componentDidMount();
       setImmediate(() => {
-        expect(cmp.state().errorCode).toBe(403);
+        const errorCode = cmp.state().errorCode;
+        const message = cmp.instance().renderErrorMessage(errorCode);
+
+        expect(message.props.children).toBe('You do not have access to view this campaign');
+        expect(cmp.state().error).toBe(true);
+        expect(errorCode).toBe(403);
+
+        done();
+      });
+    });
+
+    it('should return 400 error code if server returns 400', (done) => {
+      const modProps = { ...props };
+      modProps.itemListViewEndpoint = { url: '', method: 'GET' };
+      modProps.recordActions = {
+        fetchRecord: jest.fn(() => new Promise(() => {
+          const error = new Error('Bad Request');
+          error.response = { status: 400 };
+          throw error;
+        })),
+      };
+      modProps.record = {};
+
+      cmp = shallow(<CampaignAdminList {...modProps} />);
+      cmp.instance().componentDidMount();
+      setImmediate(() => {
+        const errorCode = cmp.state().errorCode;
+        const message = cmp.instance().renderErrorMessage(errorCode);
+
+        expect(message.props.children).toBe('Something went wrong');
+        expect(cmp.state().error).toBe(true);
+        expect(errorCode).toBe(400);
+
         done();
       });
     });

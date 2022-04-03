@@ -62,9 +62,11 @@ class CampaignAdminList extends Component {
         })
         // Catch error and set Error code
         .catch((e) => {
-          this.setState({ loading: false });
-          this.setState({ error: true });
-          this.setState({ errorCode: e.response.status });
+          this.setState({
+            loading: false,
+            error: true,
+            errorCode: e.response.status
+          });
         });
     }
   }
