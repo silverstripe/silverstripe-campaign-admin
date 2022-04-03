@@ -123,7 +123,7 @@ describe('CampaignAdminList', () => {
   describe('componentDidMount_set_error', () => {
     let cmp = null;
 
-    test.each(
+    it.each(
       [
         { code: 400, message: 'Something went wrong' },
         { code: 403, message: 'You do not have access to view this campaign' },
