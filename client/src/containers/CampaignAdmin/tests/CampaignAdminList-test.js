@@ -123,65 +123,20 @@ describe('CampaignAdminList', () => {
   describe('componentDidMount_set_error', () => {
     let cmp = null;
 
-    it('should return 404 error code if server returns 404', (done) => {
-      const modProps = { ...props };
-      modProps.itemListViewEndpoint = { url: '', method: 'GET' };
-      modProps.recordActions = {
-        fetchRecord: jest.fn(() => new Promise(() => {
-          const error = new Error('Not Found');
-          error.response = { status: 404 };
-          throw error;
-        })),
-      };
-      modProps.record = {};
-
-      cmp = shallow(<CampaignAdminList {...modProps} />);
-      cmp.instance().componentDidMount();
-      setImmediate(() => {
-        const errorCode = cmp.state().errorCode;
-        const message = cmp.instance().renderErrorMessage(errorCode);
-
-        expect(message.props.children).toBe('The campaign you are looking for can not be found');
-        expect(cmp.state().error).toBe(true);
-        expect(errorCode).toBe(404);
-
-        done();
-      });
-    });
-
-    it('should return 403 error code if server returns 403', (done) => {
-      const modProps = { ...props };
-      modProps.itemListViewEndpoint = { url: '', method: 'GET' };
-      modProps.recordActions = {
-        fetchRecord: jest.fn(() => new Promise(() => {
-          const error = new Error('Forbidden');
-          error.response = { status: 403 };
-          throw error;
-        })),
-      };
-      modProps.record = {};
-
-      cmp = shallow(<CampaignAdminList {...modProps} />);
-      cmp.instance().componentDidMount();
-      setImmediate(() => {
-        const errorCode = cmp.state().errorCode;
-        const message = cmp.instance().renderErrorMessage(errorCode);
-
-        expect(message.props.children).toBe('You do not have access to view this campaign');
-        expect(cmp.state().error).toBe(true);
-        expect(errorCode).toBe(403);
-
-        done();
-      });
-    });
-
-    it('should return 400 error code if server returns 400', (done) => {
+    test.each(
+      [
+        { code: 400, message: 'Something went wrong' },
+        { code: 403, message: 'You do not have access to view this campaign' },
+        { code: 404, message: 'The campaign you are looking for can not be found' },
+        { code: 500, message: 'Something went wrong' },
+      ]
+    )('should return error code and error message', ({ code, message }, done) => {
       const modProps = { ...props };
       modProps.itemListViewEndpoint = { url: '', method: 'GET' };
       modProps.recordActions = {
         fetchRecord: jest.fn(() => new Promise(() => {
           const error = new Error('Bad Request');
-          error.response = { status: 400 };
+          error.response = { status: code };
           throw error;
         })),
       };
@@ -189,13 +144,13 @@ describe('CampaignAdminList', () => {
 
       cmp = shallow(<CampaignAdminList {...modProps} />);
       cmp.instance().componentDidMount();
+
       setImmediate(() => {
         const errorCode = cmp.state().errorCode;
-        const message = cmp.instance().renderErrorMessage(errorCode);
-
-        expect(message.props.children).toBe('Something went wrong');
+        const msg = cmp.instance().renderErrorMessage(errorCode);
+        expect(msg.props.children).toBe(message);
         expect(cmp.state().error).toBe(true);
-        expect(errorCode).toBe(400);
+        expect(errorCode).toBe(code);
 
         done();
       });
