@@ -6,7 +6,7 @@ use ReflectionClass;
 use SilverStripe\CampaignAdmin\CampaignAdmin;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
-use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Group;
@@ -14,7 +14,7 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\ChangeSet;
 
-class CampaignAdminTest extends SapphireTest
+class CampaignAdminTest extends FunctionalTest
 {
     protected $extraDataObjects = [
         CampaignAdminTest\InvalidChangeSet::class,
@@ -135,71 +135,29 @@ class CampaignAdminTest extends SapphireTest
         );
     }
 
-    public function testReadCampaignResponse()
+    public function readCampaignDataProvider()
     {
-        // Login as admin user
-        $group = $this->objFromFixture(Group::class, 'admins');
-        Permission::grant($group->ID, 'ADMIN');
-
-        $admin = $this->objFromFixture(Member::class, 'admin_user');
-        $this->logInAs($admin);
-
-        // Create new ChangeSet object
-        $changeset = ChangeSet::create();
-        $changeset->ID = '123';
-        $changeset->Name = 'changeset 123';
-        $changeset->State = 'open';
-        $changeset->IsInferred = false;
-        
-        $changeset->write();
-
-        // ChangeSet should be accessable for Admin
-        $this->assertTrue($changeset->canView());
-
-        $expectedStatus = [
-            '200' => [
-                'ID' => '123',
-                'Name' => 'show'
-            ],
-            '400' => [
-                'ID' => '123',
-                'Name' => ''
-            ],
-            '404' => [
-                'ID' => '12345',
-                'Name' => 'show'
-            ]
+        return [
+            'valid campaign' => ['change1', 'CMS_ACCESS_CampaignAdmin', 200],
+            'non existent campaign' => ['', 'CMS_ACCESS_CampaignAdmin', 404],
+            'inferred campaign' => ['change3', 'CMS_ACCESS_CampaignAdmin', 404],
+            'not enough permission' => ['change1', 'VIEW_SITE', 403],
         ];
+    }
 
-        // Create new CampaignAdmin object
-        $campaignAdmin = CampaignAdmin::create();
-
-        $request = new HTTPRequest('GET', '/admin/campaigns/set/');
-        $request->addHeader('Accept', 'application/json');
-
-        foreach ($expectedStatus as $key => $val) {
-            $request->setRouteParams($val);
-            $response = $campaignAdmin->readCampaign($request);
-            $status = $response->getStatusCode();
-
-            // Method should return correct status
-            $this->assertInstanceOf(HTTPResponse::class, $response);
-            $this->assertEquals($key, $status);
-        }
-
-        // Login as user without admin permissions
-        $user = $this->objFromFixture(Member::class, 'mock_user');
-        $this->logInAs($user);
-
-        // ChangeSet should not be accessable for Mock User
-        $this->assertFalse($changeset->canView());
-
-        $request->setRouteParams([ 'ID' => '123', 'Name' => 'show']);
-        $response = $campaignAdmin->readCampaign($request);
-        $status = $response->getStatusCode();
-
-        // Method should return correct status if access forbidden
-        $this->assertInstanceOf(HTTPResponse::class, $response);
-        $this->assertEquals('403', $status);
+    /**
+     * @dataProvider readCampaignDataProvider
+     */
+    public function testReadCampaign(
+        string $changesetName,
+        string $permission,
+        int $expectedResponseCode
+    )
+    {
+        $this->logOut();
+        $this->logInWithPermission($permission);
+        $changeSetID = $changesetName ? $this->idFromFixture(ChangeSet::class, $changesetName) : 12345;
+        $response = $this->get("/admin/campaigns/set/$changeSetID/show", null, ['Accept' => 'application/json']);
+        $this->assertEquals($expectedResponseCode, $response->getStatusCode());
     }
 }

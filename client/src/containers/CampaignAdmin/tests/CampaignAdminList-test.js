@@ -125,10 +125,10 @@ describe('CampaignAdminList', () => {
 
     it.each(
       [
-        { code: 400, message: 'Something went wrong' },
-        { code: 403, message: 'You do not have access to view this campaign' },
-        { code: 404, message: 'The campaign you are looking for can not be found' },
-        { code: 500, message: 'Something went wrong' },
+        { code: 400, message: 'Something went wrong.' },
+        { code: 403, message: 'You do not have access to view this campaign.' },
+        { code: 404, message: 'The campaign you are looking for can not be found.' },
+        { code: 500, message: 'Something went wrong.' },
       ]
     )('should return error code and error message', ({ code, message }, done) => {
       const modProps = { ...props };

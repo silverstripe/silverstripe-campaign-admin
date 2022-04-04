@@ -316,11 +316,11 @@ class CampaignAdminList extends Component {
   renderErrorMessage(code) {
     switch (code) {
       case 403:
-        return (<p>{i18n._t('CampaignAdmin.FORBIDDEN', 'You do not have access to view this campaign')}</p>);
+        return (<p>{i18n._t('CampaignAdmin.FORBIDDEN', 'You do not have access to view this campaign.')}</p>);
       case 404:
-        return (<p>{i18n._t('CampaignAdmin.PAGE_NOT_FOUND', 'The campaign you are looking for can not be found')}</p>);
+        return (<p>{i18n._t('CampaignAdmin.PAGE_NOT_FOUND', 'The campaign you are looking for can not be found.')}</p>);
       default:
-        return (<p>{i18n._t('CampaignAdmin.SOMETHING_WENT_WRONG', 'Something went wrong')}</p>);
+        return (<p>{i18n._t('CampaignAdmin.SOMETHING_WENT_WRONG', 'Something went wrong.')}</p>);
     }
   }
 
