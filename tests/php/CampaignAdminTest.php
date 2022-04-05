@@ -152,8 +152,7 @@ class CampaignAdminTest extends FunctionalTest
         string $changesetName,
         string $permission,
         int $expectedResponseCode
-    )
-    {
+    ){
         $this->logOut();
         $this->logInWithPermission($permission);
         $changeSetID = $changesetName ? $this->idFromFixture(ChangeSet::class, $changesetName) : 12345;
