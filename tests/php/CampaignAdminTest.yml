@@ -15,4 +15,3 @@ SilverStripe\Versioned\ChangeSet:
     Name: 'changeset 4'
     State: published
     IsInferred: true
-

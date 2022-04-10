@@ -34,10 +34,14 @@ class CampaignAdminList extends Component {
     if (!this.isRecordLoaded(props)) {
       this.state = {
         loading: true,
+        error: false,
+        errorCode: 0,
       };
     } else {
       this.state = {
         loading: false,
+        error: false,
+        errorCode: 0,
       };
     }
   }
@@ -55,6 +59,14 @@ class CampaignAdminList extends Component {
         .then(() => {
           this.setBreadcrumbs();
           this.setState({ loading: false });
+        })
+        // Catch error and set Error code
+        .catch((e) => {
+          this.setState({
+            loading: false,
+            error: true,
+            errorCode: e.response.status
+          });
         });
     }
   }
@@ -126,9 +138,9 @@ class CampaignAdminList extends Component {
     const referencedBy = selectedItem._links && selectedItem._links.referenced_by;
     const requiredByNum = (referencedBy && referencedBy.length) || 0;
     const unremoveableInfoText = i18n._t(
-        'CampaignAdmin.UNREMOVEABLE_INFO',
-        'Required by {number} item(s), and cannot be removed directly.'
-      );
+      'CampaignAdmin.UNREMOVEABLE_INFO',
+      'Required by {number} item(s), and cannot be removed directly.'
+    );
     const removeAction = selectedItem.Added === 'explicitly'
       ? (
         <DropdownItem
@@ -301,9 +313,20 @@ class CampaignAdminList extends Component {
     );
   }
 
+  renderErrorMessage(code) {
+    switch (code) {
+      case 403:
+        return (<p>{i18n._t('CampaignAdmin.FORBIDDEN', 'You do not have access to view this campaign.')}</p>);
+      case 404:
+        return (<p>{i18n._t('CampaignAdmin.PAGE_NOT_FOUND', 'The campaign you are looking for can not be found.')}</p>);
+      default:
+        return (<p>{i18n._t('CampaignAdmin.SOMETHING_WENT_WRONG', 'Something went wrong.')}</p>);
+    }
+  }
+
   renderPreview(itemLinks, itemId) {
     const { PreviewComponent, previewState } = this.props;
-    const { loading } = this.state;
+    const { loading, error, errorCode } = this.state;
 
     let previewClasses = [
       'flexbox-area-grow',
@@ -329,6 +352,16 @@ class CampaignAdminList extends Component {
       return (
         <div className={previewClasses}>
           <p>{i18n._t('CampaignAdmin.LOADING', 'Loading...')}</p>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className={previewClasses}>
+          {
+            this.renderErrorMessage(errorCode)
+          }
         </div>
       );
     }
@@ -435,11 +468,11 @@ class CampaignAdminList extends Component {
 
     const selectedItem = this.getSelectedItem();
     const selectedItemsLinkedTo = (
-        selectedItem && selectedItem._links && selectedItem._links.references
-      ) || [];
+      selectedItem && selectedItem._links && selectedItem._links.references
+    ) || [];
     const selectedItemsLinkedFrom = (
-        selectedItem && selectedItem._links && selectedItem._links.referenced_by
-      ) || [];
+      selectedItem && selectedItem._links && selectedItem._links.referenced_by
+    ) || [];
 
     Object.keys(itemGroups).forEach(className => {
       const group = itemGroups[className];
@@ -467,16 +500,16 @@ class CampaignAdminList extends Component {
 
         // Add extra css class for published items
         const itemClassNames = classNames({
-            'list-group-item--inactive': (item.ChangeType === 'none' || campaign.State === 'published'),
-            active: (selected),
+          'list-group-item--inactive': (item.ChangeType === 'none' || campaign.State === 'published'),
+          active: (selected),
         });
 
         let isLinked = !!selectedItemsLinkedTo.find(
           linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
 
         isLinked = isLinked || selectedItemsLinkedFrom.find(linkFromObj => (
-            linkFromObj.ChangeSetItemID === item.ID
-          ));
+          linkFromObj.ChangeSetItemID === item.ID
+        ));
 
         listGroupItems.push(
           <ListGroupItem

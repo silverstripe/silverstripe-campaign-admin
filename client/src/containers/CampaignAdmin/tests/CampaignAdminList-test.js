@@ -119,4 +119,41 @@ describe('CampaignAdminList', () => {
       expect(cmp.instance().getSelectedItem().Title).toBe('Page two');
     });
   });
+
+  describe('componentDidMount_set_error', () => {
+    let cmp = null;
+
+    it.each(
+      [
+        { code: 400, message: 'Something went wrong.' },
+        { code: 403, message: 'You do not have access to view this campaign.' },
+        { code: 404, message: 'The campaign you are looking for can not be found.' },
+        { code: 500, message: 'Something went wrong.' },
+      ]
+    )('should return error code and error message', ({ code, message }, done) => {
+      const modProps = { ...props };
+      modProps.itemListViewEndpoint = { url: '', method: 'GET' };
+      modProps.recordActions = {
+        fetchRecord: jest.fn(() => new Promise(() => {
+          const error = new Error('Bad Request');
+          error.response = { status: code };
+          throw error;
+        })),
+      };
+      modProps.record = {};
+
+      cmp = shallow(<CampaignAdminList {...modProps} />);
+      cmp.instance().componentDidMount();
+
+      setImmediate(() => {
+        const errorCode = cmp.state().errorCode;
+        const msg = cmp.instance().renderErrorMessage(errorCode);
+        expect(msg.props.children).toBe(message);
+        expect(cmp.state().error).toBe(true);
+        expect(errorCode).toBe(code);
+
+        done();
+      });
+    });
+  });
 });

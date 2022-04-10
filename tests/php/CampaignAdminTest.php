@@ -4,12 +4,17 @@ namespace SilverStripe\CampaignAdmin\Tests;
 
 use ReflectionClass;
 use SilverStripe\CampaignAdmin\CampaignAdmin;
-use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Dev\FunctionalTest;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\Security\Group;
+use SilverStripe\Security\Member;
+use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\ChangeSet;
 
-class CampaignAdminTest extends SapphireTest
+class CampaignAdminTest extends FunctionalTest
 {
     protected $extraDataObjects = [
         CampaignAdminTest\InvalidChangeSet::class,
@@ -128,5 +133,30 @@ class CampaignAdminTest extends SapphireTest
             ],
             $results
         );
+    }
+
+    public function readCampaignDataProvider()
+    {
+        return [
+            'valid campaign' => ['change1', 'CMS_ACCESS_CampaignAdmin', 200],
+            'non existent campaign' => ['', 'CMS_ACCESS_CampaignAdmin', 404],
+            'inferred campaign' => ['change3', 'CMS_ACCESS_CampaignAdmin', 404],
+            'not enough permission' => ['change1', 'VIEW_SITE', 403],
+        ];
+    }
+
+    /**
+     * @dataProvider readCampaignDataProvider
+     */
+    public function testReadCampaign(
+        string $changesetName,
+        string $permission,
+        int $expectedResponseCode
+    ) {
+        $this->logOut();
+        $this->logInWithPermission($permission);
+        $changeSetID = $changesetName ? $this->idFromFixture(ChangeSet::class, $changesetName) : 12345;
+        $response = $this->get("/admin/campaigns/set/$changeSetID/show", null, ['Accept' => 'application/json']);
+        $this->assertEquals($expectedResponseCode, $response->getStatusCode());
     }
 }
