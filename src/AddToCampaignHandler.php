@@ -134,7 +134,7 @@ class AddToCampaignHandler
      */
     protected function getInChangeSets($object)
     {
-        $inChangeSetIDs = array_unique(ChangeSetItem::get_for_object($object)->column('ChangeSetID'));
+        $inChangeSetIDs = array_unique(ChangeSetItem::get_for_object($object)->column('ChangeSetID') ?? []);
         if ($inChangeSetIDs > 0) {
             $changeSets = $this->getAvailableChangeSets()->filter([
                 'ID' => $inChangeSetIDs,

@@ -205,7 +205,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $classes = Config::inst()->get(ChangeSet::class, 'important_classes');
 
         foreach ($classes as $class) {
-            if (!class_exists($class)) {
+            if (!class_exists($class ?? '')) {
                 continue;
             }
             /** @var DataObject $item */
@@ -441,7 +441,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $accepts = $request->getAcceptMimetypes();
 
         //accept 'text/json' for legacy reasons
-        if (in_array('application/json', $accepts) || in_array('text/json', $accepts)) {
+        if (in_array('application/json', $accepts ?? []) || in_array('text/json', $accepts ?? [])) {
             $response->addHeader('Content-Type', 'application/json');
             if (!$request->param('Name')) {
                 return (new HTTPResponse(null, 400));
@@ -788,7 +788,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $form->loadDataFrom($record);
         $extra = ['record' => ['id' => $record->ID]];
         $response = $this->getSchemaResponse($schemaId, $form, $errors, $extra);
-        $response->addHeader('X-Status', rawurlencode($message));
+        $response->addHeader('X-Status', rawurlencode($message ?? ''));
         return $response;
     }
 
