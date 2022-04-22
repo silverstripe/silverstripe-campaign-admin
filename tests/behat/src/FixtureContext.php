@@ -125,7 +125,7 @@ class FixtureContext extends BaseFixtureContext
         $mainContext = $this->getMainContext();
         $mainContext
             ->assertSession()
-            ->elementTextContains('css', '.message-box', str_replace('\\"', '"', $text));
+            ->elementTextContains('css', '.message-box', str_replace('\\"', '"', $text ?? ''));
     }
 
     /**
@@ -180,7 +180,7 @@ class FixtureContext extends BaseFixtureContext
     public function iSeeTheCampaignItem($negate, $name)
     {
         $item = $this->getCampaignItem($name);
-        $shouldSee = !trim($negate);
+        $shouldSee = !trim($negate ?? '');
 
         if ($shouldSee) {
             Assert::assertNotNull($item, sprintf('Item "%s" could not be found', $name));
@@ -219,10 +219,10 @@ class FixtureContext extends BaseFixtureContext
 
         preg_match_all(
             '/"(?<content_class>[^"]+)"\s*=\s*"(?<identifier>[^"]+)"/',
-            $data,
+            $data ?? '',
             $matches
         );
-        $itemMap = array_combine($matches['content_class'], $matches['identifier']);
+        $itemMap = array_combine($matches['content_class'] ?? [], $matches['identifier'] ?? []);
         foreach ($itemMap as $contentClass => $identifier) {
             $class = $this->convertTypeToClass($contentClass);
             $record = $this->getFixtureFactory()->get($class, $identifier);
