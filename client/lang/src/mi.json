@@ -8,5 +8,8 @@
     "CampaignAdmin.NO_CHANGES": "No changes",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publish campaign",
     "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Whakahokia"
+    "CampaignAdmin.REVERTCAMPAIGN": "Whakahokia",
+    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
+    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
+    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
 }
