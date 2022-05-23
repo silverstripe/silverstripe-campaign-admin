@@ -317,6 +317,13 @@ class AddToCampaignHandler
 
         $changeSet->addObject($object);
 
+        $childObjects = $object->findRelatedObjects('cascade_add_to_campaign');
+        if ($childObjects) {
+            foreach ($childObjects as $childObject) {
+                $changeSet->addObject($childObject);
+            }
+        }
+
         $request = $this->controller->getRequest();
         $message = _t(
             __CLASS__ . '.Success',
