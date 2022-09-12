@@ -6,10 +6,12 @@ Feature: Manage campaigns
 
   Background:
     Given a "campaign" "Test Campaign" with "Description"="this is a test"
-      And I am logged in with "ADMIN" permissions
-      And I go to "/admin/campaigns"
+      And the "group" "EDITOR" has permissions "Access to 'Pages' section" and "Access to 'Campaigns' section" and "Access to 'Files' section" and "FILE_EDIT_ALL"
+      And the "group" "CAMPAIGNS_EDITOR" has permissions "Access to 'Campaigns' section"
 
   Scenario: I can create a campaign
+    Given I am logged in as a member of "CAMPAIGNS_EDITOR" group
+      And I go to "/admin/campaigns"
     When I press the "Add campaign" button
       Then I should see the "Form_campaignCreateForm" form
     When I fill in "Name" with "newcampaign"
@@ -19,6 +21,8 @@ Feature: Manage campaigns
       And the "Publish campaign" button should be disabled
 
   Scenario: I can edit campaign
+    Given I am logged in as a member of "CAMPAIGNS_EDITOR" group
+      And I go to "/admin/campaigns"
     When I wait until I see the ".grid-field__table" element
       And I edit the campaign "Test Campaign"
     Then the "Name" field should contain "Test Campaign"
@@ -35,6 +39,8 @@ Feature: Manage campaigns
     Then I should see the campaign "Test campaign changed"
 
   Scenario: I can delete a campaign
+    Given I am logged in as a member of "CAMPAIGNS_EDITOR" group
+      And I go to "/admin/campaigns"
     When I wait until I see the ".grid-field__table" element
       And I delete the campaign "Test Campaign"
     Then I should not see the campaign "Test Campaign"
@@ -44,6 +50,7 @@ Feature: Manage campaigns
 
     Given a "page" "My page"
     And a "image" "assets/file2.jpg"
+    And I am logged in as a member of "EDITOR" group
 
     # Page is draft
     When I go to "/admin/pages"

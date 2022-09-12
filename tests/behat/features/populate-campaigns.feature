@@ -9,7 +9,8 @@ Feature: Populate campaigns
     And a "image" "assets/folder1/file2.jpg"
     And a "Campaign" "Empty Campaign"
     And a campaign "Full Campaign" with changes "image"="assets/folder1/file2.jpg" and "page"="About Us"
-    And I am logged in with "ADMIN" permissions
+    And the "group" "EDITOR" has permissions "Access to 'Pages' section" and "Access to 'Campaigns' section" and "Access to 'Files' section" and "FILE_EDIT_ALL"
+    And I am logged in as a member of "EDITOR" group
     And I go to "/admin/campaigns"
 
   Scenario: I can build a campaign from pages and files
