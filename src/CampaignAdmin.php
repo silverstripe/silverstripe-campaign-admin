@@ -582,10 +582,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     /**
      * Url handler for edit form
      *
-     * @param HTTPRequest $request
      * @return Form
      */
-    public function campaignEditForm($request)
+    public function campaignEditForm(HTTPRequest $request)
     {
         // Get ID either from posted back value, or url parameter
         if (!$request) {
@@ -674,10 +673,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     /**
      * Url handler for create form
      *
-     * @param HTTPRequest $request
      * @return Form
      */
-    public function campaignCreateForm($request)
+    public function campaignCreateForm(HTTPRequest $request)
     {
         return $this->getCampaignCreateForm();
     }
