@@ -730,13 +730,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     }
 
     /**
-     * Save  handler
-     *
-     * @param array $data
-     * @param Form $form
-     * @return HTTPResponse
+     * Save handler
      */
-    public function save($data, $form)
+    public function save(array $data, Form $form): HTTPResponse
     {
         $errors = null;
 
