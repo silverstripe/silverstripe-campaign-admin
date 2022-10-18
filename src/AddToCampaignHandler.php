@@ -98,7 +98,7 @@ class AddToCampaignHandler
      */
     public function handle()
     {
-        Deprecation::notice('5.0', 'handle() will be removed. Use addToCampaign or Form directly');
+        Deprecation::notice('5.0', 'Use addToCampaign() or Form directly instead');
         $object = $this->getObject($this->data['ID'], $this->data['ClassName']);
 
         if (empty($this->data['Campaign'])) {
