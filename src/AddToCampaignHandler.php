@@ -95,10 +95,11 @@ class AddToCampaignHandler
      * Perform the action. Either returns a Form or performs the action, as per the class doc
      *
      * @return DBHTMLText|HTTPResponse
+     * @deprecated 1.12.0 Use addToCampaign() or Form directly instead
      */
     public function handle()
     {
-        Deprecation::notice('5.0', 'Use addToCampaign() or Form directly instead');
+        Deprecation::notice('1.12.0', 'Use addToCampaign() or Form directly instead');
         $object = $this->getObject($this->data['ID'], $this->data['ClassName']);
 
         if (empty($this->data['Campaign'])) {
