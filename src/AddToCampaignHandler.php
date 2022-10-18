@@ -285,10 +285,9 @@ class AddToCampaignHandler
      *
      * @param DataObject $object The object to add to the ChangeSet
      * @param array|int $data Post data for this campaign form, or the ID of the campaign to add to
-     * @return HTTPResponse
      * @throws ValidationException
      */
-    public function addToCampaign($object, $data)
+    public function addToCampaign($object, $data): HTTPResponse
     {
         // Extract $campaignID from $data
         $campaignID = $this->getOrCreateCampaign($data);
@@ -334,10 +333,9 @@ class AddToCampaignHandler
             ]
         );
         if ($request->getHeader('X-Formschema-Request')) {
-            return $message;
+            return HTTPResponse::create()->setBody($message);
         } elseif (Director::is_ajax()) {
             $response = new HTTPResponse($message, 200);
-
             $response->addHeader('Content-Type', 'text/html; charset=utf-8');
             return $response;
         } else {
