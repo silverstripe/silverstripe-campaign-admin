@@ -92,7 +92,7 @@ class CampaignAdminTest extends FunctionalTest
         // Test limited items
         /** @var DataList $results */
         $results = $this->callProtectedMethod($admin, 'getListItems');
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             [
                 [ 'Name' => 'changeset 1' ],
             ],
@@ -102,7 +102,7 @@ class CampaignAdminTest extends FunctionalTest
         // Test published, no inferred
         CampaignAdmin::config()->set('show_published', true);
         $results = $this->callProtectedMethod($admin, 'getListItems');
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             [
                 [ 'Name' => 'changeset 1' ],
                 [ 'Name' => 'changeset 2' ],
@@ -113,7 +113,7 @@ class CampaignAdminTest extends FunctionalTest
         // Test published + inferred
         CampaignAdmin::config()->set('show_inferred', true);
         $results = $this->callProtectedMethod($admin, 'getListItems');
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             [
                 [ 'Name' => 'changeset 1' ],
                 [ 'Name' => 'changeset 2' ],
@@ -126,7 +126,7 @@ class CampaignAdminTest extends FunctionalTest
         // Test inferred, no published
         CampaignAdmin::config()->set('show_published', false);
         $results = $this->callProtectedMethod($admin, 'getListItems');
-        $this->assertDOSEquals(
+        $this->assertListEquals(
             [
                 [ 'Name' => 'changeset 1' ],
                 [ 'Name' => 'changeset 3' ],
