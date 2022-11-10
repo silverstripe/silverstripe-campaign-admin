@@ -8,7 +8,7 @@ nl:
     AddToCampaignAvailableLabel: 'Beschikbare campagnes'
     AddToCampaignFormFieldLabel: 'Selecteer een campagne'
     AddToCampaignInChangsetLabel: 'Let op, dit item is al opgenomen in de campagne(s):'
-    AddToCampaignInChangsetLabelAll: 'Let op, dit item is al opgenomen in ALLE campagnes:'
+    AddToCampaignInChangsetLabelAll: 'Let op, dit item staat al in de campagne(s):'
     CREATE_DENIED: 'U heeft geen rechten om een campagne aan te maken'
     CREATE_NEW: 'Start een nieuwe campagne'
     CREATE_NEW_PLACEHOLDER: 'Type de naam van de campagne'

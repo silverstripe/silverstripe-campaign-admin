@@ -16,8 +16,8 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.PUBLISHCAMPAIGN": "Campagne publiceren",
     "CampaignAdmin.REMOVED": "Verwijderd",
     "CampaignAdmin.REVERTCAMPAIGN": "Terugdraaien",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
-    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
+    "CampaignAdmin.FORBIDDEN": "Je hebt geen toegang tot deze campagne.",
+    "CampaignAdmin.PAGE_NOT_FOUND": "De gezochte campagne kan niet gevonden worden.",
+    "CampaignAdmin.SOMETHING_WENT_WRONG": "Er is iets misgegaan."
 });
 }
