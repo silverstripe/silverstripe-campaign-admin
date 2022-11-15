@@ -576,9 +576,9 @@ CampaignAdminList.propTypes = {
   breadcrumbsActions: PropTypes.object.isRequired,
   campaignActions: PropTypes.object.isRequired,
   recordActions: PropTypes.object.isRequired,
-  PreviewComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-  ViewModeComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
-  FormActionComponent: PropTypes.oneOfType([PropTypes.node, PropTypes.func]),
+  PreviewComponent: PropTypes.elementType,
+  ViewModeComponent: PropTypes.elementType,
+  FormActionComponent: PropTypes.elementType,
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
 };
 
