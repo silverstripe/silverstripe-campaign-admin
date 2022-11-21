@@ -556,25 +556,25 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             return (new HTTPResponse(null, 400));
         }
 
-        /** @var ChangeSet $record */
-        $record = ChangeSet::get()->byID($id);
-        if (!$record) {
+        /** @var ChangeSet $changeSet */
+        $changeSet = ChangeSet::get()->byID($id);
+        if (!$changeSet) {
             return (new HTTPResponse(null, 404));
         }
 
-        if (!$record->canPublish()) {
+        if (!$changeSet->canPublish()) {
             return (new HTTPResponse(null, 403));
         }
 
         try {
-            $record->publish();
+            $changeSet->publish();
         } catch (LogicException $e) {
             return (new HTTPResponse(json_encode(['status' => 'error', 'message' => $e->getMessage()]), 401))
                 ->addHeader('Content-Type', 'application/json');
         }
 
         return (new HTTPResponse(
-            json_encode($this->getChangeSetResource($record)),
+            json_encode($this->getChangeSetResource($changeSet)),
             200
         ))->addHeader('Content-Type', 'application/json');
     }
