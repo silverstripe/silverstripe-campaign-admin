@@ -8,7 +8,6 @@ use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injectable;
-use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\HiddenField;
@@ -18,7 +17,6 @@ use SilverStripe\Forms\Form;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\ORM\ValidationException;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Versioned\ChangeSet;
@@ -44,7 +42,7 @@ use SilverStripe\Core\Convert;
  *
  *     function addtocampaign($data, $form) {
  *         $handler = AddToCampaignHandler::create($form, $data);
- *         return $handler->handle();
+ *         return $handler->addToCampaign();
  *     }
  *
  *  and add an AddToCampaignHandler_FormAction to the EditForm, possibly through getCMSActions
@@ -89,24 +87,6 @@ class AddToCampaignHandler
         }
         $this->data = $data;
         $this->name = $name;
-    }
-
-    /**
-     * Perform the action. Either returns a Form or performs the action, as per the class doc
-     *
-     * @return DBHTMLText|HTTPResponse
-     * @deprecated 1.12.0 Use addToCampaign() or Form directly instead
-     */
-    public function handle()
-    {
-        Deprecation::notice('1.12.0', 'Use addToCampaign() or Form directly instead');
-        $object = $this->getObject($this->data['ID'], $this->data['ClassName']);
-
-        if (empty($this->data['Campaign'])) {
-            return $this->Form($object)->forTemplate();
-        } else {
-            return $this->addToCampaign($object, $this->data['Campaign']);
-        }
     }
 
     /**
