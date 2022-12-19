@@ -9,7 +9,7 @@
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publikuj kampanię",
     "CampaignAdmin.REMOVED": "Usunięto",
     "CampaignAdmin.REVERTCAMPAIGN": "Przywrócono",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
-    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
+    "CampaignAdmin.FORBIDDEN": "Nie masz uprawnień do zobaczenia kampanii",
+    "CampaignAdmin.PAGE_NOT_FOUND": "Kampania której szukasz nie może zostać odnaleziona.",
+    "CampaignAdmin.SOMETHING_WENT_WRONG": "Coś poszło nie tak."
 }
