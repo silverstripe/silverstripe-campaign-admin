@@ -16,6 +16,7 @@ import { DropdownItem } from 'reactstrap';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import classNames from 'classnames';
+import { joinUrlPaths } from 'lib/urls';
 
 /**
  * Represents a campaign list view
@@ -80,7 +81,7 @@ class CampaignAdminList extends Component {
    * Update breadcrumbs for this view
    */
   setBreadcrumbs() {
-    const { breadcrumbsActions: actions, campaignId, record, sectionConfig: { url } } = this.props;
+    const { breadcrumbsActions: actions, campaignId, record, sectionConfig: { reactRoutePath } } = this.props;
 
     // Setup breadcrumbs if record is loaded
     if (!record) {
@@ -90,11 +91,11 @@ class CampaignAdminList extends Component {
     // Push breadcrumb
     const breadcrumbs = [{
       text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
-      href: url,
+      href: joinUrlPaths('/', reactRoutePath),
     }];
     breadcrumbs.push({
       text: record.Name,
-      href: `${url}/set/${campaignId}/show`,
+      href: joinUrlPaths('/', reactRoutePath, `set/${campaignId}/show`),
     });
 
     actions.setBreadcrumbs(breadcrumbs);

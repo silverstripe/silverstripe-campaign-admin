@@ -130,19 +130,19 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 ],
             ],
             'readCampaignsEndpoint' => [
-                'url' => $this->Link() . 'sets',
+                'url' => $this->Link('sets'),
                 'method' => 'get'
             ],
             'itemListViewEndpoint' => [
-                'url' => $this->Link() . 'set/:id/show',
+                'url' => $this->Link('set/:id/show'),
                 'method' => 'get'
             ],
             'publishEndpoint' => [
-                'url' => $this->Link() . 'set/:id/publish',
+                'url' => $this->Link('set/:id/publish'),
                 'method' => 'post'
             ],
             'removeCampaignItemEndpoint' => [
-                'url' => $this->Link() . 'removeCampaignItem/:id/:itemId',
+                'url' => $this->Link('removeCampaignItem/:id/:itemId'),
                 'method' => 'post'
             ],
             'treeClass' => $this->config()->get('tree_class')
