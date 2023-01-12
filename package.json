@@ -9,7 +9,7 @@
     "node": "^18.x"
   },
   "scripts": {
-    "build": "yarn && rm -rf client/dist/* && NODE_ENV=production webpack --mode production --bail --progress",
+    "build": "yarn && yarn lint && rm -rf client/dist/* && NODE_ENV=production webpack --mode production --bail --progress",
     "dev": "NODE_ENV=development webpack --progress",
     "watch": "yarn && NODE_ENV=development webpack --watch --progress",
     "css": "yarn && WEBPACK_CHILD=css webpack -p --bail --progress",
@@ -49,8 +49,8 @@
     "redux-thunk": "^2.4.2"
   },
   "devDependencies": {
-    "@silverstripe/eslint-config": "^1.0.0-alpha1",
-    "@silverstripe/webpack-config": "^2.0.0-alpha1",
+    "@silverstripe/eslint-config": "^1.0.0-alpha6",
+    "@silverstripe/webpack-config": "^2.0.0-alpha5",
     "babel-core": "^6.26.3",
     "babel-jest": "^29.3.0",
     "babel-loader": "^9.1.0",
