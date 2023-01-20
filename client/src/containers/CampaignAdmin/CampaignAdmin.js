@@ -18,6 +18,7 @@ import ResizeAware from 'components/ResizeAware/ResizeAware';
 import withRouter, { routerPropTypes } from 'lib/withRouter';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import CampaignAdminList from './CampaignAdminList';
+import { joinUrlPaths } from 'lib/urls';
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
@@ -79,12 +80,12 @@ class CampaignAdmin extends Component {
   }
 
   setBreadcrumbs(view, id, title) {
-    const { sectionConfig: { url } } = this.props;
+    const { sectionConfig: { reactRoutePath } } = this.props;
 
     // Set root breadcrumb
     const breadcrumbs = [{
       text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
-      href: url,
+      href: joinUrlPaths('/', reactRoutePath),
     }];
     switch (view) {
       case 'show':
@@ -119,7 +120,8 @@ class CampaignAdmin extends Component {
    * @return {string}
    */
   getActionRoute(id, view) {
-    return `/${this.props.sectionConfig.reactRoutePath}/set/${id}/${view}`;
+    const { reactRoutePath } = this.props.sectionConfig;
+    return joinUrlPaths('/', reactRoutePath, `/set/${id}/${view}`);
   }
 
   handleBackButtonClick(event) {
@@ -154,10 +156,9 @@ class CampaignAdmin extends Component {
         const hasErrors = this.hasErrors(response);
         if (action === 'action_save' && !hasErrors) {
           // open the new campaign in edit mode after save completes
-          const sectionUrl = this.props.sectionConfig.reactRoutePath;
           const id = response.record.id;
           this.props.campaignActions.setNewItem(id);
-          this.props.router.navigate(`/${sectionUrl}/set/${id}/show`);
+          this.props.router.navigate(this.getActionRoute(id, 'show'));
         }
 
         return response;
@@ -169,7 +170,7 @@ class CampaignAdmin extends Component {
     const name = event.currentTarget.name;
     // intercept the Add to Campaign submit and open the modal dialog instead
     if (name === 'action_cancel') {
-      navigate(`/${reactRoutePath}`);
+      navigate(joinUrlPaths('/', reactRoutePath));
       event.preventDefault();
     }
   }
@@ -269,7 +270,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         ...props,
         onClick: (event) => {
           event.preventDefault();
-          navigate(`/${reactRoutePath}`);
+          navigate(joinUrlPaths('/', reactRoutePath));
         },
       };
 
@@ -297,7 +298,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         ...props,
         onClick: (event) => {
           event.preventDefault();
-          navigate(`/${reactRoutePath}`);
+          navigate(joinUrlPaths('/', reactRoutePath));
         },
       };
 
@@ -326,10 +327,10 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         data: {
         ...props.data,
           onDrillDown: (event, record) => {
-            navigate(`/${reactRoutePath}/${typeUrlParam}/${record.ID}/show`);
+            navigate(joinUrlPaths('/', reactRoutePath, `${typeUrlParam}/${record.ID}/show`));
           },
           onEditRecord: (event, id) => {
-            navigate(`/${reactRoutePath}/${typeUrlParam}/${id}/edit`);
+            navigate(joinUrlPaths('/', reactRoutePath, `${typeUrlParam}/${id}/edit`));
           },
         },
       };
@@ -355,7 +356,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       return this.renderCreateView();
     }
     const baseSchemaUrl = this.props.sectionConfig.form.campaignEditForm.schemaUrl;
-    const schemaUrl = `${baseSchemaUrl}/${this.props.router.params.id}`;
+    const schemaUrl = joinUrlPaths(baseSchemaUrl, '/', this.props.router.params.id);
 
     return (
       <div className="fill-height">
