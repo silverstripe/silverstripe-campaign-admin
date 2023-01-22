@@ -8,7 +8,6 @@ use SilverStripe\Versioned\ChangeSet;
 
 /**
  * Warning: Volatile API as placeholder for standard "GridField"
- * @skipUpgrade
  */
 class CampaignAdminList extends FormField
 {
