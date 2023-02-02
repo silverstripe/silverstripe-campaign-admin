@@ -16,8 +16,8 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publikigi kampanjon",
     "CampaignAdmin.REMOVED": "Removed",
     "CampaignAdmin.REVERTCAMPAIGN": "Malfari",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
-    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
+    "CampaignAdmin.FORBIDDEN": "Vi ne havas permeson vidi ĉi tiun kampanjon",
+    "CampaignAdmin.PAGE_NOT_FOUND": "Ne povas trovi la kampanjon kiun vi serĉas.",
+    "CampaignAdmin.SOMETHING_WENT_WRONG": "Io malfunkciis."
 });
 }
