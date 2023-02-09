@@ -8,6 +8,7 @@ import React from 'react';
 import { Component as CampaignAdminList } from '../CampaignAdminList';
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import { setImmediate } from 'core-js';
 
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -16,7 +17,9 @@ describe('CampaignAdminList', () => {
 
   beforeEach(() => {
     props = {
-      sectionConfig: {},
+      sectionConfig: {
+        reactRoutePath: '',
+      },
       itemListViewEndpoint: { url: '', method: 'POST' },
       record: {
         ID: 3,
