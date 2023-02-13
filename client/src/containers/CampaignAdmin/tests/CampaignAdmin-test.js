@@ -14,6 +14,7 @@ describe('CampaignAdminItem', () => {
     beforeEach(() => {
       props = {
         sectionConfig: {
+          reactRoutePath: '',
           publishEndpoint: {
             url: '/',
             method: 'get',
