@@ -9,7 +9,7 @@
     "node": "^18.x"
   },
   "scripts": {
-    "build": "yarn && yarn lint && rm -rf client/dist/* && NODE_ENV=production webpack --mode production --bail --progress",
+    "build": "yarn && yarn lint && yarn test && rm -rf client/dist/* && NODE_ENV=production webpack --mode production --bail --progress",
     "dev": "NODE_ENV=development webpack --progress",
     "watch": "yarn && NODE_ENV=development webpack --watch --progress",
     "css": "yarn && WEBPACK_CHILD=css webpack -p --bail --progress",
@@ -57,6 +57,9 @@
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.7",
     "jest-cli": "^29.3.0",
+    "jest-environment-jsdom": "^29.3.1",
+    "react-16": "npm:react@^16.14.0",
+    "react-dom-16": "npm:react-dom@^16.14.0",
     "toposort": "^2.0.2",
     "validator": "^13.7.0",
     "webpack": "^5.74.0",
@@ -69,9 +72,15 @@
     "defaults"
   ],
   "jest": {
+    "testEnvironment": "jsdom",
     "roots": [
       "client/src"
     ],
+    "moduleNameMapper": {
+      "^react-dom/client$": "react-dom-16",
+      "^react-dom((/.*)?)$": "react-dom-16$1",
+      "^react((/.*)?)$": "react-16$1"
+    },
     "modulePaths": [
       "client/src",
       "../admin/client/src",
@@ -85,11 +94,5 @@
     "transform": {
       ".*": "babel-jest"
     }
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ]
   }
 }
