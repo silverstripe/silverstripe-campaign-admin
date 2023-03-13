@@ -43,7 +43,7 @@
 }
 
 .campaign-info__icon {
-  margin-right: $panel-padding-x / 2;
+  margin-right: calc($panel-padding-x / 2);
 
   @include media-breakpoint-down(xs) {
     display: none;
@@ -53,7 +53,7 @@
 .campaign-info__buttons {
   position: absolute;
   top: $panel-padding-y;
-  right: $panel-padding-x / 2;
+  right: calc($panel-padding-x / 2);
 }
 
 .campaign-info__links {
