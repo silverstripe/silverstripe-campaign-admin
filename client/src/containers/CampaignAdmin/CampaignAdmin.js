@@ -59,7 +59,7 @@ class CampaignAdmin extends Component {
     this.handleToggleMessage = this.handleToggleMessage.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     // Ensure default breadcrumbs are setup
     const { breadcrumbs, title, router: { params: { id, view } } } = this.props;
     if (breadcrumbs.length === 0) {
@@ -67,12 +67,12 @@ class CampaignAdmin extends Component {
     }
   }
 
-  componentWillReceiveProps(props) {
-    const { title, router: { params: { id, view } } } = props;
+  componentDidUpdate(prevProps) {
+    const { title, router: { params: { id, view } } } = this.props;
     const hasChangedRoute = (
-      this.props.router.params.id !== id ||
-      this.props.router.params.view !== view ||
-      this.props.title !== title
+      prevProps.router.params.id !== id ||
+      prevProps.router.params.view !== view ||
+      prevProps.title !== title
     );
     if (hasChangedRoute) {
       this.setBreadcrumbs(view, id, title);

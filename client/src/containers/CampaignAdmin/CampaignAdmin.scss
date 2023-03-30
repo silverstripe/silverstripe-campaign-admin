@@ -47,7 +47,7 @@
   color: $brand-primary;
   position: absolute;
   right: $spacer;
-  bottom: $spacer * 2 / 3;
+  bottom: calc($spacer * 2 / 3);
   font-size: $font-size-sm;
 
   .font-icon-link {
