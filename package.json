@@ -51,15 +51,12 @@
   "devDependencies": {
     "@silverstripe/eslint-config": "^1.0.0",
     "@silverstripe/webpack-config": "^2.0.0",
+    "@testing-library/react": "^14.0.0",
     "babel-core": "^6.26.3",
     "babel-jest": "^29.3.0",
     "babel-loader": "^9.1.0",
-    "enzyme": "^3.11.0",
-    "enzyme-adapter-react-16": "^1.15.7",
     "jest-cli": "^29.3.0",
     "jest-environment-jsdom": "^29.3.1",
-    "react-16": "npm:react@^16.14.0",
-    "react-dom-16": "npm:react-dom@^16.14.0",
     "toposort": "^2.0.2",
     "validator": "^13.7.0",
     "webpack": "^5.74.0",
@@ -76,11 +73,6 @@
     "roots": [
       "client/src"
     ],
-    "moduleNameMapper": {
-      "^react-dom/client$": "react-dom-16",
-      "^react-dom((/.*)?)$": "react-dom-16$1",
-      "^react((/.*)?)$": "react-16$1"
-    },
     "modulePaths": [
       "client/src",
       "../admin/client/src",

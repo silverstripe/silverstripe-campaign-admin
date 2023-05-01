@@ -1,42 +1,27 @@
-/* global jest, describe, it, expect */
+/* global jest, test, describe, it, expect */
 
 import React from 'react';
 import IntroScreen from '../IntroScreen';
-import Enzyme, { mount } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16/build/index';
+import { render } from '@testing-library/react';
 
-Enzyme.configure({ adapter: new Adapter() });
+test('IntroScreen renders when show is true', () => {
+  const { container } = render(
+    <IntroScreen {...{
+      show: true,
+      onClose: () => {},
+    }}
+    />
+  );
+  expect(container.querySelector('.campaign-info')).not.toBeNull();
+});
 
-const errorSpy = jest.spyOn(global.console, 'error');
-const warnSpy = jest.spyOn(global.console, 'warn');
-
-const props = {
-  show: true,
-  onClose: () => {},
-};
-
-describe('IntroScreen', () => {
-  describe('render()', () => {
-    beforeEach(() => {
-      errorSpy.mockClear();
-      warnSpy.mockClear();
-    });
-
-    it('renders', () => {
-      mount(
-        <IntroScreen {...props} />
-      );
-      expect(errorSpy).not.toHaveBeenCalled();
-      expect(warnSpy).not.toHaveBeenCalled();
-    });
-
-    it('renders when show is false', () => {
-      const props2 = { ...props, show: false };
-      mount(
-        <IntroScreen {...props2} />
-      );
-      expect(errorSpy).not.toHaveBeenCalled();
-      expect(warnSpy).not.toHaveBeenCalled();
-    });
-  });
+test('IntroScreen does not render when show is false', () => {
+  const { container } = render(
+    <IntroScreen {...{
+      show: false,
+      onClose: () => {},
+    }}
+    />
+  );
+  expect(container.querySelector('.campaign-info')).toBeNull();
 });
