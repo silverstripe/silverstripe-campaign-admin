@@ -13,15 +13,13 @@ prepared for publishing in advance.
 
 ## Installation
 
+```sh
+composer require silverstripe/campaign-admin
 ```
-$ composer require silverstripe/campaign-admin
-```
-
-You'll also need to run `dev/build`.
 
 ## Documentation
 
-See [doc.silverstripe.org](http://doc.silverstripe.org)
+See [docs.silverstripe.org](https://docs.silverstripe.org)
 
 ## Versioning
 
