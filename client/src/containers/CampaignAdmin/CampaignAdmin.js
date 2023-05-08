@@ -352,6 +352,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @returns {object}
    */
   renderDetailEditView() {
+    const { FormBuilderLoaderComponent, BreadcrumbComponent } = this.props;
     if (this.props.router.params.id <= 0) {
       return this.renderCreateView();
     }
@@ -361,10 +362,10 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     return (
       <div className="fill-height">
         <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
-          <Breadcrumb multiline />
+          <BreadcrumbComponent multiline />
         </Toolbar>
 
-        <FormBuilderLoader
+        <FormBuilderLoaderComponent
           fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
           actionHolder={{ className: 'toolbar--south' }}
           onAction={this.handleFormAction}
@@ -381,13 +382,14 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @returns {object}
    */
   renderCreateView() {
+    const { FormBuilderLoaderComponent, BreadcrumbComponent } = this.props;
     const { schemaUrl } = this.props.sectionConfig.form.campaignCreateForm;
     return (
       <div className="fill-height">
         <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
-          <Breadcrumb multiline />
+          <BreadcrumbComponent multiline />
         </Toolbar>
-        <FormBuilderLoader
+        <FormBuilderLoaderComponent
           fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
           actionHolder={{ className: 'toolbar--south' }}
           onSubmit={this.handleCreateCampaignSubmit}
@@ -405,7 +407,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @returns {object}
    */
   renderIndexView() {
-    const { showMessage } = this.props;
+    const { showMessage, BreadcrumbComponent, FormBuilderLoaderComponent } = this.props;
     const { schemaUrl } = this.props.sectionConfig.form.EditForm;
     const formActionProps = {
       title: i18n._t('CampaignAdmin.ADDCAMPAIGN', 'Add campaign'),
@@ -422,7 +424,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     return (
       <div className="fill-height" aria-expanded="true">
         <Toolbar>
-          <Breadcrumb multiline />
+          <BreadcrumbComponent multiline />
         </Toolbar>
         <div className="panel panel--scrollable flexbox-area-grow">
           <IntroScreen show={showMessage} onClose={this.handleHideMessage} />
@@ -443,7 +445,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
                 </div>
               </div>
             </div>
-            <FormBuilderLoader {...formBuilderProps} />
+            <FormBuilderLoaderComponent {...formBuilderProps} />
           </div>
         </div>
       </div>
@@ -527,6 +529,8 @@ CampaignAdmin.propTypes = {
   showMessage: PropTypes.bool,
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
   onResize: PropTypes.func.isRequired,
+  FormBuilderLoaderComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  BreadcrumbComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 
 CampaignAdmin.defaultProps = {
@@ -536,6 +540,8 @@ CampaignAdmin.defaultProps = {
   },
   view: 'show',
   breadcrumbs: [],
+  FormBuilderLoaderComponent: FormBuilderLoader,
+  BreadcrumbComponent: Breadcrumb,
 };
 
 function mapStateToProps(state, ownProps) {

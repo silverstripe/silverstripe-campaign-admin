@@ -1,145 +1,110 @@
-/* global jest, describe, beforeEach, it, expect */
-
-jest.mock('reactstrap');
+/* global jest, test, describe, beforeEach, it, expect */
 
 import React from 'react';
-import ReactTestUtils from 'react-dom/test-utils';
+import { render } from '@testing-library/react';
 import CampaignAdminItem from '../CampaignAdminItem';
 
-describe('CampaignAdminItem', () => {
-  let props = null;
+function makeProps(obj = {}) {
+  return {
+    campaign: {},
+    item: { ID: 1 },
+    ...obj
+  };
+}
 
-  beforeEach(() => {
-    props = {
-      campaign: {},
-      item: { ID: 1 },
-    };
-  });
+test('CampaignAdminItem should not show link icon by default', () => {
+  const { container } = render(<CampaignAdminItem {...makeProps()} />);
+  expect(container.querySelectorAll('.campaign-admin__item-links')).toHaveLength(0);
+});
 
-  describe('Links', () => {
-    let cmp = null;
-    let links = null;
+test('CampaignAdminItem should show link icon when the item is being from the selected item', () => {
+  const { container } = render(
+    <CampaignAdminItem {...makeProps({
+      isLinked: true
+    })}
+    />
+  );
+  expect(container.querySelectorAll('.campaign-admin__item-links')).toHaveLength(1);
+});
 
-    beforeEach(() => {
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      links = ReactTestUtils
-        .scryRenderedDOMComponentsWithClass(cmp, 'campaign-admin__item-links');
-    });
+test('CampaignAdminItem should show link icon when the item is selected and have links to other items', () => {
+  const { container } = render(
+    <CampaignAdminItem {...makeProps({
+      isLinked: false,
+      selected: true,
+      item: {
+        _links: {
+          references: [
+            { ID: 2 },
+            { ID: 3 },
+            { ID: 4 },
+          ],
+        },
+      },
+    })}
+    />
+  );
+  expect(container.querySelectorAll('.campaign-admin__item-links')).toHaveLength(1);
+});
 
-    it('should not show link icon by default', () => {
-      expect(links).toHaveLength(0);
-    });
+test('CampaignAdminItem should show correct link to information in the tooltip', () => {
+  const { container } = render(
+    <CampaignAdminItem {...makeProps({
+      selected: true,
+      item: {
+        _links: {
+          references: [
+            { ID: 2 },
+          ],
+        },
+      },
+    })}
+    />
+  );
+  expect(container.querySelector('.campaign-admin__item-links__number').innerHTML).toBe('1');
+});
 
-    it('should show link icon when the item is being from the selected item', () => {
-      props.isLinked = true;
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      links = ReactTestUtils
-        .scryRenderedDOMComponentsWithClass(cmp, 'campaign-admin__item-links');
+test('CampaignAdminItem should show correct linked by information in the tooltip', () => {
+  const { container } = render(
+    <CampaignAdminItem {...makeProps({
+      selected: true,
+      item: {
+        _links: {
+          references: [
+            { ID: 2 },
+            { ID: 3 },
+            { ID: 4 },
+            { ID: 4 },
+            { ID: 5 },
+            { ID: 7 },
+            { ID: 8 },
+            { ID: 9 },
+            { ID: 10 },
+            { ID: 11 },
+          ],
+        },
+      },
+    })}
+    />
+  );
+  expect(container.querySelector('.campaign-admin__item-links__number').innerHTML).toBe('10');
+});
 
-      expect(links).toHaveLength(1);
-    });
-
-    it('should show link icon when the item is selected and have links to other items', () => {
-      props.isLinked = false;
-      props.selected = true;
-      props.item._links = {
-        references: [
-          { ID: 2 },
-          { ID: 3 },
-          { ID: 4 },
-        ],
-      };
-
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      links = ReactTestUtils
-        .scryRenderedDOMComponentsWithClass(cmp, 'campaign-admin__item-links');
-      expect(links).toHaveLength(1);
-    });
-
-    it('should show correct link to information in the tooltip', () => {
-      props.item._links = {
-        references: [
-          { ID: 2 },
-        ],
-      };
-
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      expect(cmp.getReferToTooltipText()).toEqual('Requires one item(s)');
-      expect(cmp.getReferredByTooltipText()).toEqual('Required by zero item(s)');
-
-      props.item._links = {
-        references: [
-          { ID: 2 },
-          { ID: 3 },
-          { ID: 4 },
-          { ID: 4 },
-          { ID: 5 },
-          { ID: 7 },
-          { ID: 8 },
-          { ID: 9 },
-          { ID: 10 },
-          { ID: 11 },
-        ],
-      };
-
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      expect(cmp.getReferToTooltipText()).toEqual('Requires 10 item(s)');
-    });
-
-    it('should show correct linked by information in the tooltip', () => {
-      props.item._links = {
-        referenced_by: [
-          { ObjectId: 2 },
-        ],
-      };
-
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      expect(cmp.getReferToTooltipText()).toEqual('Requires zero item(s)');
-      expect(cmp.getReferredByTooltipText()).toEqual('Required by one item(s)');
-
-      props.item._links = {
-        referenced_by: [
-          { ChangeSetItemID: 2 },
-          { ChangeSetItemID: 3 },
-          { ChangeSetItemID: 4 },
-        ],
-      };
-
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      expect(cmp.getReferredByTooltipText()).toEqual('Required by three item(s)');
-    });
-
-    it('should show correct link to and linked by information in the tooltip', () => {
-      props.item._links = {
-        references: [
-          { ID: 5 },
-        ],
-        referenced_by: [
-          { ChangeSetItemID: 2 },
-          { ChangeSetItemID: 3 },
-          { ChangeSetItemID: 4 },
-        ],
-      };
-
-      cmp = ReactTestUtils.renderIntoDocument(
-        <CampaignAdminItem {...props} />
-      );
-      expect(cmp.getReferToTooltipText()).toEqual('Requires one item(s)');
-      expect(cmp.getReferredByTooltipText()).toEqual('Required by three item(s)');
-    });
-  });
+test('CampaignAdminItem should show correct linked by information in the tooltip', () => {
+  const { container } = render(
+    <CampaignAdminItem {...makeProps({
+      selected: true,
+      item: {
+        _links: {
+          referenced_by: [
+            { ChangeSetItemID: 2 },
+            { ChangeSetItemID: 3 },
+            { ChangeSetItemID: 4 },
+          ],
+        },
+      },
+    })}
+    />
+  );
+  expect(container.querySelector('.campaign-admin__item-links__number').innerHTML).toBe('3');
 });

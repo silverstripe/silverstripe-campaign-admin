@@ -130,6 +130,7 @@ class CampaignAdminList extends Component {
    * @return {array}
    */
   getMoreActions() {
+    const { DropdownItemComponent } = this.props;
     const selectedItem = this.getSelectedItem();
 
     if (!selectedItem) {
@@ -144,7 +145,7 @@ class CampaignAdminList extends Component {
     );
     const removeAction = selectedItem.Added === 'explicitly'
       ? (
-        <DropdownItem
+        <DropdownItemComponent
           key="remove_action"
           className="btn btn-secondary action"
           onClick={this.handleRemoveItem}
@@ -153,17 +154,17 @@ class CampaignAdminList extends Component {
             'CampaignAdmin.REMOVE',
             'Remove'
           )}
-        </DropdownItem>
+        </DropdownItemComponent>
       )
       : (
-        <DropdownItem
+        <DropdownItemComponent
           tag="p"
           key="unremoveable_info"
           className="alert alert-info campaign-admin__unremoveable-item"
         >
           <span className="font-icon-link" />
           {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
-        </DropdownItem>
+        </DropdownItemComponent>
       );
 
     return [
@@ -402,7 +403,7 @@ class CampaignAdminList extends Component {
    * @return object
    */
   renderCampaignAdminListDetail(body) {
-    const { previewState, onBackButtonClick, newItem } = this.props;
+    const { previewState, onBackButtonClick, newItem, BreadcrumbComponent } = this.props;
 
     const bodyClass = classNames(
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
@@ -436,7 +437,7 @@ class CampaignAdminList extends Component {
     return (
       <div className={itemClass} aria-expanded="true">
         <Toolbar showBackButton onBackButtonClick={onBackButtonClick}>
-          <Breadcrumb multiline />
+          <BreadcrumbComponent multiline />
         </Toolbar>
         {newItemInfo}
         <div className={bodyClass}>
@@ -581,10 +582,13 @@ CampaignAdminList.propTypes = {
   ViewModeComponent: PropTypes.elementType,
   FormActionComponent: PropTypes.elementType,
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
+  BreadcrumbComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  DropdownItemComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 
 CampaignAdminList.defaultProps = {
-
+  BreadcrumbComponent: Breadcrumb,
+  DropdownItemComponent: DropdownItem,
 };
 
 function mapStateToProps(state, ownProps) {
