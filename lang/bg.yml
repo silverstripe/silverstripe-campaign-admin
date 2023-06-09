@@ -18,5 +18,3 @@ bg:
     MENUTITLE: Кампании
     SAVEDUP: Записана.
     SAVEDERROR: Грешка.
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Запис

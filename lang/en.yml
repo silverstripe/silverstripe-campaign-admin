@@ -1,7 +1,4 @@
 en:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Save
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Saved
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Add to a new campaign'
     AddToCampaignAddAction: Add
@@ -33,5 +30,7 @@ en:
     ERROR_DUPLICATE_NAME: 'Name "{Name}" already exists'
     MENUTITLE: Campaigns
     NOITEMSTEXT: 'Add items from the {section} section'
+    SAVE: Save
+    SAVED: Saved
     SAVEDERROR: Error.
     SAVEDUP: Saved.

@@ -1,7 +1,4 @@
 eo:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Konservi
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Konservita.
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Aldoni al nova kampanjo'
     AddToCampaignAddAction: Aldoni

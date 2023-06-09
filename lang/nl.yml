@@ -1,7 +1,4 @@
 nl:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Opslaan
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Opgeslagen
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Aan nieuwe campagne toevoegen'
     AddToCampaignAddAction: Toevoegen
