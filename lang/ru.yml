@@ -16,5 +16,3 @@ ru:
     CANCEL: Отмена
     MENUTITLE: Кампании
     SAVEDUP: Сохранено.
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Сохранить

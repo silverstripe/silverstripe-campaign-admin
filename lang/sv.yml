@@ -1,7 +1,4 @@
 sv:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Spara
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Sparat
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Lägg till i ny kampanj'
     AddToCampaignAddAction: 'Lägg till'
