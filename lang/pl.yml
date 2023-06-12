@@ -1,7 +1,4 @@
 pl:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Zapisz
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Zapisano
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Dodaj do nowej kampanii'
     AddToCampaignAddAction: Dodaj

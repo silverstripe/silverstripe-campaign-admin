@@ -1,7 +1,4 @@
 fi_FI:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Tallenna
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Tallennettu
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Lisää uusi kampanja'
     AddToCampaignAddAction: Lisää
