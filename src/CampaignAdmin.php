@@ -629,13 +629,13 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             'campaignEditForm',
             $fields,
             FieldList::create(
-                FormAction::create('save', _t(__CLASS__.'SAVE', 'Save'))
+                FormAction::create('save', _t(__CLASS__.'.SAVE', 'Save'))
                     ->setIcon('save')
                     ->setSchemaState([
                         'data' => [
-                            'pristineTitle' => _t(__CLASS__.'SAVED', 'Saved'),
+                            'pristineTitle' => _t(__CLASS__.'.SAVED', 'Saved'),
                             'pristineIcon' => 'tick',
-                            'dirtyTitle' => _t(__CLASS__.'SAVE', 'Save'),
+                            'dirtyTitle' => _t(__CLASS__.'.SAVE', 'Save'),
                             'dirtyIcon' => 'save',
                             'pristineClass' => 'btn-outline-primary',
                             'dirtyClass' => '',
