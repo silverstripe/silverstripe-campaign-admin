@@ -1,7 +1,4 @@
 da:
-  CampaignAdmin:
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVE: Gem
-    php.SilverStripe\CampaignAdmin\CampaignAdminSAVED: Gemt
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Tilføj til ny kampagne'
     AddToCampaignAddAction: Tilføj
