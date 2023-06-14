@@ -32,3 +32,5 @@ it:
     NOITEMSTEXT: 'Aggiungere elementi dalla sezione {section}'
     SAVEDERROR: Errore.
     SAVEDUP: Salvato.
+    SAVE: Salva
+    SAVED: Salvato

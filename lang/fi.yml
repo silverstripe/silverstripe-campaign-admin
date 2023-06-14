@@ -32,3 +32,5 @@ fi:
     NOITEMSTEXT: 'Lisää kohteet osiosta: {section}'
     SAVEDERROR: Virhe
     SAVEDUP: Tallennettu.
+    SAVE: Tallenna
+    SAVED: Tallennettu

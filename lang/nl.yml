@@ -32,3 +32,5 @@ nl:
     NOITEMSTEXT: 'Items toevoegen aan het  {section} onderdeel'
     SAVEDERROR: Fout
     SAVEDUP: Opgeslagen.
+    SAVE: Opslaan
+    SAVED: Opgeslagen
