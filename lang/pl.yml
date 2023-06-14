@@ -32,3 +32,5 @@ pl:
     NOITEMSTEXT: 'Dodaj elementy z sekcji {section}'
     SAVEDERROR: Błąd.
     SAVEDUP: Zapisano.
+    SAVE: Zapisz
+    SAVED: Zapisano
