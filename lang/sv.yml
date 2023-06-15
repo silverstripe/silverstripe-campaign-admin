@@ -32,3 +32,5 @@ sv:
     NOITEMSTEXT: 'Lägg till objekt från sektionen {section}'
     SAVEDERROR: Fel.
     SAVEDUP: Sparat.
+    SAVE: Spara
+    SAVED: Sparat
