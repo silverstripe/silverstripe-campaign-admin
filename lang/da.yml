@@ -32,3 +32,5 @@ da:
     NOITEMSTEXT: 'Tilføj elementer fra sektionen {section}'
     SAVEDERROR: Fejl.
     SAVEDUP: Gemt.
+    SAVE: Gem
+    SAVED: Gemt

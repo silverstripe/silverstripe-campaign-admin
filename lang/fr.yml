@@ -32,3 +32,5 @@ fr:
     NOITEMSTEXT: 'Ajouter des éléments de la section {section}'
     SAVEDERROR: Erreur
     SAVEDUP: Sauvegardé
+    SAVE: Sauvegarder
+    SAVED: Sauvegardé
