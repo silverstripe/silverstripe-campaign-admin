@@ -1,25 +1,27 @@
 /* global jest, test, describe, beforeEach, it, expect */
 
-import { Component as CampaignAdmin } from '../CampaignAdmin';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-
+import { Component as CampaignAdmin } from '../CampaignAdmin';
 
 let mockResponse;
 
 function makeProps(obj = {}) {
   return {
     sectionConfig: {
-      reactRoutePath: '',
+      reactRoutePath: '/campaigns',
       publishEndpoint: {
         url: '/',
         method: 'get',
       },
       form: {
         EditForm: {
-          schemaUrl: 'schemaEditForm',
+          schemaUrl: 'schemaEditForm'
         },
-      },
+        campaignCreateForm: {
+          schemaUrl: '/my/schema'
+        }
+      }
     },
     breadcrumbsActions: {
       setBreadcrumbs: jest.fn(),
@@ -39,14 +41,6 @@ function makeProps(obj = {}) {
         id: null,
         view: null
       }
-    },
-    sectionConfig: {
-      form: {
-        campaignCreateForm: {
-          schemaUrl: '/my/schema'
-        }
-      },
-      reactRoutePath: '/campaigns',
     },
     router: {
       params: {

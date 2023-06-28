@@ -1,8 +1,8 @@
 /* global jest, test, describe, beforeEach, it, expect */
 
 import React from 'react';
-import { Component as CampaignAdminList } from '../CampaignAdminList';
 import { render, screen } from '@testing-library/react';
+import { Component as CampaignAdminList } from '../CampaignAdminList';
 
 function makeProps(obj = {}) {
   return {

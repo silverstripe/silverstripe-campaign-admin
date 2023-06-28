@@ -17,8 +17,8 @@ import IntroScreen from 'components/IntroScreen/IntroScreen';
 import ResizeAware from 'components/ResizeAware/ResizeAware';
 import withRouter, { routerPropTypes } from 'lib/withRouter';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
-import CampaignAdminList from './CampaignAdminList';
 import { joinUrlPaths } from 'lib/urls';
+import CampaignAdminList from './CampaignAdminList';
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
@@ -136,7 +136,6 @@ class CampaignAdmin extends Component {
       }
     }
   }
-
 
   /**
    * Handler for creating campaign, will redirect to edit form
@@ -325,7 +324,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       const extendedProps = {
         ...props,
         data: {
-        ...props.data,
+          ...props.data,
           onDrillDown: (event, record) => {
             navigate(joinUrlPaths('/', reactRoutePath, `${typeUrlParam}/${record.ID}/show`));
           },
