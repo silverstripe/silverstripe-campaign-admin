@@ -1,8 +1,8 @@
 /* global jest, test, describe, it, expect */
 
 import React from 'react';
-import IntroScreen from '../IntroScreen';
 import { render } from '@testing-library/react';
+import IntroScreen from '../IntroScreen';
 
 test('IntroScreen renders when show is true', () => {
   const { container } = render(

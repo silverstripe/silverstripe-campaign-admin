@@ -10,13 +10,13 @@ import Accordion from 'components/Accordion/Accordion';
 import AccordionBlock from 'components/Accordion/AccordionBlock';
 import ListGroupItem from 'components/ListGroup/ListGroupItem';
 import Toolbar from 'components/Toolbar/Toolbar';
-import CampaignAdminItem from './CampaignAdminItem';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import { DropdownItem } from 'reactstrap';
 import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import classNames from 'classnames';
 import { joinUrlPaths } from 'lib/urls';
+import CampaignAdminItem from './CampaignAdminItem';
 
 /**
  * Represents a campaign list view
@@ -309,7 +309,7 @@ class CampaignAdminList extends Component {
         <FormActionComponent {...actionProps} />
         {!empty && <ViewModeComponent
           id="view-mode-toggle-in-edit-nb"
-          area={'edit'}
+          area="edit"
         />}
       </div>
     );

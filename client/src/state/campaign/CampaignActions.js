@@ -1,8 +1,8 @@
 /* global window */
-import ACTION_TYPES from './CampaignActionTypes';
 import RECORD_ACTION_TYPES from 'state/records/RecordsActionTypes';
 import * as toastsActions from 'state/toasts/ToastsActions';
 import i18n from 'i18n';
+import ACTION_TYPES from './CampaignActionTypes';
 
 export function setShowMessage(show, storage = window.localStorage) {
   storage.setItem('campaign.showMessage', show);

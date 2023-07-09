@@ -1,10 +1,9 @@
 /* global jest, jasmine, describe, it, expect, beforeEach */
 
-import * as actions from '../CampaignActions';
-import ACTION_TYPES from '../CampaignActionTypes';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
-
+import * as actions from '../CampaignActions';
+import ACTION_TYPES from '../CampaignActionTypes';
 
 describe('CampaignActions', () => {
   const middlewares = [thunk];
