@@ -9,15 +9,15 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.ADDCAMPAIGN": "Tilføj kampagne",
     "CampaignAdmin.DELETECAMPAIGN": "Er du sikker på du vil slette dette element?",
     "CampaignAdmin.DRAFT": "Kladde",
+    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s elementer",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s element",
     "CampaignAdmin.MODIFIED": "Modificeret",
     "CampaignAdmin.NO_CHANGES": "Ingen ændringer",
+    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Offentliggør kampagne",
     "CampaignAdmin.REMOVED": "Fjernet",
     "CampaignAdmin.REVERTCAMPAIGN": "Fortryd",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
 });
 }

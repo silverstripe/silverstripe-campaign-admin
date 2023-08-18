@@ -30,7 +30,7 @@ sv:
     ERROR_DUPLICATE_NAME: 'Namnet "{Name}" finns redan'
     MENUTITLE: Kampanjer
     NOITEMSTEXT: 'Lägg till objekt från sektionen {section}'
-    SAVEDERROR: Fel.
-    SAVEDUP: Sparat.
     SAVE: Spara
     SAVED: Sparat
+    SAVEDERROR: Fel.
+    SAVEDUP: Sparat.

@@ -2,14 +2,14 @@
     "CampaignAdmin.ADDCAMPAIGN": "Aggiungi campagna",
     "CampaignAdmin.DELETECAMPAIGN": "Sei sicuro di voler eliminare questo record?",
     "CampaignAdmin.DRAFT": "Bozza",
+    "CampaignAdmin.FORBIDDEN": "Non hai accesso ai dati di questa campagna.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s elementi",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s elemento",
     "CampaignAdmin.MODIFIED": "Modificato",
     "CampaignAdmin.NO_CHANGES": "Nessuna modifica",
+    "CampaignAdmin.PAGE_NOT_FOUND": "La campagna che stai cercando non è stata trovata.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Pubblica campagna",
     "CampaignAdmin.REMOVED": "Eliminato",
     "CampaignAdmin.REVERTCAMPAIGN": "Ripristina",
-    "CampaignAdmin.FORBIDDEN": "Non hai accesso ai dati di questa campagna.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "La campagna che stai cercando non è stata trovata.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Qualcosa è andato storto."
 }
