@@ -9,15 +9,15 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.ADDCAMPAIGN": "Lisää kampanja",
     "CampaignAdmin.DELETECAMPAIGN": "Haluatko varmasti poistaa tämän tietueen?",
     "CampaignAdmin.DRAFT": "Draft",
+    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s kohdetta",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s kohde",
     "CampaignAdmin.MODIFIED": "Modified",
     "CampaignAdmin.NO_CHANGES": "No changes",
+    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Julkaise kampanja",
     "CampaignAdmin.REMOVED": "Removed",
     "CampaignAdmin.REVERTCAMPAIGN": "Palauta",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
 });
 }

@@ -30,7 +30,7 @@ pl:
     ERROR_DUPLICATE_NAME: 'Nazwa "{Name}" już istnieje'
     MENUTITLE: Kampanie
     NOITEMSTEXT: 'Dodaj elementy z sekcji {section}'
-    SAVEDERROR: Błąd.
-    SAVEDUP: Zapisano.
     SAVE: Zapisz
     SAVED: Zapisano
+    SAVEDERROR: Błąd.
+    SAVEDUP: Zapisano.

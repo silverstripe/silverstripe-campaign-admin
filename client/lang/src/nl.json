@@ -2,14 +2,14 @@
     "CampaignAdmin.ADDCAMPAIGN": "Campagne toevoegen",
     "CampaignAdmin.DELETECAMPAIGN": "Weet u zeker dat u dit record wilt verwijderen?",
     "CampaignAdmin.DRAFT": "Concept",
+    "CampaignAdmin.FORBIDDEN": "Je hebt geen toegang tot deze campagne.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
     "CampaignAdmin.MODIFIED": "Gewijzigd",
     "CampaignAdmin.NO_CHANGES": "Geen wijzigingen",
+    "CampaignAdmin.PAGE_NOT_FOUND": "De gezochte campagne kan niet gevonden worden.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Campagne publiceren",
     "CampaignAdmin.REMOVED": "Verwijderd",
     "CampaignAdmin.REVERTCAMPAIGN": "Terugdraaien",
-    "CampaignAdmin.FORBIDDEN": "Je hebt geen toegang tot deze campagne.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "De gezochte campagne kan niet gevonden worden.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Er is iets misgegaan."
 }
