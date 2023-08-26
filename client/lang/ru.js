@@ -9,15 +9,15 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.ADDCAMPAIGN": "Добавить кампанию",
     "CampaignAdmin.DELETECAMPAIGN": "Вы действительно хотите удалить эту запись?",
     "CampaignAdmin.DRAFT": "Draft",
+    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s элементов",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s элемент",
     "CampaignAdmin.MODIFIED": "Modified",
     "CampaignAdmin.NO_CHANGES": "No changes",
+    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Опубликовать кампанию",
     "CampaignAdmin.REMOVED": "Removed",
     "CampaignAdmin.REVERTCAMPAIGN": "Отменить",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
 });
 }

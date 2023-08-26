@@ -30,7 +30,7 @@ de:
     ERROR_DUPLICATE_NAME: 'Name "{Name}" existiert bereits'
     MENUTITLE: Kampagnen
     NOITEMSTEXT: 'Fügen Sie Elemente aus dem Abschnitt {section} hinzu'
-    SAVEDERROR: Fehler
-    SAVEDUP: Gespeichert
     SAVE: Speichern
     SAVED: Speichern
+    SAVEDERROR: Fehler
+    SAVEDUP: Gespeichert

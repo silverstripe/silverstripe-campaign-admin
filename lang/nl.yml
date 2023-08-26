@@ -30,7 +30,7 @@ nl:
     ERROR_DUPLICATE_NAME: 'De naam "{Name}" bestaat al'
     MENUTITLE: Campagnes
     NOITEMSTEXT: 'Items toevoegen aan het  {section} onderdeel'
-    SAVEDERROR: Fout
-    SAVEDUP: Opgeslagen.
     SAVE: Opslaan
     SAVED: Opgeslagen
+    SAVEDERROR: Fout
+    SAVEDUP: Opgeslagen.

@@ -30,7 +30,7 @@ eo:
     ERROR_DUPLICATE_NAME: 'Nomo "{Name}" jam ekzistas'
     MENUTITLE: Kampanjoj
     NOITEMSTEXT: 'Enmeti erojn el la sekcio {section}'
-    SAVEDERROR: Eraro.
-    SAVEDUP: Konservita.
     SAVE: Konservi
     SAVED: Konservita.
+    SAVEDERROR: Eraro.
+    SAVEDUP: Konservita.

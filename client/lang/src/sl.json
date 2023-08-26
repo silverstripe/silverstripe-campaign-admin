@@ -2,14 +2,14 @@
     "CampaignAdmin.ADDCAMPAIGN": "Dodaj kampanjo",
     "CampaignAdmin.DELETECAMPAIGN": "Res želite izbrisati ta zapis?",
     "CampaignAdmin.DRAFT": "Osnutek",
+    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s elementov",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s element",
     "CampaignAdmin.MODIFIED": "Spremenjeno",
     "CampaignAdmin.NO_CHANGES": "Brez sprememb",
+    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Objavi kampanjo",
     "CampaignAdmin.REMOVED": "Odstranjeno",
     "CampaignAdmin.REVERTCAMPAIGN": "Povrni",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
 }

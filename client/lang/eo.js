@@ -9,15 +9,15 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.ADDCAMPAIGN": "Aldoni kampanjon",
     "CampaignAdmin.DELETECAMPAIGN": "Ĉu vi vere volas forigi ĉi tiun rikordon?",
     "CampaignAdmin.DRAFT": "Draft",
+    "CampaignAdmin.FORBIDDEN": "Vi ne havas permeson vidi ĉi tiun kampanjon",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s elementoj",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s elemento",
     "CampaignAdmin.MODIFIED": "Modified",
     "CampaignAdmin.NO_CHANGES": "No changes",
+    "CampaignAdmin.PAGE_NOT_FOUND": "Ne povas trovi la kampanjon kiun vi serĉas.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Publikigi kampanjon",
     "CampaignAdmin.REMOVED": "Removed",
     "CampaignAdmin.REVERTCAMPAIGN": "Malfari",
-    "CampaignAdmin.FORBIDDEN": "Vi ne havas permeson vidi ĉi tiun kampanjon",
-    "CampaignAdmin.PAGE_NOT_FOUND": "Ne povas trovi la kampanjon kiun vi serĉas.",
     "CampaignAdmin.SOMETHING_WENT_WRONG": "Io malfunkciis."
 });
 }

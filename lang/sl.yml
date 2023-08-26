@@ -30,7 +30,7 @@ sl:
     ERROR_DUPLICATE_NAME: 'Ime "{Name}" je že uporabljeno'
     MENUTITLE: Kampanje
     NOITEMSTEXT: 'Izberite elemente iz sklopa {section}'
-    SAVEDERROR: Napaka
-    SAVEDUP: Shranjeno
     SAVE: Shrani
     SAVED: Shranjeno
+    SAVEDERROR: Napaka
+    SAVEDUP: Shranjeno
