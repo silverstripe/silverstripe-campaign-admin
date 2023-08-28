@@ -30,7 +30,7 @@ da:
     ERROR_DUPLICATE_NAME: 'Navnet "{Name}" eksisterer allerede'
     MENUTITLE: Kampagner
     NOITEMSTEXT: 'Tilføj elementer fra sektionen {section}'
-    SAVEDERROR: Fejl.
-    SAVEDUP: Gemt.
     SAVE: Gem
     SAVED: Gemt
+    SAVEDERROR: Fejl.
+    SAVEDUP: Gemt.

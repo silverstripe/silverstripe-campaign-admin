@@ -30,7 +30,7 @@ fi_FI:
     ERROR_DUPLICATE_NAME: 'Nimi "{Name}" on jo olemassa'
     MENUTITLE: Kampanjat
     NOITEMSTEXT: 'Lisää kohteet osiosta: {section}'
-    SAVEDERROR: Virhe
-    SAVEDUP: Tallennettu.
     SAVE: Tallenna
     SAVED: Tallennettu
+    SAVEDERROR: Virhe
+    SAVEDUP: Tallennettu.
