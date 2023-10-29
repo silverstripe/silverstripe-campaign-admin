@@ -118,7 +118,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         return array_merge(parent::getClientConfig(), [
             'reactRouter' => true,
             'form' => [
-                // TODO Use schemaUrl instead
                 'EditForm' => [
                     'schemaUrl' => $this->Link('schema/EditForm')
                 ],
@@ -601,9 +600,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     }
 
     /**
-     * @todo Use GridFieldDetailForm once it can handle structured data and form schemas
-     * @todo move to FormBuilder
-     *
      * @param int $id
      * @return Form
      */
@@ -684,7 +680,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
     /**
      * Build create form
-     * @todo Move to form builder
      *
      * @return Form
      */
