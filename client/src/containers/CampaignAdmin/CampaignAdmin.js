@@ -92,7 +92,6 @@ class CampaignAdmin extends Component {
         // NOOP - Lazy loaded in CampaignAdminList.js
         break;
       case 'edit':
-        // @todo - Lazy load in FormBuilderLoader / GridField
         breadcrumbs.push({
           text: title,
           href: this.getActionRoute(id, view),

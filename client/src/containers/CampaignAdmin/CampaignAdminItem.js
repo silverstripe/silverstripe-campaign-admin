@@ -114,8 +114,6 @@ class CampaignAdminItem extends Component {
     const badge = {};
     const { campaign, item } = this.props;
 
-    // @todo customise these status messages for already-published changesets
-
     // Change badge. If the campaign has been published,
     // don't apply a badge at all
     if (campaign.State === 'open') {
