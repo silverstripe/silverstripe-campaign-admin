@@ -497,6 +497,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             return (new HTTPResponse(null, 404));
         }
 
+        if ($campaign->State !== ChangeSet::STATE_OPEN) {
+            return (new HTTPResponse(null, 400));
+        }
 
         $campaign->removeObject($item->Object());
 

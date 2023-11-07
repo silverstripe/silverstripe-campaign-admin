@@ -327,7 +327,7 @@ class CampaignAdminList extends Component {
   }
 
   renderPreview(itemLinks, itemId) {
-    const { PreviewComponent, previewState } = this.props;
+    const { PreviewComponent, previewState, record: { State } } = this.props;
     const { loading, error, errorCode } = this.state;
 
     let previewClasses = [
@@ -384,16 +384,16 @@ class CampaignAdminList extends Component {
         </div>
       );
     }
-
-    return (
-      <PreviewComponent
-        itemLinks={itemLinks}
-        itemId={itemId}
-        onBack={this.handleCloseItem}
-        moreActions={this.getMoreActions()}
-        className={previewClasses}
-      />
-    );
+    const props = {
+      itemLinks,
+      itemId,
+      onBack: this.handleCloseItem,
+      className: previewClasses,
+    };
+    if (State === 'open') {
+      props.moreActions = this.getMoreActions();
+    }
+    return <PreviewComponent {...props}/>;
   }
 
   /**

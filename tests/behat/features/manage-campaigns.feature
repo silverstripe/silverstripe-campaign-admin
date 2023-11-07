@@ -76,6 +76,8 @@ Feature: Manage campaigns
     And I click on the ".grid-field__cell--drillable" element
     And I press the "Publish campaign" button
     And I confirm the dialog
+    And I should not see the "Publish campaign" button
+    And I should not see an "#tab-ActionMenus_MoreOptions" element
 
     When I go to "/admin/pages"
     Then the rendered HTML should not contain "badge status-addedtodraft"
