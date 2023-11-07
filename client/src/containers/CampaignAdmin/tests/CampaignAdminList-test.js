@@ -12,6 +12,7 @@ function makeProps(obj = {}) {
     itemListViewEndpoint: { url: '', method: 'POST' },
     record: {
       ID: 3,
+      State: 'open',
       placeholderGroups: [
         {
           baseClass: 'SilverStripe\\CMS\\Model\\SiteTree',

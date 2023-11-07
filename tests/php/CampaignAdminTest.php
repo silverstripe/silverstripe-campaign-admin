@@ -4,6 +4,7 @@ namespace SilverStripe\CampaignAdmin\Tests;
 
 use ReflectionClass;
 use SilverStripe\CampaignAdmin\CampaignAdmin;
+use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Dev\FunctionalTest;
@@ -13,6 +14,7 @@ use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\ChangeSet;
+use SilverStripe\Versioned\ChangeSetItem;
 
 class CampaignAdminTest extends FunctionalTest
 {
@@ -157,6 +159,40 @@ class CampaignAdminTest extends FunctionalTest
         $this->logInWithPermission($permission);
         $changeSetID = $changesetName ? $this->idFromFixture(ChangeSet::class, $changesetName) : 12345;
         $response = $this->get("/admin/campaigns/set/$changeSetID/show", null, ['Accept' => 'application/json']);
+        $this->assertEquals($expectedResponseCode, $response->getStatusCode());
+    }
+
+    public function provideRemoveCampaignItem(): array
+    {
+        return [
+            'open campaign' => [false, false, 204],
+            'published campaign' => [true, false,  400],
+            'incorrect campaign ID' => [true, true, 404],
+        ];
+    }
+
+    /**
+     * @dataProvider provideRemoveCampaignItem
+     */
+    public function testRemoveCampaignItem(
+        bool $isPublished,
+        bool $isWrongID,
+        int $expectedResponseCode,
+    ): void {
+        $item = new SiteTree();
+        $item->write();
+        $changeset = new ChangeSet();
+        $changeset->write();
+        $changeset->addObject($item);
+
+        if ($isPublished) {
+            $changeset->publish();
+        }
+
+        $changesetitemID = ChangeSetItem::get()->where(['"ChangeSetID" = ?' => $changeset->ID])->first()->ID;
+        $changesetID =  $isWrongID ? 12345 : $changeset->ID;
+
+        $response = $this->post("/admin/campaigns/removeCampaignItem/$changesetID/$changesetitemID", null);
         $this->assertEquals($expectedResponseCode, $response->getStatusCode());
     }
 }
