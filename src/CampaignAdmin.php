@@ -246,7 +246,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             ],
             '_embedded' => [$treeClass => []]
         ];
-        /** @var ChangeSet $item */
         foreach ($items as $item) {
             $sync = $this->shouldCampaignSync($item);
             $resource = $this->getChangeSetResource($item, $sync);
@@ -304,7 +303,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                     continue;
                 }
 
-                /** @var ChangesetItem $changeSetItem */
                 $resource = $this->getChangeSetItemResource($changeSetItem);
                 if (!empty($resource)) {
                     $hal['_embedded']['items'][] = $resource;
@@ -406,7 +404,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
     /**
      * Gets viewable list of campaigns
      *
-     * @return SS_List
+     * @return SS_List<ChangeSet>
      */
     protected function getListItems()
     {
@@ -446,7 +444,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 return (new HTTPResponse(null, 400));
             }
 
-            /** @var ChangeSet $changeSet */
             $changeSet = ChangeSet::get()->filter('IsInferred', 0)->byID($request->param('ID'));
 
             if (!$changeSet) {
@@ -489,9 +486,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             return (new HTTPResponse(null, 400));
         }
 
-        /** @var ChangeSet $campaign */
         $campaign = ChangeSet::get()->byID($campaignID);
-        /** @var ChangeSetItem $item */
         $item = ChangeSetItem::get()->byID($itemID);
         if (!$campaign || !$item) {
             return (new HTTPResponse(null, 404));
@@ -558,7 +553,6 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
             return (new HTTPResponse(null, 400));
         }
 
-        /** @var ChangeSet $changeSet */
         $changeSet = ChangeSet::get()->byID($id);
         if (!$changeSet) {
             return (new HTTPResponse(null, 404));

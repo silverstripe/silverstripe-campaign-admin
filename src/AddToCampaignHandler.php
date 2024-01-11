@@ -92,7 +92,7 @@ class AddToCampaignHandler
     /**
      * Get what ChangeSets are available for an item to be added to by this user
      *
-     * @return ArrayList|ChangeSet[]
+     * @return ArrayList<ChangeSet>
      */
     protected function getAvailableChangeSets()
     {
@@ -111,7 +111,7 @@ class AddToCampaignHandler
      * Get changesets that a given object is already in
      *
      * @param DataObject
-     * @return ArrayList[ChangeSet]
+     * @return ArrayList<ChangeSet>
      */
     protected function getInChangeSets($object)
     {
@@ -272,8 +272,6 @@ class AddToCampaignHandler
     {
         // Extract $campaignID from $data
         $campaignID = $this->getOrCreateCampaign($data);
-
-        /** @var ChangeSet $changeSet */
         $changeSet = ChangeSet::get()->byID($campaignID);
 
         if (!$changeSet) {
