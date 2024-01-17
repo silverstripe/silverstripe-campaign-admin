@@ -2,9 +2,13 @@
 
 namespace SilverStripe\CampaignAdmin;
 
+use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Core\Extension;
 use SilverStripe\View\Requirements;
 
+/**
+ * @extends Extension<LeftAndMain>
+ */
 class CampaignAdminExtension extends Extension
 {
     public function init()
