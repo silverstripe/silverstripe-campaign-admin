@@ -1,15 +1,15 @@
 {
     "CampaignAdmin.ADDCAMPAIGN": "Pridať kampaň",
-    "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
-    "CampaignAdmin.DRAFT": "Draft",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
+    "CampaignAdmin.DELETECAMPAIGN": "Naozaj chcete odstrániť tento záznam?",
+    "CampaignAdmin.DRAFT": "Koncept",
+    "CampaignAdmin.FORBIDDEN": "Nemáte prístup na zobrazenie tejto kampane.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s položiek",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s položka",
-    "CampaignAdmin.MODIFIED": "Modified",
-    "CampaignAdmin.NO_CHANGES": "No changes",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
+    "CampaignAdmin.MODIFIED": "Upravené",
+    "CampaignAdmin.NO_CHANGES": "Žiadne zmeny",
+    "CampaignAdmin.PAGE_NOT_FOUND": "Kampaň, ktorú hľadáte, nie je možné nájsť.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Zverejniť kampaň",
-    "CampaignAdmin.REMOVED": "Removed",
-    "CampaignAdmin.REVERTCAMPAIGN": "Prepnúť",
-    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
+    "CampaignAdmin.REMOVED": "Odstránené",
+    "CampaignAdmin.REVERTCAMPAIGN": "Vrátiť späť",
+    "CampaignAdmin.SOMETHING_WENT_WRONG": "Niečo sa pokazilo."
 }
