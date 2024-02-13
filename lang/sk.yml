@@ -1,0 +1,36 @@
+sk:
+  SilverStripe\CampaignAdmin\AddToCampaignHandler:
+    ADD_TO_A_NEW_CAMPAIGN: 'Pridať do novej kampane'
+    AddToCampaignAddAction: Pridať
+    AddToCampaignAvailableLabel: 'Dostupné kampane'
+    AddToCampaignFormFieldLabel: 'Vybrať kampaň'
+    AddToCampaignInChangsetLabel: 'Pozor, táto položka je už v kampaniach:'
+    AddToCampaignInChangsetLabelAll: 'Pozor, táto položka je už vo VŠETKÝCH kampaniach:'
+    CREATE_DENIED: 'Nemáte oprávnenie na vytváranie kampaní'
+    CREATE_NEW: 'Vytvoriť novú kampaň'
+    CREATE_NEW_PLACEHOLDER: 'Zadajte názov kampane'
+    ErrorCampaignPermissionDenied: 'Zdá sa, že nemáte potrebné oprávnenia na pridanie objektu {ObjectTitle} do kampane {CampaignTitle}'
+    ErrorGeneral: 'Ospravedlňujeme sa, ale vyskytla sa chyba'
+    ErrorItemPermissionDenied: 'Zdá sa, že nemáte potrebné oprávnenia na pridanie objektu {ObjectTitle} do kampane'
+    ErrorNotFound: 'Tento {Type} sa nepodarilo nájsť'
+    MISSING_TITLE: 'Názov kampane je povinný'
+    NONE_SELECTED: 'Nie je vybratá žiadna kampaň'
+    NO_CAMPAIGNS: 'Momentálne nemáte žiadne kampane. Podrobnosti kampane môžete upraviť neskôr v sekcii Kampane.'
+    NO_CREATE: 'Ach nie! Momentálne nemáte vytvorené žiadne kampane. Vaše aktuálne prihlasovacie údaje nemajú oprávnenia na vytváranie kampaní. Kampane môžu vytvárať iba používatelia s právami na sekciu Kampane.'
+    Success: 'Úspešne pridané <strong>{ObjectTitle}</strong> do <strong>{CampaignTitle}</strong>'
+  SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
+    ADDTOCAMPAIGN: 'Pridať do kampane'
+  SilverStripe\CampaignAdmin\AddToCampaignValidator:
+    NEW_TITLE_EMPTY: 'Zadajte názov novej kampane'
+    SELECT_CAMPAIGN_EMPTY: 'Vyberte kampaň'
+  SilverStripe\CampaignAdmin\CampaignAdmin:
+    ACCESS_HELP: 'Povoliť zobrazenie sekcie publikovania kampane.'
+    CANCEL: Zrušiť
+    CREATE: Vytvoriť
+    ERROR_DUPLICATE_NAME: 'Názov "{Name}" už existuje'
+    MENUTITLE: Kampane
+    NOITEMSTEXT: 'Pridajte položky zo sekcie {section}'
+    SAVE: Uložiť
+    SAVED: Uložené
+    SAVEDERROR: Chyba.
+    SAVEDUP: Uložené.
