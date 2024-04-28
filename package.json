@@ -15,7 +15,7 @@
     "css": "yarn && WEBPACK_CHILD=css webpack -p --bail --progress",
     "test": "jest",
     "coverage": "jest --coverage",
-    "lint": "eslint client/src && sass-lint -v client/src"
+    "lint": "eslint client/src && stylelint **/client/src/**/*.scss"
   },
   "repository": {
     "type": "git",
@@ -49,8 +49,8 @@
     "redux-thunk": "^2.4.2"
   },
   "devDependencies": {
-    "@silverstripe/eslint-config": "^1.1.0",
-    "@silverstripe/webpack-config": "^2.0.0",
+    "@silverstripe/eslint-config": "^1.2.1",
+    "@silverstripe/webpack-config": "^2.1.0",
     "@testing-library/react": "^14.0.0",
     "babel-core": "^6.26.3",
     "babel-jest": "^29.3.0",
