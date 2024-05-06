@@ -10,7 +10,7 @@ it:
     CREATE_NEW: 'Creare una nuova campagna'
     CREATE_NEW_PLACEHOLDER: 'Inserire il nome della campagna'
     ErrorCampaignPermissionDenied: 'Sembra tu non disponga dei privilegi necessari per aggiungere {ObjectTitle} a {CampaignTitle}'
-    ErrorGeneral: 'Spiacenti, ma c''è stato un errore'
+    ErrorGeneral: "Spiacenti, ma c'è stato un errore"
     ErrorItemPermissionDenied: 'Sembra tu non disponga dei privilegi necessari per aggiungere {ObjectTitle} ad una campagna'
     ErrorNotFound: '{Type} potrebbe non essere trovato'
     MISSING_TITLE: 'Nome campagna richiesto'
