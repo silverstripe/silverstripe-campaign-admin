@@ -9,15 +9,10 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.ADDCAMPAIGN": "Campagne toevoegen",
     "CampaignAdmin.DELETECAMPAIGN": "Weet u zeker dat u dit record wilt verwijderen?",
     "CampaignAdmin.DRAFT": "Concept",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
-    "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
-    "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
     "CampaignAdmin.MODIFIED": "Gewijzigd",
     "CampaignAdmin.NO_CHANGES": "Geen wijzigingen",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Campagne publiceren",
     "CampaignAdmin.REMOVED": "Verwijderd",
-    "CampaignAdmin.REVERTCAMPAIGN": "Terugdraaien",
-    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
+    "CampaignAdmin.REVERTCAMPAIGN": "Terugdraaien"
 });
 }

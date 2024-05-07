@@ -2,14 +2,11 @@
     "CampaignAdmin.ADDCAMPAIGN": "Добави кампания",
     "CampaignAdmin.DELETECAMPAIGN": "Да бъде ли изтрит този запис?",
     "CampaignAdmin.DRAFT": "Чернова",
-    "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s елемента",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s елемент",
     "CampaignAdmin.MODIFIED": "Променена",
     "CampaignAdmin.NO_CHANGES": "Без промени",
-    "CampaignAdmin.PAGE_NOT_FOUND": "The campaign you are looking for can not be found.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Публикувай кампания",
     "CampaignAdmin.REMOVED": "Премахната",
-    "CampaignAdmin.REVERTCAMPAIGN": "Възстановена",
-    "CampaignAdmin.SOMETHING_WENT_WRONG": "Something went wrong."
+    "CampaignAdmin.REVERTCAMPAIGN": "Възстановена"
 }
