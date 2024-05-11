@@ -10,8 +10,6 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
     "CampaignAdmin.DELETECAMPAIGN": "Weet u zeker dat u dit record wilt verwijderen?",
     "CampaignAdmin.DRAFT": "Concept",
     "CampaignAdmin.FORBIDDEN": "Je hebt geen toegang tot deze campagne.",
-    "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s items",
-    "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s item",
     "CampaignAdmin.MODIFIED": "Gewijzigd",
     "CampaignAdmin.NO_CHANGES": "Geen wijzigingen",
     "CampaignAdmin.PAGE_NOT_FOUND": "De gezochte campagne kan niet gevonden worden.",

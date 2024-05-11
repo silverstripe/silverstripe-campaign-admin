@@ -12,7 +12,7 @@ nl_NL:
   SilverStripe\CampaignAdmin\AddToCampaignHandler_FormAction:
     ADDTOCAMPAIGN: 'Aan de campagne toevoegen'
   SilverStripe\CampaignAdmin\CampaignAdmin:
-    ACCESS_HELP: 'Het bekijken van de sectie ''campagne publiceren'' toestaan'
+    ACCESS_HELP: "Het bekijken van de sectie 'campagne publiceren' toestaan"
     CANCEL: Annuleren
     ERROR_DUPLICATE_NAME: 'De naam "{Name}" bestaat al'
     MENUTITLE: Campagnes
