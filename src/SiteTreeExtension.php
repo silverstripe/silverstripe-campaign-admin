@@ -15,7 +15,7 @@ use SilverStripe\Security\Permission;
  */
 class SiteTreeExtension extends DataExtension
 {
-    public function updateCMSActions(FieldList $actions)
+    protected function updateCMSActions(FieldList $actions)
     {
         // Add to campaign option if not-archived and has publish permission
         if ((!$this->owner->isPublished() && !$this->owner->isOnDraft())
