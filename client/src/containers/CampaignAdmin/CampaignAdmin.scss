@@ -14,7 +14,7 @@
   }
 
   .campaign-admin__empty-info {
-    padding: calc(270px + 0.5em) $panel-padding-x 0 $panel-padding-x;
+    padding: calc(270px + 0.5em) $panel-padding-x 0;
     background-image: url("images/empty-campaign-preview.png");
     background-repeat: no-repeat;
     background-position: 50% 0;
@@ -119,12 +119,6 @@
 
   .campaign-admin__item-links__number {
     display: none;
-  }
-}
-
-.list-group-item:hover {
-  .campaign-admin__item-links--is-linked {
-    opacity: 1;
   }
 }
 
