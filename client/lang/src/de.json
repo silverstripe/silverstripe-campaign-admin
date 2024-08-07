@@ -2,11 +2,14 @@
     "CampaignAdmin.ADDCAMPAIGN": "Kampagne hinzufügen",
     "CampaignAdmin.DELETECAMPAIGN": "Sind Sie sicher, dass Sie diesen Eintrag löschen möchten?",
     "CampaignAdmin.DRAFT": "Entwurf",
+    "CampaignAdmin.FORBIDDEN": "Sie haben keinen Zugriff auf diese Kampagne.",
     "CampaignAdmin.ITEM_SUMMARY_PLURAL": "%s Elemente",
     "CampaignAdmin.ITEM_SUMMARY_SINGULAR": "%s Element",
     "CampaignAdmin.MODIFIED": "Geändert",
     "CampaignAdmin.NO_CHANGES": "Keine Änderungen",
+    "CampaignAdmin.PAGE_NOT_FOUND": "Die Kampagne kann nicht gefunden werden.",
     "CampaignAdmin.PUBLISHCAMPAIGN": "Kampagne veröffentlichen",
     "CampaignAdmin.REMOVED": "Entfernt",
-    "CampaignAdmin.REVERTCAMPAIGN": "Rückgängig machen"
+    "CampaignAdmin.REVERTCAMPAIGN": "Rückgängig machen",
+    "CampaignAdmin.SOMETHING_WENT_WRONG": "Etwas ist schief gelaufen."
 }
