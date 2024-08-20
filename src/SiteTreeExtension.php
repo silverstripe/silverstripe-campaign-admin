@@ -5,15 +5,15 @@ namespace SilverStripe\CampaignAdmin;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\Security\Permission;
+use SilverStripe\Core\Extension;
 
 /**
  * Handles adding the "Add to Campaign" button to a page's secondary actions menu
  *
- * @extends DataExtension<SiteTree>
+ * @extends Extension<SiteTree>
  */
-class SiteTreeExtension extends DataExtension
+class SiteTreeExtension extends Extension
 {
     protected function updateCMSActions(FieldList $actions)
     {
