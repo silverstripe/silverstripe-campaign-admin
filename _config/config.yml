@@ -2,8 +2,12 @@
 Name: campaignadmin
 ---
 SilverStripe\Admin\LeftAndMain:
-  extensions:
-    - SilverStripe\CampaignAdmin\CampaignAdminExtension
+  extra_requirements_i18n:
+    - 'silverstripe/campaign-admin: client/lang'
+  extra_requirements_javascript:
+    - 'silverstripe/campaign-admin: client/dist/js/bundle.js'
+  extra_requirements_css:
+    - 'silverstripe/campaign-admin: client/dist/styles/bundle.css'
 
 SilverStripe\CMS\Model\SiteTree:
   extensions:
