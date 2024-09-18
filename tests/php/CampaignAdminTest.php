@@ -15,6 +15,7 @@ use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CampaignAdminTest extends FunctionalTest
 {
@@ -137,7 +138,7 @@ class CampaignAdminTest extends FunctionalTest
         );
     }
 
-    public function readCampaignDataProvider()
+    public static function readCampaignDataProvider()
     {
         return [
             'valid campaign' => ['change1', 'CMS_ACCESS_CampaignAdmin', 200],
@@ -147,9 +148,7 @@ class CampaignAdminTest extends FunctionalTest
         ];
     }
 
-    /**
-     * @dataProvider readCampaignDataProvider
-     */
+    #[DataProvider('readCampaignDataProvider')]
     public function testReadCampaign(
         string $changesetName,
         string $permission,
@@ -162,7 +161,7 @@ class CampaignAdminTest extends FunctionalTest
         $this->assertEquals($expectedResponseCode, $response->getStatusCode());
     }
 
-    public function provideRemoveCampaignItem(): array
+    public static function provideRemoveCampaignItem(): array
     {
         return [
             'open campaign' => [false, false, 204],
@@ -171,9 +170,7 @@ class CampaignAdminTest extends FunctionalTest
         ];
     }
 
-    /**
-     * @dataProvider provideRemoveCampaignItem
-     */
+    #[DataProvider('provideRemoveCampaignItem')]
     public function testRemoveCampaignItem(
         bool $isPublished,
         bool $isWrongID,
