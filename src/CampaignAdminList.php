@@ -21,7 +21,7 @@ class CampaignAdminList extends FormField
      * @param array $properties
      * @return string
      */
-    public function FieldHolder($properties = [])
+    public function renderFieldHolder($properties = [])
     {
         return '';
     }
