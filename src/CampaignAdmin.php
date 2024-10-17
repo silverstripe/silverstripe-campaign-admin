@@ -144,7 +144,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'url' => $this->Link('removeCampaignItem/:id/:itemId'),
                 'method' => 'post'
             ],
-            'treeClass' => $this->config()->get('tree_class')
+            'treeClass' => $this->getModelClass()
         ]);
     }
 
@@ -235,7 +235,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $items = $this->getListItems();
         $count = $items->count();
         /** @var string $treeClass */
-        $treeClass = $this->config()->get('tree_class');
+        $treeClass = $this->getModelClass();
         $hal = [
             'count' => $count,
             'total' => $count,
@@ -813,11 +813,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         return array(
             "CMS_ACCESS_CampaignAdmin" => array(
                 'name' => _t(
-                    'SilverStripe\\CMS\\Controllers\\CMSMain.ACCESS',
+                    LeftAndMain::class . '.ACCESS',
                     "Access to '{title}' section",
                     array('title' => static::menu_title())
                 ),
-                'category' => _t('SilverStripe\\Security\\Permission.CMS_ACCESS_CATEGORY', 'CMS Access'),
+                'category' => _t(LeftAndMain::class . '.CMS_ACCESS_CATEGORY', 'CMS Access'),
                 'help' => _t(
                     __CLASS__.'.ACCESS_HELP',
                     'Allow viewing of the campaign publishing section.'
