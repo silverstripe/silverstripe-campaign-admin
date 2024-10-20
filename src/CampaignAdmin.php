@@ -113,7 +113,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
     private static $required_permission_codes = 'CMS_ACCESS_CampaignAdmin';
 
-    public function getClientConfig()
+    public function getClientConfig(): array
     {
         return array_merge(parent::getClientConfig(), [
             'reactRouter' => true,
