@@ -61,7 +61,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
 
     private static $menu_icon_class = 'font-icon-page-multiple';
 
-    private static $tree_class = ChangeSet::class;
+    private static $model_class = ChangeSet::class;
 
     /**
      * Show published changesets
@@ -144,7 +144,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'url' => $this->Link('removeCampaignItem/:id/:itemId'),
                 'method' => 'post'
             ],
-            'treeClass' => $this->config()->get('tree_class')
+            'treeClass' => $this->config()->get('model_class')
         ]);
     }
 
@@ -235,7 +235,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $items = $this->getListItems();
         $count = $items->count();
         /** @var string $treeClass */
-        $treeClass = $this->config()->get('tree_class');
+        $treeClass = $this->config()->get('model_class');
         $hal = [
             'count' => $count,
             'total' => $count,
