@@ -5,7 +5,7 @@ namespace SilverStripe\CampaignAdmin\Tests;
 use SilverStripe\CampaignAdmin\SiteTreeExtension;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Versioned\Versioned;
+use SilverStripe\Versioned\Mode\Versioned;
 
 class SiteTreeExtensionTest extends SapphireTest
 {

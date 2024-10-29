@@ -5,7 +5,7 @@ namespace SilverStripe\CampaignAdmin\Tests;
 use SilverStripe\CampaignAdmin\AddToCampaignHandler;
 use SilverStripe\CampaignAdmin\AddToCampaignValidator;
 use SilverStripe\Dev\SapphireTest;
-use SilverStripe\Versioned\ChangeSet;
+use SilverStripe\Versioned\Staged\ChangeSet;
 
 class AddToCampaignValidatorTest extends SapphireTest
 {

@@ -19,9 +19,9 @@ use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\Core\Validation\ValidationResult;
-use SilverStripe\Versioned\ChangeSet;
-use SilverStripe\Versioned\ChangeSetItem;
-use SilverStripe\Versioned\Versioned;
+use SilverStripe\Versioned\Staged\ChangeSet;
+use SilverStripe\Versioned\Staged\ChangeSetItem;
+use SilverStripe\Versioned\Mode\Versioned;
 use SilverStripe\Core\Convert;
 
 /**

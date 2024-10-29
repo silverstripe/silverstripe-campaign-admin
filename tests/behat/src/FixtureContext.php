@@ -8,7 +8,7 @@ use PHPUnit\Framework\Assert;
 use SilverStripe\BehatExtension\Context\FixtureContext as BaseFixtureContext;
 use SilverStripe\BehatExtension\Utility\StepHelper;
 use SilverStripe\MinkFacebookWebDriver\FacebookWebDriver;
-use SilverStripe\Versioned\ChangeSet;
+use SilverStripe\Versioned\Staged\ChangeSet;
 
 /**
  * Context used to create fixtures in the SilverStripe ORM.

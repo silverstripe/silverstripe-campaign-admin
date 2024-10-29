@@ -24,8 +24,8 @@ use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
 use SilverStripe\Security\SecurityToken;
-use SilverStripe\Versioned\ChangeSet;
-use SilverStripe\Versioned\ChangeSetItem;
+use SilverStripe\Versioned\Staged\ChangeSet;
+use SilverStripe\Versioned\Staged\ChangeSetItem;
 use SilverStripe\View\Requirements;
 
 /**

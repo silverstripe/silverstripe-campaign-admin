@@ -1,4 +1,4 @@
-SilverStripe\Versioned\ChangeSet:
+SilverStripe\Versioned\Staged\ChangeSet:
   change1:
     Name: 'changeset 1'
     State: open

@@ -13,8 +13,8 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
-use SilverStripe\Versioned\ChangeSet;
-use SilverStripe\Versioned\ChangeSetItem;
+use SilverStripe\Versioned\Staged\ChangeSet;
+use SilverStripe\Versioned\Staged\ChangeSetItem;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class CampaignAdminTest extends FunctionalTest

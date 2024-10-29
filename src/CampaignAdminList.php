@@ -4,7 +4,7 @@
 namespace SilverStripe\CampaignAdmin;
 
 use SilverStripe\Forms\FormField;
-use SilverStripe\Versioned\ChangeSet;
+use SilverStripe\Versioned\Staged\ChangeSet;
 
 /**
  * Warning: Volatile API as placeholder for standard "GridField"

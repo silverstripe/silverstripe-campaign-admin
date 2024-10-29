@@ -4,7 +4,7 @@ namespace SilverStripe\CampaignAdmin\Tests\AddToCampaignValidatorTest;
 
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\Versioned\Versioned;
+use SilverStripe\Versioned\Mode\Versioned;
 
 class TestObject extends DataObject implements TestOnly
 {
