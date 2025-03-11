@@ -1,1 +1,2 @@
-require('../boot/index');
+import '../legacy/AddToCampaignForm';
+import '../boot/index';

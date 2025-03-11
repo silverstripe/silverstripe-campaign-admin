@@ -15,3 +15,13 @@ SilverStripe\Versioned\ChangeSet:
     Name: 'changeset 4'
     State: published
     IsInferred: true
+SilverStripe\CampaignAdmin\Tests\CampaignAdminTest\BaseObject:
+  test:
+    Foo: 123
+SilverStripe\CampaignAdmin\Tests\CampaignAdminTest\OtherObject:
+  test1:
+    Foo: 456
+    BaseObject: =>SilverStripe\CampaignAdmin\Tests\CampaignAdminTest\BaseObject.test
+  test2:
+    Foo: 789
+    BaseObject: =>SilverStripe\CampaignAdmin\Tests\CampaignAdminTest\BaseObject.test
