@@ -119,20 +119,20 @@ class CampaignAdminItem extends Component {
     if (campaign.State === 'open') {
       switch (item.ChangeType) {
         case 'created':
-          badge.className = 'badge badge-warning list-group-item__status';
+          badge.className = 'badge status-addedtodraft';
           badge.Title = i18n._t('CampaignAdmin.DRAFT', 'Draft');
           break;
         case 'modified':
-          badge.className = 'badge badge-warning list-group-item__status';
+          badge.className = 'badge status-modified';
           badge.Title = i18n._t('CampaignAdmin.MODIFIED', 'Modified');
           break;
         case 'deleted':
-          badge.className = 'badge badge-error list-group-item__status';
+          badge.className = 'badge status-removedfromdraft';
           badge.Title = i18n._t('CampaignAdmin.REMOVED', 'Removed');
           break;
         case 'none':
         default:
-          badge.className = 'badge badge-success list-group-item__status';
+          badge.className = 'badge list-group-item__status';
           badge.Title = i18n._t('CampaignAdmin.NO_CHANGES', 'No changes');
           break;
       }

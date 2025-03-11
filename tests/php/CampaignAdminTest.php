@@ -16,11 +16,18 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Versioned\ChangeSet;
 use SilverStripe\Versioned\ChangeSetItem;
 use PHPUnit\Framework\Attributes\DataProvider;
+use SilverStripe\CampaignAdmin\Tests\CampaignAdminTest\BaseObject;
+use SilverStripe\CampaignAdmin\Tests\CampaignAdminTest\OtherObject;
 
 class CampaignAdminTest extends FunctionalTest
 {
     protected $extraDataObjects = [
         CampaignAdminTest\InvalidChangeSet::class,
+    ];
+
+    protected static $extra_dataobjects = [
+        BaseObject::class,
+        OtherObject::class,
     ];
 
     protected static $fixture_file = 'CampaignAdminTest.yml';
@@ -191,5 +198,104 @@ class CampaignAdminTest extends FunctionalTest
 
         $response = $this->post("/admin/campaigns/removeCampaignItem/$changesetID/$changesetitemID", null);
         $this->assertEquals($expectedResponseCode, $response->getStatusCode());
+    }
+
+    /**
+     * This test in copied from Versioned ChangeSetTest::testCanPublish() and expanded
+     * to test the CMS_ACCESS_CampaignAdmin permission
+     *
+     * Note that the PERM_canPublish permission is defined in the fixture file
+     * and is not a built-in permission.
+     */
+    public function testChangeSetCanPublish()
+    {
+        // Create changeset containing all items (unpublished)
+        $this->logInWithPermission('ADMIN');
+        $changeSet = new ChangeSet();
+        $changeSet->write();
+        $obj = $this->objFromFixture(BaseObject::class, 'test');
+        $changeSet->addObject($obj);
+        $changeSet->sync();
+        $this->assertEquals(3, $changeSet->Changes()->count());
+        // Test un-authenticated user cannot publish
+        $this->logOut();
+        $this->assertFalse($changeSet->canPublish());
+        // With model publish permissions only publish is allowed
+        $this->logInWithPermission('PERM_canPublish');
+        $this->assertTrue($changeSet->canPublish());
+        // Test user with the necessary minimum permissions can login
+        $this->logInWithPermission(
+            [
+                'CMS_ACCESS_CampaignAdmin',
+                'PERM_canPublish'
+            ]
+        );
+        $this->assertTrue($changeSet->canPublish());
+        // campaign admin only permission doesn't grant publishing rights
+        $this->logInWithPermission('CMS_ACCESS_CampaignAdmin');
+        $this->assertFalse($changeSet->canPublish());
+        // Test that you can still publish a changeset, even if canPublish()
+        // returns false (e.g. externally rather than internally enforced)
+        $changeSet->publish();
+    }
+
+    /**
+     * This test in copied from Versioned ChangeSetTest::testCanCreate() and expanded
+     * to test the CMS_ACCESS_CampaignAdmin permission
+     */
+    public function testChangeSetCanCreate()
+    {
+        $this->logOut();
+        $this->assertFalse(ChangeSet::singleton()->canCreate());
+        $this->logInWithPermission('SomeWrongPermission');
+        $this->assertFalse(ChangeSet::singleton()->canCreate());
+        $this->logInWithPermission('CMS_ACCESS_CampaignAdmin');
+        $this->assertTrue(ChangeSet::singleton()->canCreate());
+    }
+
+    /**
+     * This test in copied from Versioned ChangeSetTest::testCanDelete() and expanded
+     * to test the CMS_ACCESS_CampaignAdmin permission
+     */
+    public function testChangeSetCanDelete()
+    {
+        // Create changeset containing all items (unpublished)
+        $this->logInWithPermission('ADMIN');
+        $changeSet = new ChangeSet();
+        $changeSet->write();
+        $obj = $this->objFromFixture(BaseObject::class, 'test');
+        $changeSet->addObject($obj);
+        $changeSet->sync();
+        $this->assertEquals(3, $changeSet->Changes()->count());
+        // Check canDelete
+        $this->logOut();
+        $this->assertFalse($changeSet->canDelete());
+        $this->logInWithPermission('SomeWrongPermission');
+        $this->assertFalse($changeSet->canDelete());
+        $this->logInWithPermission('CMS_ACCESS_CampaignAdmin');
+        $this->assertTrue($changeSet->canDelete());
+    }
+
+    /**
+     * This test in copied from Versioned ChangeSetTest::testCanView() and expanded
+     * to test the CMS_ACCESS_CampaignAdmin permission
+     */
+    public function testChangeSetCanView()
+    {
+        // Create changeset containing all items (unpublished)
+        $this->logInWithPermission('ADMIN');
+        $changeSet = new ChangeSet();
+        $changeSet->write();
+        $obj = $this->objFromFixture(BaseObject::class, 'test');
+        $changeSet->addObject($obj);
+        $changeSet->sync();
+        $this->assertEquals(3, $changeSet->Changes()->count());
+        // Check canView
+        $this->logOut();
+        $this->assertFalse($changeSet->canView());
+        $this->logInWithPermission('SomeWrongPermission');
+        $this->assertFalse($changeSet->canView());
+        $this->logInWithPermission('CMS_ACCESS_CampaignAdmin');
+        $this->assertTrue($changeSet->canView());
     }
 }

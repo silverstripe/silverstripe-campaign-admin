@@ -93,6 +93,11 @@
   }
 }
 
+.list-group-item .badge {
+  border-width: 1px;
+  border-style: solid;
+}
+
 .list-group-wrapper--empty {
   .list-group {
     border-bottom: 0;

@@ -9,6 +9,8 @@ SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
     - 'silverstripe/campaign-admin: client/dist/styles/bundle.css'
 
-SilverStripe\CMS\Model\SiteTree:
-  extensions:
-    - SilverStripe\CampaignAdmin\SiteTreeExtension
+# Allow users only only have access to the campaign-admin, and not all CMS access
+# i.e. CMS_ACCESS_LeftAndMain, to still be able to manage changesets
+SilverStripe\Versioned\ChangeSet:
+  required_permission:
+    - CMS_ACCESS_CampaignAdmin

@@ -147,7 +147,7 @@ class FixtureContext extends BaseFixtureContext
     {
         /** @var DocumentElement $page */
         $page = $this->getMainContext()->getSession()->getPage();
-        $button = $page->find('css', '.modal-header .close');
+        $button = $page->find('css', '.modal-header .btn-close');
         Assert::assertNotNull($button, 'Close button not found');
 
         $button->click();
