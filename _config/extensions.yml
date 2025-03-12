@@ -1,0 +1,42 @@
+---
+Name: campaign-admin-extensions
+---
+SilverStripe\Assets\Shortcodes\FileLink:
+  extensions:
+    - SilverStripe\CampaignAdmin\Extensions\HideInCampaignsExtension
+---
+Name: campaign-admin-extensions-elemental
+Only:
+  moduleexists: dnadesign/silverstripe-elemental
+---
+DNADesign\Elemental\Models\ElementalArea:
+  extensions:
+    - SilverStripe\CampaignAdmin\Extensions\HideInCampaignsExtension
+---
+Name: campaign-admin-extensions-asset-admin
+Only:
+  moduleexists: silverstripe/asset-admin
+After: assetadmin
+---
+SilverStripe\AssetAdmin\Forms\FileFormFactory:
+  extensions:
+    - SilverStripe\CampaignAdmin\Extensions\FileFormFactoryExtension
+SilverStripe\AssetAdmin\Controller\AssetAdmin:
+  campaign_admin_managed_data_class: SilverStripe\Assets\File
+  extensions:
+    - SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension
+---
+Name: campaign-admin-extensions-cms
+Only:
+  moduleexists: silverstripe/cms
+---
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - SilverStripe\CampaignAdmin\SiteTreeExtension
+SilverStripe\CMS\Controllers\CMSPageEditController:
+  campaign_admin_managed_data_class: Page
+  extensions:
+    - SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension
+SilverStripe\CMS\Controllers\CMSMain:
+  extensions:
+    - SilverStripe\CampaignAdmin\Extensions\CMSMainExtension

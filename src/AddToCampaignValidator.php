@@ -2,7 +2,7 @@
 
 namespace SilverStripe\CampaignAdmin;
 
-use SilverStripe\Forms\Validator;
+use SilverStripe\Forms\Validation\Validator;
 
 class AddToCampaignValidator extends Validator
 {

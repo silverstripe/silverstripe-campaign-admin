@@ -68,6 +68,8 @@ class AddToCampaignValidatorTest extends SapphireTest
                 'fieldName' => 'Campaign',
                 'messageType' => 'error',
                 'messageCast' => 'text',
+                'modelClass' => '',
+                'recordID' => null,
             ]],
             $this->validator->getResult()->getMessages()
         );
@@ -83,6 +85,8 @@ class AddToCampaignValidatorTest extends SapphireTest
                 'fieldName' => 'NewTitle',
                 'messageType' => 'error',
                 'messageCast' => 'text',
+                'modelClass' => '',
+                'recordID' => null,
             ]],
             $this->validator->getResult()->getMessages()
         );
@@ -98,6 +102,8 @@ class AddToCampaignValidatorTest extends SapphireTest
                 'fieldName' => 'NewTitle',
                 'messageType' => 'error',
                 'messageCast' => 'text',
+                'modelClass' => '',
+                'recordID' => null,
             ]],
             $this->validator->getResult()->getMessages()
         );

@@ -9,13 +9,12 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Core\Convert;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Model\List\SS_List;
@@ -637,7 +636,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
-            new RequiredFields('Name')
+            RequiredFieldsValidator::create('Name')
         );
 
         // Load into form
@@ -701,7 +700,7 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
                     ->setUseButtonTag(true)
             ),
-            new RequiredFields('Name')
+            RequiredFieldsValidator::create('Name')
         );
 
         // Custom form handler
