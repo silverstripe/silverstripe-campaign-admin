@@ -5,7 +5,7 @@ Feature: Manage campaigns
   So that I can control bulk publication of content efficiently
 
   Background:
-    Given a "campaign" "Test Campaign" with "Description"="this is a test"
+    Given a "ChangeSet" "Test Campaign" with "Description"="this is a test"
       And the "group" "EDITOR" has permissions "Access to 'Pages' section" and "Access to 'Campaigns' section" and "Access to 'Files' section" and "FILE_EDIT_ALL"
       And the "group" "CAMPAIGNS_EDITOR" has permissions "Access to 'Campaigns' section"
 
