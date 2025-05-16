@@ -1,4 +1,6 @@
 en:
+  SilverStripe\CMS\Controllers\CMSMain:
+    ACCESS: "Access to '{title}' section"
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Add to a new campaign'
     AddToCampaignAddAction: Add
@@ -34,3 +36,13 @@ en:
     SAVED: Saved
     SAVEDERROR: Error.
     SAVEDUP: Saved.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorItemPermissionDenied: "You don't have the necessary permissions to modify {ObjectTitle}"
+    ErrorNotFound: "That {Type} couldn't be found"
+  SilverStripe\CampaignAdmin\Extensions\CMSMainExtension:
+    ArchiveWarningWithCampaigns: 'Warning: This page will be unpublished and automatically removed from their associated {NumCampaigns} before being sent to the archive.\n\nAre you sure you want to proceed?'
+    ArchiveWarningWithChildrenAndCampaigns: 'Warning: This page and all of its child pages will be unpublished and automatically removed from their associated {NumCampaigns} before being sent to the archive.\n\nAre you sure you want to proceed?'
+  SilverStripe\CampaignAdmin\Extensions\FileFormFactoryExtension:
+    ADDTOCAMPAIGN: 'Add to campaign'
+  SilverStripe\Security\Permission:
+    CMS_ACCESS_CATEGORY: 'CMS Access'
