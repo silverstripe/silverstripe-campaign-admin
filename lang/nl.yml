@@ -34,3 +34,5 @@ nl:
     SAVED: Opgeslagen
     SAVEDERROR: Fout
     SAVEDUP: Opgeslagen.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: '{Type} is niet gevonden'

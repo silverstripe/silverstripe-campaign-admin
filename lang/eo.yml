@@ -34,3 +34,5 @@ eo:
     SAVED: Konservita.
     SAVEDERROR: Eraro.
     SAVEDUP: Konservita.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Tiu {Type} ne estas trovita'
