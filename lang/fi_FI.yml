@@ -34,3 +34,5 @@ fi_FI:
     SAVED: Tallennettu
     SAVEDERROR: Virhe
     SAVEDUP: Tallennettu.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Tyyppiä {Type} ei löydetty'

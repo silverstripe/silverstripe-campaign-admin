@@ -34,3 +34,5 @@ pl:
     SAVED: Zapisano
     SAVEDERROR: Błąd.
     SAVEDUP: Zapisano.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Nie można znaleźć {Type}'
