@@ -17,3 +17,5 @@ ru:
     MENUTITLE: Кампании
     SAVE: Сохранить
     SAVEDUP: Сохранено.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Этот {Type} не может быть найден'

@@ -34,3 +34,5 @@ sl:
     SAVED: Shranjeno
     SAVEDERROR: Napaka
     SAVEDUP: Shranjeno
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Tip {Type} ni na voljo'

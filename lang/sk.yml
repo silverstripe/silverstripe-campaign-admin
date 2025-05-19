@@ -34,3 +34,5 @@ sk:
     SAVED: Uložené
     SAVEDERROR: Chyba.
     SAVEDUP: Uložené.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Tento {Type} sa nepodarilo nájsť'

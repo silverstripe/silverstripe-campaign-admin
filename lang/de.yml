@@ -34,3 +34,5 @@ de:
     SAVED: Speichern
     SAVEDERROR: Fehler
     SAVEDUP: Gespeichert
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Dieses {Type} konnte nicht gefunden werden'

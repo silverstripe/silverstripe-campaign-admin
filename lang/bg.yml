@@ -19,3 +19,5 @@ bg:
     SAVE: Запис
     SAVEDERROR: Грешка.
     SAVEDUP: Записана.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: '{Type} не можа да бъде намерен'

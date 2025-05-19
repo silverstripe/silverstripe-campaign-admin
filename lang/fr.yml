@@ -34,3 +34,5 @@ fr:
     SAVED: Sauvegardé
     SAVEDERROR: Erreur
     SAVEDUP: Sauvegardé
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: '{Type} introuvable'
