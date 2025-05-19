@@ -34,3 +34,5 @@ sv:
     SAVED: Sparat
     SAVEDERROR: Fel.
     SAVEDUP: Sparat.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Kunde inte hitta {Type}'
