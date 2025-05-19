@@ -34,3 +34,5 @@ da:
     SAVED: Gemt
     SAVEDERROR: Fejl.
     SAVEDUP: Gemt.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: 'Den {Type} kunne ikke findes'

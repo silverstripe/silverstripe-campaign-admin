@@ -34,3 +34,5 @@ it:
     SAVED: Salvato
     SAVEDERROR: Errore.
     SAVEDUP: Salvato.
+  SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorNotFound: '{Type} potrebbe non essere trovato'
