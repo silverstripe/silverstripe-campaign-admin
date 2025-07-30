@@ -11,14 +11,15 @@ class CMSMainExtension extends Extension
 {
     function updateArchiveWarningMessage(string &$message, array $descendants)
     {
-        $inChangeSetIDs = ChangeSetItem::get()->filter([
+        $inChangeSetList = ChangeSetItem::get()->filter([
             'ObjectID' => $descendants,
             'ObjectClass' => SiteTree::class
-        ])->column('ChangeSetID');
+        ]);
         $affectedChangeSetCount = 0;
-        if (count($inChangeSetIDs ?? []) > 0) {
+        if ($inChangeSetList->exists()) {
             $affectedChangeSetCount = ChangeSet::get()
-                ->filter(['ID' => $inChangeSetIDs, 'State' => ChangeSet::STATE_OPEN])
+                ->filter(['State' => ChangeSet::STATE_OPEN])
+                ->filterByList($inChangeSetList, 'ID', 'ChangeSetID')
                 ->count();
         }
         if ($affectedChangeSetCount === 0) {
