@@ -12,15 +12,11 @@ class CMSMainExtension extends Extension
 {
     function updateArchiveWarningMessage(string &$message, array $descendants)
     {
-<<<<<<< HEAD
-        $inChangeSetList = ChangeSetItem::get()->filter([
-=======
         /** @var DataObject $record */
         $record = func_get_arg(2);
         // Get all changesets including for the current record
         $descendants[] = $record->ID;
-        $inChangeSetIDs = ChangeSetItem::get()->filter([
->>>>>>> 3.0
+        $inChangeSetList = ChangeSetItem::get()->filter([
             'ObjectID' => $descendants,
             'ObjectClass' => SiteTree::class
         ]);
