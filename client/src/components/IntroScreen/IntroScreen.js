@@ -10,6 +10,23 @@ class IntroScreen extends Component {
     super(props);
 
     this.handleClose = this.handleClose.bind(this);
+    this.closeButtonRef = React.createRef();
+  }
+
+  componentDidMount() {
+    if (this.props.focusCloseButton && this.closeButtonRef.current) {
+      this.closeButtonRef.current.focus();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.focusCloseButton &&
+      !prevProps.focusCloseButton &&
+      this.closeButtonRef.current
+    ) {
+      this.closeButtonRef.current.focus();
+    }
   }
 
   handleClose(e) {
@@ -49,21 +66,22 @@ class IntroScreen extends Component {
       return null;
     }
     return (
-      <div className="fill-width campaign-info">
+      <div className="fill-width campaign-info" id="campaign-info">
+        <div className="campaign-info__buttons">
+          <button
+            className="btn campaign-info__close btn--no-text font-icon-cancel btn--icon-xl"
+            onClick={this.handleClose}
+            aria-label={i18n._t('CampaignAdmin.HELP_HIDE', 'Hide help')}
+            aria-expanded="true"
+            aria-controls="campaign-info"
+            ref={this.closeButtonRef}
+          />
+        </div>
+        <div className="campaign-info__banner-image" />
         <div className="campaign-info__icon">
           <span className="font-icon-white-question icon btn--icon-xl btn--no-text" />
         </div>
         {this.renderContent()}
-        <div className="campaign-info__banner-image" />
-        <div className="campaign-info__buttons">
-          <a
-            className="btn campaign-info__close btn--no-text font-icon-cancel btn--icon-xl"
-            onClick={this.handleClose}
-            role="button"
-            aria-label={i18n._t('CampaignAdmin.HELP_HIDE', 'Hide help')}
-            tabIndex={0}
-          />
-        </div>
       </div>
     );
   }
@@ -72,11 +90,13 @@ class IntroScreen extends Component {
 IntroScreen.propTypes = {
   show: PropTypes.bool,
   onClose: PropTypes.func,
+  focusCloseButton: PropTypes.bool,
 };
 
 IntroScreen.defaultProps = {
   show: false,
   onClose: noop,
+  focusCloseButton: false,
 };
 
 export default IntroScreen;
