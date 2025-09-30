@@ -7,6 +7,7 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
 } else {
   ss.i18n.addDictionary('en', {
     "CampaignAdmin.ADDCAMPAIGN": "Add campaign",
+    "CampaignAdmin.ADDNEWCAMPAIGN": "Add new campaign",
     "CampaignAdmin.DELETECAMPAIGN": "Are you sure you want to delete this record?",
     "CampaignAdmin.DRAFT": "Draft",
     "CampaignAdmin.FORBIDDEN": "You do not have access to view this campaign.",
