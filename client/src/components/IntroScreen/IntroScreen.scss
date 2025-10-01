@@ -5,11 +5,11 @@
   padding: #{$panel-padding-y * 1.5} #{$panel-padding-x * 1.5};
 
   .campaign-info__popover & {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 
   @include media-breakpoint-down(xs) {
-    flex-direction: column-reverse;
+    flex-direction: column;
   }
 }
 
@@ -66,4 +66,9 @@
 
 .campaign-info__close {
   color: $body-color;
+
+  &:focus-visible {
+    outline-width: 1px;
+    outline-style: auto;
+  }
 }

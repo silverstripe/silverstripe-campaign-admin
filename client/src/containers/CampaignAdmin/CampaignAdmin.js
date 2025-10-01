@@ -28,7 +28,10 @@ class CampaignAdmin extends Component {
 
     this.state = {
       loading: false,
+      focusIntroCloseButton: false,
     };
+
+    this.helpButtonRef = React.createRef();
 
     const defaultData = { SecurityID: props.securityId };
     this.publishApi = backend.createEndpointFetcher({
@@ -76,6 +79,11 @@ class CampaignAdmin extends Component {
     );
     if (hasChangedRoute) {
       this.setBreadcrumbs(view, id, title);
+    }
+
+    // Focus help button when showMessage toggles from true to false
+    if (prevProps.showMessage && !this.props.showMessage && this.helpButtonRef.current) {
+      this.helpButtonRef.current.focus();
     }
   }
 
@@ -203,10 +211,16 @@ By removing this item all linked items will be removed unless used elsewhere.`;
 
   handleToggleMessage() {
     this.props.campaignActions.setShowMessage(!this.props.showMessage);
+    this.setState({
+      focusIntroCloseButton: true,
+    });
   }
 
   handleHideMessage() {
     this.props.campaignActions.setShowMessage(false);
+    this.setState({
+      focusIntroCloseButton: false,
+    });
   }
 
   removeCampaignItem(campaignId, itemId) {
@@ -425,21 +439,26 @@ By removing this item all linked items will be removed unless used elsewhere.`;
           <BreadcrumbComponent multiline />
         </Toolbar>
         <div className="panel panel--scrollable flexbox-area-grow">
-          <IntroScreen show={showMessage} onClose={this.handleHideMessage} />
+          <IntroScreen
+            show={showMessage}
+            onClose={this.handleHideMessage}
+            focusCloseButton={this.state.focusIntroCloseButton}
+          />
           <div className="panel panel--padded flexbox-area-grow">
             <div className="toolbar toolbar--content">
-              <div className="btn-toolbar fill-width">
-                <div className="btn-toolbar__left-panel flexbox-area-grow">
-                  <FormAction {...formActionProps} />
-                </div>
-                <div className="btn-toolbar__left-panel">
-                  <a
-                    role="button"
+              <div className="btn-toolbar fill-width campaign-toolbar">
+                { !showMessage && <div className="btn-toolbar__left-panel">
+                  <button
                     aria-label={i18n._t('CampaignAdmin.HELP_SHOW', 'Show help')}
-                    tabIndex={0}
+                    aria-expanded={showMessage}
+                    aria-controls="campaign-info"
                     onClick={this.handleToggleMessage}
                     className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
+                    ref={this.helpButtonRef}
                   />
+                </div> }
+                <div className="btn-toolbar__left-panel flexbox-area-grow">
+                  <FormAction {...formActionProps} />
                 </div>
               </div>
             </div>
