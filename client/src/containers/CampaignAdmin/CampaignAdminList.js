@@ -162,7 +162,7 @@ class CampaignAdminList extends Component {
           key="unremoveable_info"
           className="alert alert-info campaign-admin__unremoveable-item"
         >
-          <span className="font-icon-link" />
+          <span className="font-icon-link" aria-hidden="true" />
           {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
         </DropdownItemComponent>
       );

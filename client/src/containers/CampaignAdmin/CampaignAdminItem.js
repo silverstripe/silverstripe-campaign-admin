@@ -94,7 +94,7 @@ class CampaignAdminItem extends Component {
             <span className="campaign-admin__item-links__number">
               {numReferTo + numReferredBy}
             </span>
-            <span className="font-icon-link" />
+            <span className="font-icon-link" aria-hidden="true" />
           </span>
           <UncontrolledTooltip
             placement="left"

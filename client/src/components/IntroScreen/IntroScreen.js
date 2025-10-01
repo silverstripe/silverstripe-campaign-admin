@@ -79,7 +79,7 @@ class IntroScreen extends Component {
         </div>
         <div className="campaign-info__banner-image" />
         <div className="campaign-info__icon">
-          <span className="font-icon-white-question icon btn--icon-xl btn--no-text" />
+          <span className="font-icon-white-question icon btn--icon-xl btn--no-text" aria-hidden="true" />
         </div>
         {this.renderContent()}
       </div>
