@@ -28,11 +28,11 @@ Feature: Manage campaigns
     Then the "Name" field should contain "Test Campaign"
       And the "Description" field should contain "this is a test"
       And the "State" field should contain "open"
-      And I should see a "button.font-icon-tick[name=action_save]" element
+      And I should see a "button[name=action_save] .font-icon-tick" element
     When I fill in "Name" with "changed"
-    Then I should see a "button.font-icon-save[name=action_save]" element
+    Then I should see a "button[name=action_save] .font-icon-save" element
     When I fill in "Name" with "Test Campaign"
-    Then I should see a "button.font-icon-tick[name=action_save]" element
+    Then I should see a "button[name=action_save] .font-icon-tick" element
     When I fill in "Name" with "Test campaign changed"
       And I press the "Save" button
       And I press the "Campaigns" button
