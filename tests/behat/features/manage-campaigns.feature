@@ -12,7 +12,7 @@ Feature: Manage campaigns
   Scenario: I can create a campaign
     Given I am logged in as a member of "CAMPAIGNS_EDITOR" group
       And I go to "/admin/campaigns"
-    When I press the "Add campaign" button
+    When I press the "Add new campaign" button
       Then I should see the "Form_campaignCreateForm" form
     When I fill in "Name" with "newcampaign"
       And I fill in "Description" with "awesome campaign"

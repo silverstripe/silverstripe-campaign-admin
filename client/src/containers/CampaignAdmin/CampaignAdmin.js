@@ -107,7 +107,7 @@ class CampaignAdmin extends Component {
         break;
       case 'create':
         breadcrumbs.push({
-          text: i18n._t('CampaignAdmin.ADDCAMPAIGN', 'Add campaign'),
+          text: i18n._t('CampaignAdmin.ADDNEWCAMPAIGN', 'Add new campaign'),
           href: this.getActionRoute(id, view),
         });
         break;
@@ -422,7 +422,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
     const { showMessage, BreadcrumbComponent, FormBuilderLoaderComponent } = this.props;
     const { schemaUrl } = this.props.sectionConfig.form.EditForm;
     const formActionProps = {
-      title: i18n._t('CampaignAdmin.ADDCAMPAIGN', 'Add campaign'),
+      title: i18n._t('CampaignAdmin.ADDNEWCAMPAIGN', 'Add new campaign'),
       icon: 'plus',
       extraClass: 'btn-primary',
       onClick: this.addCampaign,
