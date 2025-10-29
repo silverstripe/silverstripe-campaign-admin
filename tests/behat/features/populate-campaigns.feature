@@ -22,7 +22,7 @@ Feature: Populate campaigns
     And I press the "Save" button
     Then I should see the "Saved" button
     When I click on the ".toast__close" element
-    And I click "More options" in the "#ActionMenus" element
+    And I press the "More options" button
     And I press the "Add to Campaign" button
     Then I should see a modal titled "Add to campaign"
     When I select "Empty Campaign" from "Campaign"
