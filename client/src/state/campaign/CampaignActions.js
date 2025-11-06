@@ -129,3 +129,27 @@ export function removeCampaignItem(removeItemApi, campaignId, itemId) {
       });
   };
 }
+
+export function searchCampaigns(recordType, searchCampaignsApi, filters) {
+  return (dispatch) => {
+    dispatch({
+      type: RECORD_ACTION_TYPES.FETCH_RECORDS_REQUEST,
+      payload: { recordType },
+    });
+
+    return searchCampaignsApi({ filters })
+      .then((response) => {
+        dispatch({
+          type: RECORD_ACTION_TYPES.FETCH_RECORDS_SUCCESS,
+          payload: { recordType, data: response },
+        });
+      })
+      .catch((error) => {
+        dispatch({
+          type: RECORD_ACTION_TYPES.FETCH_RECORDS_FAILURE,
+          payload: { error, recordType },
+        });
+        throw error;
+      });
+  };
+}

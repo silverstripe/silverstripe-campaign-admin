@@ -10,6 +10,8 @@ import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
 import * as recordActions from 'state/records/RecordsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import FormAction from 'components/FormAction/FormAction';
+import Search, { hasFilters } from 'components/Search/Search';
+import SearchToggle from 'components/Search/SearchToggle';
 import i18n from 'i18n';
 import Toolbar from 'components/Toolbar/Toolbar';
 import FormBuilderLoader from 'containers/FormBuilderLoader/FormBuilderLoader';
@@ -29,6 +31,8 @@ class CampaignAdmin extends Component {
     this.state = {
       loading: false,
       focusIntroCloseButton: false,
+      showSearch: false,
+      filters: {},
     };
 
     this.helpButtonRef = React.createRef();
@@ -51,6 +55,11 @@ class CampaignAdmin extends Component {
       },
     });
 
+    this.searchCampaignsApi = backend.createEndpointFetcher({
+      ...props.sectionConfig.searchCampaignsEndpoint,
+      payloadSchema: {},
+    });
+
     // Bind
     this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
     this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
@@ -60,6 +69,9 @@ class CampaignAdmin extends Component {
     this.addCampaign = this.addCampaign.bind(this);
     this.handleHideMessage = this.handleHideMessage.bind(this);
     this.handleToggleMessage = this.handleToggleMessage.bind(this);
+    this.toggleSearch = this.toggleSearch.bind(this);
+    this.handleDoSearch = this.handleDoSearch.bind(this);
+    this.handleClearSearch = this.handleClearSearch.bind(this);
   }
 
   componentDidMount() {
@@ -85,6 +97,30 @@ class CampaignAdmin extends Component {
     if (prevProps.showMessage && !this.props.showMessage && this.helpButtonRef.current) {
       this.helpButtonRef.current.focus();
     }
+  }
+
+  toggleSearch() {
+    this.setState(
+      prevState => ({ showSearch: !prevState.showSearch })
+    );
+  }
+
+  handleClearSearch() {
+    this.setState({ showSearch: false });
+    this.handleDoSearch({});
+  }
+
+  handleDoSearch(filters) {
+    this.setState({ filters });
+    // If there are no filters, or the filter values are empty, just fetch everything
+    if (!hasFilters(filters) || Object.values(filters).filter((val) => val || val === 0).length === 0) {
+      return this.fetchCampaignsList();
+    }
+    return this.props.campaignActions.searchCampaigns(
+      this.props.sectionConfig.treeClass,
+      this.searchCampaignsApi,
+      filters
+    );
   }
 
   setBreadcrumbs(view, id, title) {
@@ -364,11 +400,11 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @returns {object}
    */
   renderDetailEditView() {
-    const { FormBuilderLoaderComponent, BreadcrumbComponent } = this.props;
+    const { FormBuilderLoaderComponent, BreadcrumbComponent, sectionConfig } = this.props;
     if (this.props.router.params.id <= 0) {
       return this.renderCreateView();
     }
-    const baseSchemaUrl = this.props.sectionConfig.form.campaignEditForm.schemaUrl;
+    const baseSchemaUrl = sectionConfig.form.campaignEditForm.schemaUrl;
     const schemaUrl = joinUrlPaths(baseSchemaUrl, '/', this.props.router.params.id);
 
     return (
@@ -419,8 +455,8 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    * @returns {object}
    */
   renderIndexView() {
-    const { showMessage, BreadcrumbComponent, FormBuilderLoaderComponent } = this.props;
-    const { schemaUrl } = this.props.sectionConfig.form.EditForm;
+    const { showMessage, BreadcrumbComponent, FormBuilderLoaderComponent, sectionConfig } = this.props;
+    const { schemaUrl } = sectionConfig.form.EditForm;
     const formActionProps = {
       title: i18n._t('CampaignAdmin.ADDNEWCAMPAIGN', 'Add new campaign'),
       icon: 'plus',
@@ -433,11 +469,27 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       identifier: 'Campaign.IndexView',
     };
 
+    const showSearch = hasFilters(this.state.filters) || this.state.showSearch;
+
     return (
       <div className="fill-height" aria-expanded="true">
         <Toolbar>
           <BreadcrumbComponent multiline />
+          <div className="campaign--toolbar__extra pull-xs-right fill-width vertical-align-items">
+            <SearchToggle toggled={showSearch} onToggle={this.toggleSearch} />
+          </div>
         </Toolbar>
+        {showSearch && <Search
+          onSearch={this.handleDoSearch}
+          id="CampaignSearchForm"
+          formSchemaUrl={sectionConfig.form.campaignSearchForm.schemaUrl}
+          onHide={this.handleClearSearch}
+          displayBehavior="HIDEABLE"
+          filters={this.state.filters}
+          filterPrefix="Search__"
+          addFilterPrefix
+          name={sectionConfig.searchCampaignsGeneralField}
+        />}
         <div className="panel panel--scrollable flexbox-area-grow">
           <IntroScreen
             show={showMessage}
