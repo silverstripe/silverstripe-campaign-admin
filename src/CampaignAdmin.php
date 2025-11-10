@@ -20,6 +20,9 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Model\List\SS_List;
 use SilverStripe\ORM\UnexpectedDataException;
 use SilverStripe\Core\Validation\ValidationResult;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\Search\SearchContext;
+use SilverStripe\ORM\Search\SearchContextForm;
 use SilverStripe\Security\PermissionProvider;
 use SilverStripe\Security\Security;
 use SilverStripe\Security\SecurityToken;
@@ -38,6 +41,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         'EditForm',
         'campaignEditForm',
         'campaignCreateForm',
+        'campaignSearchForm',
+        'searchCampaigns',
         'readCampaigns',
         'readCampaign',
         'deleteCampaign',
@@ -126,6 +131,9 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'campaignCreateForm' => [
                     'schemaUrl' => $this->Link('schema/campaignCreateForm')
                 ],
+                'campaignSearchForm' => [
+                    'schemaUrl' => $this->Link('schema/campaignSearchForm')
+                ],
             ],
             'readCampaignsEndpoint' => [
                 'url' => $this->Link('sets'),
@@ -143,6 +151,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 'url' => $this->Link('removeCampaignItem/:id/:itemId'),
                 'method' => 'post'
             ],
+            'searchCampaignsEndpoint' => [
+                'url' => $this->Link('searchCampaigns'),
+                'method' => 'post'
+            ],
+            'searchCampaignsGeneralField' => $this->getCampaignSearchForm()->getSearchField(),
             'treeClass' => $this->config()->get('model_class')
         ]);
     }
@@ -231,7 +244,11 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      */
     protected function getListResource()
     {
-        $items = $this->getListItems();
+        return $this->getResourceForList($this->getListItems());
+    }
+
+    private function getResourceForList(SS_List $items): array
+    {
         $count = $items->count();
         /** @var string $treeClass */
         $treeClass = $this->config()->get('model_class');
@@ -407,6 +424,18 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
      */
     protected function getListItems()
     {
+        return $this->getRawListItems()
+            ->filterByCallback(function ($item) {
+                /** @var ChangeSet $item */
+                return ($item->canView());
+            });
+    }
+
+    /**
+     * Gets list of campaigns whether they can be viewed or not
+     */
+    private function getRawListItems(): DataList
+    {
         $changesets = ChangeSet::get();
         // Filter out published items if disabled
         if (!$this->config()->get('show_published')) {
@@ -416,13 +445,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         if (!$this->config()->get('show_inferred')) {
             $changesets = $changesets->filter('IsInferred', 0);
         }
-        return $changesets
-            ->filterByCallback(function ($item) {
-                /** @var ChangeSet $item */
-                return ($item->canView());
-            });
+        return $changesets;
     }
-
 
     /**
      * REST endpoint to get a campaign.
@@ -718,6 +742,40 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
         $form->setNotifyUnsavedChanges(true);
 
         return $form;
+    }
+
+    /**
+     * Get a SearchContextForm for searching campaigns, based on searchable fields config in ChangeSet
+     */
+    public function getCampaignSearchForm(?SearchContext $searchContext = null): SearchContextForm
+    {
+        if (!$searchContext) {
+            $searchContext = ChangeSet::singleton()->getDefaultSearchContext();
+        }
+        $form = SearchContextForm::create($this, $searchContext, 'campaignSearchForm');
+        return $form;
+    }
+
+    /**
+     * Search for campaigns using ChangeSet's SearchContext
+     */
+    public function searchCampaigns(HTTPRequest $request): HTTPResponse
+    {
+        $searchContext = ChangeSet::singleton()->getDefaultSearchContext();
+        $filters = $request->requestVar('filters');
+        $form = $this->getCampaignSearchForm($searchContext);
+        $filterArguments = $form->prepareValuesForSearchContext($filters);
+        $results = $searchContext->getQuery($filterArguments, existingQuery: $this->getRawListItems());
+        $results = $results->filterByCallback(function ($item) {
+            /** @var ChangeSet $item */
+            return $item->canView();
+        });
+
+        $response = $this->getResponse();
+        $resourceArray = $this->getResourceForList($results);
+        $response->setBody(json_encode($resourceArray));
+        $response->addHeader('Content-Type', 'application/json');
+        return $response;
     }
 
     /**

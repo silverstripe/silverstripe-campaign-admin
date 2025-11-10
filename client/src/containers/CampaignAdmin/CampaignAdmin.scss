@@ -173,3 +173,11 @@
 .campaign-toolbar {
   flex-direction: row-reverse;
 }
+
+.campaign--toolbar__extra {
+  width: auto;
+
+  button:last-of-type {
+    margin-right: -10px;
+  }
+}
