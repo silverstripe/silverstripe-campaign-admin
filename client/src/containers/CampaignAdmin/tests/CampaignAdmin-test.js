@@ -202,3 +202,180 @@ test('CampaignAdmin detects no errors in field state fields messages', async () 
   await screen.findByTestId('test-breadcrumb');
   expect(navigate).toBeCalledWith('/campaigns/set/1/show');
 });
+
+test('CampaignAdmin renders index view when no view param specified', () => {
+  render(<CampaignAdmin {...makeProps({
+    router: {
+      params: {
+        view: null
+      },
+      navigate: jest.fn()
+    }
+  })}
+  />);
+  expect(screen.getByTestId('test-breadcrumb')).not.toBeNull();
+});
+
+test('CampaignAdmin renders detail edit view when view is edit', () => {
+  render(<CampaignAdmin {...makeProps({
+    sectionConfig: {
+      ...makeProps().sectionConfig,
+      reactRoutePath: '/campaigns',
+      form: {
+        ...makeProps().sectionConfig.form,
+        campaignEditForm: {
+          schemaUrl: '/campaigns/schema/edit'
+        }
+      }
+    },
+    router: {
+      params: {
+        id: '1',
+        view: 'edit'
+      },
+      navigate: jest.fn()
+    }
+  })}
+  />);
+  expect(screen.getByTestId('test-form-builder-loader')).not.toBeNull();
+});
+
+test('CampaignAdmin renders create view when view is create', () => {
+  render(<CampaignAdmin {...makeProps({
+    router: {
+      params: {
+        view: 'create'
+      },
+      navigate: jest.fn()
+    }
+  })}
+  />);
+  expect(screen.getByTestId('test-form-builder-loader')).not.toBeNull();
+});
+
+test('CampaignAdmin renders create form when id is 0 in edit view', () => {
+  render(<CampaignAdmin {...makeProps({
+    router: {
+      params: {
+        id: '0',
+        view: 'edit'
+      },
+      navigate: jest.fn()
+    }
+  })}
+  />);
+  expect(screen.getByTestId('test-form-builder-loader')).not.toBeNull();
+});
+
+test('CampaignAdmin calls setBreadcrumbs on mount', () => {
+  const setBreadcrumbs = jest.fn();
+  render(<CampaignAdmin {...makeProps({
+    breadcrumbsActions: {
+      setBreadcrumbs
+    },
+    breadcrumbs: [],
+    router: {
+      params: {
+        view: 'index'
+      },
+      navigate: jest.fn()
+    }
+  })}
+  />);
+  expect(setBreadcrumbs).toHaveBeenCalled();
+});
+
+test('CampaignAdmin handles back button click with breadcrumbs', () => {
+  const navigate = jest.fn();
+  render(<CampaignAdmin {...makeProps({
+    breadcrumbs: [
+      { text: 'Home', href: '/' },
+      { text: 'Campaigns', href: '/campaigns' }
+    ],
+    router: {
+      params: {
+        view: 'index',
+        id: '1'
+      },
+      navigate
+    }
+  })}
+  />);
+  expect(navigate).not.toHaveBeenCalled();
+});
+
+test('CampaignAdmin detects errors in field message type', async () => {
+  const navigate = jest.fn();
+  render(<CampaignAdmin {...makeProps({
+    router: {
+      ...makeProps().router,
+      navigate
+    }
+  })}
+  />);
+  const loader = await screen.findByTestId('test-form-builder-loader');
+  setTimeout(() => fireEvent.click(loader));
+  mockResponse = {
+    errors: [],
+    state: {
+      fields: [
+        { name: 'Title', message: { type: 'error', value: 'Required' } },
+      ],
+    },
+    record: {
+      id: 1
+    }
+  };
+  await screen.findByTestId('test-breadcrumb');
+  expect(navigate).not.toBeCalled();
+});
+
+test('CampaignAdmin detects good field message type does not error', async () => {
+  const navigate = jest.fn();
+  render(<CampaignAdmin {...makeProps({
+    router: {
+      ...makeProps().router,
+      navigate
+    }
+  })}
+  />);
+  const loader = await screen.findByTestId('test-form-builder-loader');
+  setTimeout(() => fireEvent.click(loader));
+  mockResponse = {
+    errors: [],
+    state: {
+      messages: [
+        { type: 'good', value: 'Success' },
+      ],
+      fields: [
+        { name: 'Title', message: { type: 'good', value: 'Valid' } },
+      ]
+    },
+    record: {
+      id: 1
+    }
+  };
+  await screen.findByTestId('test-breadcrumb');
+  expect(navigate).toBeCalledWith('/campaigns/set/1/show');
+});
+
+test('CampaignAdmin handles no response.state gracefully', async () => {
+  const navigate = jest.fn();
+  render(<CampaignAdmin {...makeProps({
+    router: {
+      ...makeProps().router,
+      navigate
+    }
+  })}
+  />);
+  const loader = await screen.findByTestId('test-form-builder-loader');
+  setTimeout(() => fireEvent.click(loader));
+  mockResponse = {
+    errors: [],
+    record: {
+      id: 1
+    }
+  };
+  await screen.findByTestId('test-breadcrumb');
+  expect(navigate).toBeCalledWith('/campaigns/set/1/show');
+});

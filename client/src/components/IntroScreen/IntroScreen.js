@@ -1,39 +1,28 @@
-import React, { Component } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import i18n from 'i18n';
 import CONSTANTS from 'constants/index';
 
 const noop = () => null;
 
-class IntroScreen extends Component {
-  constructor(props) {
-    super(props);
+const IntroScreen = ({
+  show = false,
+  onClose = noop,
+  focusCloseButton = false,
+}) => {
+  const closeButtonRef = useRef(null);
 
-    this.handleClose = this.handleClose.bind(this);
-    this.closeButtonRef = React.createRef();
-  }
-
-  componentDidMount() {
-    if (this.props.focusCloseButton && this.closeButtonRef.current) {
-      this.closeButtonRef.current.focus();
+  useEffect(() => {
+    if (focusCloseButton && closeButtonRef.current) {
+      closeButtonRef.current.focus();
     }
-  }
+  }, [focusCloseButton]);
 
-  componentDidUpdate(prevProps) {
-    if (
-      this.props.focusCloseButton &&
-      !prevProps.focusCloseButton &&
-      this.closeButtonRef.current
-    ) {
-      this.closeButtonRef.current.focus();
-    }
-  }
+  const handleClose = (e) => {
+    onClose(e);
+  };
 
-  handleClose(e) {
-    this.props.onClose(e);
-  }
-
-  renderContent() {
+  const renderContent = () => {
     const button = CONSTANTS.infoScreen.callToAction;
     const links = CONSTANTS.infoScreen.links;
     return (
@@ -59,44 +48,36 @@ class IntroScreen extends Component {
         </div>
       </div>
     );
-  }
+  };
 
-  render() {
-    if (!this.props.show) {
-      return null;
-    }
-    return (
-      <div className="fill-width campaign-info" id="campaign-info">
-        <div className="campaign-info__buttons">
-          <button
-            className="btn campaign-info__close btn--no-text font-icon-cancel btn--icon-xl"
-            onClick={this.handleClose}
-            aria-label={i18n._t('CampaignAdmin.HELP_HIDE', 'Hide help')}
-            aria-expanded="true"
-            aria-controls="campaign-info"
-            ref={this.closeButtonRef}
-          />
-        </div>
-        <div className="campaign-info__banner-image" />
-        <div className="campaign-info__icon">
-          <span className="font-icon-white-question icon btn--icon-xl btn--no-text" aria-hidden="true" />
-        </div>
-        {this.renderContent()}
-      </div>
-    );
+  if (!show) {
+    return null;
   }
-}
+  return (
+    <div className="fill-width campaign-info" id="campaign-info">
+      <div className="campaign-info__buttons">
+        <button
+          className="btn campaign-info__close btn--no-text font-icon-cancel btn--icon-xl"
+          onClick={handleClose}
+          aria-label={i18n._t('CampaignAdmin.HELP_HIDE', 'Hide help')}
+          aria-expanded="true"
+          aria-controls="campaign-info"
+          ref={closeButtonRef}
+        />
+      </div>
+      <div className="campaign-info__banner-image" />
+      <div className="campaign-info__icon">
+        <span className="font-icon-white-question icon btn--icon-xl btn--no-text" aria-hidden="true" />
+      </div>
+      {renderContent()}
+    </div>
+  );
+};
 
 IntroScreen.propTypes = {
   show: PropTypes.bool,
   onClose: PropTypes.func,
   focusCloseButton: PropTypes.bool,
-};
-
-IntroScreen.defaultProps = {
-  show: false,
-  onClose: noop,
-  focusCloseButton: false,
 };
 
 export default IntroScreen;

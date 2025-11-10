@@ -1,13 +1,13 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
 import { bindActionCreators } from 'redux';
 import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
-import * as campaignActions from 'state/campaign/CampaignActions';
-import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
-import * as recordActions from 'state/records/RecordsActions';
+import * as campaignActionsImport from 'state/campaign/CampaignActions';
+import * as breadcrumbsActionsImport from 'state/breadcrumbs/BreadcrumbsActions';
+import * as recordActionsImport from 'state/records/RecordsActions';
 import Breadcrumb from 'components/Breadcrumb/Breadcrumb';
 import FormAction from 'components/FormAction/FormAction';
 import Search, { hasFilters } from 'components/Search/Search';
@@ -24,136 +24,51 @@ import CampaignAdminList from './CampaignAdminList';
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
 
-class CampaignAdmin extends Component {
-  constructor(props) {
-    super(props);
+const CampaignAdmin = ({
+  breadcrumbsActions,
+  campaignActions,
+  recordActions,
+  breadcrumbs = [],
+  sectionConfig = {},
+  securityId,
+  router = { params: {} },
+  showMessage,
+  previewState,
+  onResize,
+  FormBuilderLoaderComponent = FormBuilderLoader,
+  BreadcrumbComponent = Breadcrumb,
+  title,
+}) => {
+  const [loading, setLoading] = useState(false);
+  const [focusIntroCloseButton, setFocusIntroCloseButton] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [filters, setFilters] = useState({});
 
-    this.state = {
-      loading: false,
-      focusIntroCloseButton: false,
-      showSearch: false,
-      filters: {},
-    };
+  const helpButtonRef = useRef();
 
-    this.helpButtonRef = React.createRef();
+  const defaultData = { SecurityID: securityId };
 
-    const defaultData = { SecurityID: props.securityId };
-    this.publishApi = backend.createEndpointFetcher({
-      ...props.sectionConfig.publishEndpoint,
-      defaultData,
-      payloadSchema: {
-        id: { urlReplacement: ':id', remove: true },
-      },
-    });
+  const publishApi = backend.createEndpointFetcher({
+    ...sectionConfig.publishEndpoint,
+    defaultData,
+    payloadSchema: {
+      id: { urlReplacement: ':id', remove: true },
+    },
+  });
 
-    this.removeCampaignItemApi = backend.createEndpointFetcher({
-      ...props.sectionConfig.removeCampaignItemEndpoint,
-      defaultData,
-      payloadSchema: {
-        id: { urlReplacement: ':id', remove: true },
-        itemId: { urlReplacement: ':itemId', remove: true },
-      },
-    });
+  const removeCampaignItemApi = backend.createEndpointFetcher({
+    ...sectionConfig.removeCampaignItemEndpoint,
+    defaultData,
+    payloadSchema: {
+      id: { urlReplacement: ':id', remove: true },
+      itemId: { urlReplacement: ':itemId', remove: true },
+    },
+  });
 
-    this.searchCampaignsApi = backend.createEndpointFetcher({
-      ...props.sectionConfig.searchCampaignsEndpoint,
-      payloadSchema: {},
-    });
-
-    // Bind
-    this.handleBackButtonClick = this.handleBackButtonClick.bind(this);
-    this.handleCreateCampaignSubmit = this.handleCreateCampaignSubmit.bind(this);
-    this.handleFormAction = this.handleFormAction.bind(this);
-    this.hasErrors = this.hasErrors.bind(this);
-    this.handleRemoveCampaignItem = this.handleRemoveCampaignItem.bind(this);
-    this.addCampaign = this.addCampaign.bind(this);
-    this.handleHideMessage = this.handleHideMessage.bind(this);
-    this.handleToggleMessage = this.handleToggleMessage.bind(this);
-    this.toggleSearch = this.toggleSearch.bind(this);
-    this.handleDoSearch = this.handleDoSearch.bind(this);
-    this.handleClearSearch = this.handleClearSearch.bind(this);
-  }
-
-  componentDidMount() {
-    // Ensure default breadcrumbs are setup
-    const { breadcrumbs, title, router: { params: { id, view } } } = this.props;
-    if (breadcrumbs.length === 0) {
-      this.setBreadcrumbs(view, id, title);
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    const { title, router: { params: { id, view } } } = this.props;
-    const hasChangedRoute = (
-      prevProps.router.params.id !== id ||
-      prevProps.router.params.view !== view ||
-      prevProps.title !== title
-    );
-    if (hasChangedRoute) {
-      this.setBreadcrumbs(view, id, title);
-    }
-
-    // Focus help button when showMessage toggles from true to false
-    if (prevProps.showMessage && !this.props.showMessage && this.helpButtonRef.current) {
-      this.helpButtonRef.current.focus();
-    }
-  }
-
-  toggleSearch() {
-    this.setState(
-      prevState => ({ showSearch: !prevState.showSearch })
-    );
-  }
-
-  handleClearSearch() {
-    this.setState({ showSearch: false });
-    this.handleDoSearch({});
-  }
-
-  handleDoSearch(filters) {
-    this.setState({ filters });
-    // If there are no filters, or the filter values are empty, just fetch everything
-    if (!hasFilters(filters) || Object.values(filters).filter((val) => val || val === 0).length === 0) {
-      return this.fetchCampaignsList();
-    }
-    return this.props.campaignActions.searchCampaigns(
-      this.props.sectionConfig.treeClass,
-      this.searchCampaignsApi,
-      filters
-    );
-  }
-
-  setBreadcrumbs(view, id, title) {
-    const { sectionConfig: { reactRoutePath } } = this.props;
-
-    // Set root breadcrumb
-    const breadcrumbs = [{
-      text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
-      href: joinUrlPaths('/', reactRoutePath),
-    }];
-    switch (view) {
-      case 'show':
-        // NOOP - Lazy loaded in CampaignAdminList.js
-        break;
-      case 'edit':
-        breadcrumbs.push({
-          text: title,
-          href: this.getActionRoute(id, view),
-        });
-        break;
-      case 'create':
-        breadcrumbs.push({
-          text: i18n._t('CampaignAdmin.ADDNEWCAMPAIGN', 'Add new campaign'),
-          href: this.getActionRoute(id, view),
-        });
-        break;
-      default:
-        // NOOP
-        break;
-    }
-
-    this.props.breadcrumbsActions.setBreadcrumbs(breadcrumbs);
-  }
+  const searchCampaignsApi = backend.createEndpointFetcher({
+    ...sectionConfig.searchCampaignsEndpoint,
+    payloadSchema: {},
+  });
 
   /**
    * Generate route with the given id and view
@@ -162,23 +77,105 @@ class CampaignAdmin extends Component {
    * @param {string} view
    * @return {string}
    */
-  getActionRoute(id, view) {
-    const { reactRoutePath } = this.props.sectionConfig;
+  const getActionRoute = (id, view) => {
+    const { reactRoutePath } = sectionConfig;
     return joinUrlPaths('/', reactRoutePath, `/set/${id}/${view}`);
-  }
+  };
 
-  handleBackButtonClick(event) {
-    const { breadcrumbs, router: { navigate } } = this.props;
+  const setBreadcrumbs = (view, id, breadcrumbTitle) => {
+    const { reactRoutePath } = sectionConfig;
 
+    // Set root breadcrumb
+    const newBreadcrumbs = [{
+      text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
+      href: joinUrlPaths('/', reactRoutePath),
+    }];
+    switch (view) {
+      case 'show':
+        // NOOP - Lazy loaded in CampaignAdminList.js
+        break;
+      case 'edit':
+        newBreadcrumbs.push({
+          text: breadcrumbTitle,
+          href: getActionRoute(id, view),
+        });
+        break;
+      case 'create':
+        newBreadcrumbs.push({
+          text: i18n._t('CampaignAdmin.ADDNEWCAMPAIGN', 'Add new campaign'),
+          href: getActionRoute(id, view),
+        });
+        break;
+      default:
+        // NOOP
+        break;
+    }
+    breadcrumbsActions.setBreadcrumbs(newBreadcrumbs);
+  };
+
+  const fetchCampaignsList = () => {
+    const endpoint = sectionConfig.readCampaignsEndpoint;
+    const fetchURL = endpoint.url;
+    return recordActions.fetchRecords(
+      sectionConfig.treeClass,
+      endpoint.method,
+      fetchURL
+    );
+  };
+
+  const handleDoSearch = (filtersParam) => {
+    setFilters(filtersParam);
+    // If there are no filters, or the filter values are empty, just fetch everything
+    if (!hasFilters(filtersParam) || Object.values(filtersParam).filter((val) => val || val === 0).length === 0) {
+      return fetchCampaignsList();
+    }
+    return campaignActions.searchCampaigns(
+      sectionConfig.treeClass,
+      searchCampaignsApi,
+      filtersParam
+    );
+  };
+
+  const toggleSearch = () => {
+    setShowSearch(prevShowSearch => !prevShowSearch);
+  };
+
+  const handleClearSearch = () => {
+    setShowSearch(false);
+    handleDoSearch({});
+  };
+
+  const handleBackButtonClick = (event) => {
     // Go back to second from last breadcrumb (where last item is current)
     if (breadcrumbs.length > 1) {
       const last = breadcrumbs[breadcrumbs.length - 2];
       if (last && last.href) {
         event.preventDefault();
-        navigate(last.href);
+        router.navigate(last.href);
       }
     }
-  }
+  };
+
+  /**
+   * @param {object} response
+   * @returns {boolean}
+   */
+  const hasErrors = (response) => {
+    if (response.errors && response.errors.length) {
+      return true;
+    }
+    const responseState = response.state;
+    if (!responseState) {
+      return false;
+    }
+    // Check global messages
+    if (responseState.messages && responseState.messages.find((message) => message.type !== 'good')) {
+      return true;
+    }
+    // Find first field message
+    const message = responseState.fields && responseState.fields.find((field) => field.message && field.message.type !== 'good');
+    return Boolean(message);
+  };
 
   /**
    * Handler for creating campaign, will redirect to edit form
@@ -188,173 +185,74 @@ class CampaignAdmin extends Component {
    * @param {function} submitFn
    * @returns {Promise}
    */
-  handleCreateCampaignSubmit(data, action, submitFn) {
+  const handleCreateCampaignSubmit = (data, action, submitFn) => {
     const promise = submitFn();
     if (!promise) {
       throw new Error('Promise was not returned for submitting');
     }
     return promise
       .then((response) => {
-        const hasErrors = this.hasErrors(response);
-        if (action === 'action_save' && !hasErrors) {
+        const hasErrorsResult = hasErrors(response);
+        if (action === 'action_save' && !hasErrorsResult) {
           // open the new campaign in edit mode after save completes
           const id = response.record.id;
-          this.props.campaignActions.setNewItem(id);
-          this.props.router.navigate(this.getActionRoute(id, 'show'));
+          campaignActions.setNewItem(id);
+          router.navigate(getActionRoute(id, 'show'));
         }
-
         return response;
       });
-  }
+  };
 
-  handleFormAction(event) {
-    const { router: { navigate }, sectionConfig: { reactRoutePath } } = this.props;
+  const handleFormAction = (event) => {
     const name = event.currentTarget.name;
     // intercept the Add to Campaign submit and open the modal dialog instead
     if (name === 'action_cancel') {
-      navigate(joinUrlPaths('/', reactRoutePath));
+      router.navigate(joinUrlPaths('/', sectionConfig.reactRoutePath));
       event.preventDefault();
     }
-  }
+  };
+
+  const removeCampaignItemHelper = (campaignId, itemId) => campaignActions.removeCampaignItem(
+    removeCampaignItemApi,
+    campaignId,
+    itemId
+  );
 
   /**
    * @param {number} campaignId
    * @param {number} itemId
    * @returns {Promise|null}
    */
-  handleRemoveCampaignItem(campaignId, itemId) {
+  const handleRemoveCampaignItem = (campaignId, itemId) => {
     const fallbackMsg = `Are you sure you want to remove this item?
 
 By removing this item all linked items will be removed unless used elsewhere.`;
     const msg = i18n._t('CampaignAdmin.REMOVE_ITEM_MESSAGE', fallbackMsg);
     // eslint-disable-next-line no-alert
     const confirmed = window.confirm(msg);
-
     if (!confirmed) {
       return null;
     }
-
-    this.setState({ loading: true });
-    return this.removeCampaignItem(campaignId, itemId)
-      .then(this.fetchCampaignsList.bind(this))
-      .then(() => this.setState({ loading: false }))
+    setLoading(true);
+    return removeCampaignItemHelper(campaignId, itemId)
+      .then(fetchCampaignsList)
+      .then(() => setLoading(false))
       .then(() => {
-        this.props.campaignActions.selectChangeSetItem(null);
+        campaignActions.selectChangeSetItem(null);
         // Workaround to hide more actions popover
         window.document.body.click();
       });
-  }
+  };
 
-  handleToggleMessage() {
-    this.props.campaignActions.setShowMessage(!this.props.showMessage);
-    this.setState({
-      focusIntroCloseButton: true,
-    });
-  }
+  const handleToggleMessage = () => {
+    campaignActions.setShowMessage(!showMessage);
+    setFocusIntroCloseButton(true);
+  };
 
-  handleHideMessage() {
-    this.props.campaignActions.setShowMessage(false);
-    this.setState({
-      focusIntroCloseButton: false,
-    });
-  }
-
-  removeCampaignItem(campaignId, itemId) {
-    return this.props.campaignActions.removeCampaignItem(
-      this.removeCampaignItemApi,
-      campaignId,
-      itemId
-    );
-  }
-
-  fetchCampaignsList() {
-    const endpoint = this.props.sectionConfig.readCampaignsEndpoint;
-    const fetchURL = endpoint.url;
-    return this.props.recordActions.fetchRecords(
-      this.props.sectionConfig.treeClass,
-      endpoint.method,
-      fetchURL
-    );
-  }
-
-  /**
-   * @param {object} response
-   * @returns {boolean}
-   */
-  hasErrors(response) {
-    if (response.errors && response.errors.length) {
-      return true;
-    }
-    const state = response.state;
-
-    if (!state) {
-      return false;
-    }
-    // Check global messages
-    if (state.messages && state.messages.find((message) => message.type !== 'good')) {
-      return true;
-    }
-    // Find first field message
-    const message = state.fields && state.fields.find((field) => field.message && field.message.type !== 'good');
-
-    return Boolean(message);
-  }
-
-  /**
-   * Hook to allow customisation of components being constructed
-   * by the Campaign DetailEdit FormBuilderLoader.
-   *
-   * @param {object} Custom Component constructor.
-   * @param {object} props Props passed from FormBuilderLoader.
-   *
-   * @return {object} Instantiated React component
-   */
-  campaignEditCreateFn(Custom, props) {
-    const { sectionConfig: { reactRoutePath }, router: { navigate } } = this.props;
-
-    // Route to the Campaigns index view when 'Cancel' is clicked.
-    if (props.name === 'action_cancel') {
-      const extendedProps = {
-        ...props,
-        onClick: (event) => {
-          event.preventDefault();
-          navigate(joinUrlPaths('/', reactRoutePath));
-        },
-      };
-
-      return <Custom key={props.id} {...extendedProps} />;
-    }
-
-    return <Custom key={props.id} {...props} />;
-  }
-
-  /**
-   * Hook to allow customisation of components being constructed
-   * by the Campaign creation FormBuilderLoader.
-   *
-   * @param {object} Custom Component constructor.
-   * @param {object} props Props passed from FormBuilderLoader.
-   *
-   * @return {object} Instantiated React component
-   */
-  campaignAddCreateFn(Custom, props) {
-    const { router: { navigate }, sectionConfig: { reactRoutePath } } = this.props;
-
-    // Route to the Campaigns index view when 'Cancel' is clicked.
-    if (props.name === 'action_cancel') {
-      const extendedProps = {
-        ...props,
-        onClick: (event) => {
-          event.preventDefault();
-          navigate(joinUrlPaths('/', reactRoutePath));
-        },
-      };
-
-      return <Custom key={props.name} {...extendedProps} />;
-    }
-
-    return <Custom key={props.name} {...props} />;
-  }
+  const handleHideMessage = () => {
+    campaignActions.setShowMessage(false);
+    setFocusIntroCloseButton(false);
+  };
 
   /**
    * Hook to allow customisation of components being constructed
@@ -365,127 +263,128 @@ By removing this item all linked items will be removed unless used elsewhere.`;
    *
    * @return {object} Instantiated React component
    */
-  campaignListCreateFn(Custom, props) {
-    const { router: { navigate }, sectionConfig: { reactRoutePath } } = this.props;
+  const campaignListCreateFn = (Custom, props) => {
     const typeUrlParam = 'set';
-
     if (props.schemaComponent === 'GridField') {
       const extendedProps = {
         ...props,
         data: {
           ...props.data,
           onDrillDown: (event, record) => {
-            navigate(joinUrlPaths('/', reactRoutePath, `${typeUrlParam}/${record.ID}/show`));
+            router.navigate(joinUrlPaths('/', sectionConfig.reactRoutePath, `${typeUrlParam}/${record.ID}/show`));
           },
           onEditRecord: (event, id) => {
-            navigate(joinUrlPaths('/', reactRoutePath, `${typeUrlParam}/${id}/edit`));
+            router.navigate(joinUrlPaths('/', sectionConfig.reactRoutePath, `${typeUrlParam}/${id}/edit`));
           },
         },
       };
-
       return <Custom key={extendedProps.name} {...extendedProps} />;
     }
-
     return <Custom key={props.name} {...props} />;
-  }
+  };
 
-  addCampaign() {
-    const path = this.getActionRoute(0, 'create');
-    this.props.router.navigate(path);
-  }
+  const addCampaign = () => {
+    const path = getActionRoute(0, 'create');
+    router.navigate(path);
+  };
 
-  /**
-   * Renders the Detail Edit Form for a Campaign.
-   *
-   * @returns {object}
-   */
-  renderDetailEditView() {
-    const { FormBuilderLoaderComponent, BreadcrumbComponent, sectionConfig } = this.props;
-    if (this.props.router.params.id <= 0) {
-      return this.renderCreateView();
+  // Set breadcrumbs when route or title changes
+  useEffect(() => {
+    setBreadcrumbs(router.params.view, router.params.id, title);
+  }, [router.params.id, router.params.view, title]);
+
+  // Focus help button when showMessage toggles from true to false
+  useEffect(() => {
+    if (!showMessage && helpButtonRef.current) {
+      helpButtonRef.current.focus();
     }
-    const baseSchemaUrl = sectionConfig.form.campaignEditForm.schemaUrl;
-    const schemaUrl = joinUrlPaths(baseSchemaUrl, '/', this.props.router.params.id);
-
-    return (
-      <div className="fill-height">
-        <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
-          <BreadcrumbComponent multiline />
-        </Toolbar>
-
-        <FormBuilderLoaderComponent
-          fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
-          actionHolder={{ className: 'toolbar--south' }}
-          onAction={this.handleFormAction}
-          schemaUrl={schemaUrl}
-          identifier="Campaign.EditView"
-        />
-      </div>
-    );
-  }
+  }, [showMessage]);
 
   /**
    * Render the view for creating a new Campaign.
    *
    * @returns {object}
    */
-  renderCreateView() {
-    const { FormBuilderLoaderComponent, BreadcrumbComponent } = this.props;
-    const { schemaUrl } = this.props.sectionConfig.form.campaignCreateForm;
+  const renderCreateView = () => {
+    const { schemaUrl } = sectionConfig.form.campaignCreateForm;
     return (
       <div className="fill-height">
-        <Toolbar showBackButton onBackButtonClick={this.handleBackButtonClick}>
+        <Toolbar showBackButton onBackButtonClick={handleBackButtonClick}>
           <BreadcrumbComponent multiline />
         </Toolbar>
         <FormBuilderLoaderComponent
           fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
           actionHolder={{ className: 'toolbar--south' }}
-          onSubmit={this.handleCreateCampaignSubmit}
-          onAction={this.handleFormAction}
+          onSubmit={handleCreateCampaignSubmit}
+          onAction={handleFormAction}
           schemaUrl={schemaUrl}
           identifier="Campaign.CreateView"
         />
       </div>
     );
-  }
+  };
+
+  /**
+   * Renders the Detail Edit Form for a Campaign.
+   *
+   * @returns {object}
+   */
+  const renderDetailEditView = () => {
+    if (router.params.id <= 0) {
+      return renderCreateView();
+    }
+    const baseSchemaUrl = sectionConfig.form.campaignEditForm.schemaUrl;
+    const schemaUrl = joinUrlPaths(baseSchemaUrl, '/', router.params.id);
+    return (
+      <div className="fill-height">
+        <Toolbar showBackButton onBackButtonClick={handleBackButtonClick}>
+          <BreadcrumbComponent multiline />
+        </Toolbar>
+
+        <FormBuilderLoaderComponent
+          fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
+          actionHolder={{ className: 'toolbar--south' }}
+          onAction={handleFormAction}
+          schemaUrl={schemaUrl}
+          identifier="Campaign.EditView"
+        />
+      </div>
+    );
+  };
 
   /**
    * Renders the default view which displays a list of Campaigns.
    *
    * @returns {object}
    */
-  renderIndexView() {
-    const { showMessage, BreadcrumbComponent, FormBuilderLoaderComponent, sectionConfig } = this.props;
-    const { schemaUrl } = sectionConfig.form.EditForm;
+  const renderIndexView = () => {
     const formActionProps = {
       title: i18n._t('CampaignAdmin.ADDNEWCAMPAIGN', 'Add new campaign'),
       icon: 'plus',
       extraClass: 'btn-primary',
-      onClick: this.addCampaign,
+      onClick: addCampaign,
     };
     const formBuilderProps = {
-      createFn: this.campaignListCreateFn.bind(this),
-      schemaUrl,
+      createFn: campaignListCreateFn,
+      schemaUrl: sectionConfig.form.EditForm.schemaUrl,
       identifier: 'Campaign.IndexView',
     };
-
-    const showSearch = hasFilters(this.state.filters) || this.state.showSearch;
-
+    const showSearchDisplay = hasFilters(filters) || showSearch;
     return (
       <div className="fill-height" aria-expanded="true">
         <Toolbar>
           <BreadcrumbComponent multiline />
           <div className="campaign--toolbar__extra pull-xs-right fill-width vertical-align-items">
-            <SearchToggle toggled={showSearch} onToggle={this.toggleSearch} />
+            <SearchToggle toggled={showSearchDisplay} onToggle={toggleSearch} />
           </div>
         </Toolbar>
-        {showSearch && <Search
-          onSearch={this.handleDoSearch}
+        {showSearchDisplay && <Search
+          onSearch={handleDoSearch}
           id="CampaignSearchForm"
           formSchemaUrl={sectionConfig.form.campaignSearchForm.schemaUrl}
-          onHide={this.handleClearSearch}
+          onHide={handleClearSearch}
           displayBehavior="HIDEABLE"
-          filters={this.state.filters}
+          filters={filters}
           filterPrefix="Search__"
           addFilterPrefix
           name={sectionConfig.searchCampaignsGeneralField}
@@ -493,8 +392,8 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         <div className="panel panel--scrollable flexbox-area-grow">
           <IntroScreen
             show={showMessage}
-            onClose={this.handleHideMessage}
-            focusCloseButton={this.state.focusIntroCloseButton}
+            onClose={handleHideMessage}
+            focusCloseButton={focusIntroCloseButton}
           />
           <div className="panel panel--padded flexbox-area-grow">
             <div className="toolbar toolbar--content">
@@ -504,9 +403,9 @@ By removing this item all linked items will be removed unless used elsewhere.`;
                     aria-label={i18n._t('CampaignAdmin.HELP_SHOW', 'Show help')}
                     aria-expanded={showMessage}
                     aria-controls="campaign-info"
-                    onClick={this.handleToggleMessage}
+                    onClick={handleToggleMessage}
                     className="btn btn-secondary font-icon-white-question btn--icon-xl btn--no-text"
-                    ref={this.helpButtonRef}
+                    ref={helpButtonRef}
                   />
                 </div> }
                 <div className="btn-toolbar__left-panel flexbox-area-grow">
@@ -519,62 +418,51 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         </div>
       </div>
     );
-  }
+  };
 
   /**
    * Renders a list of items in a Campaign.
    *
    * @returns {object}
    */
-  renderItemListView() {
-    const { sectionConfig, previewState, router: { params: { id: campaignId } } } = this.props;
-    const { loading } = this.state;
-
+  const renderItemListView = () => {
     const props = {
       sectionConfig,
-      campaignId,
+      campaignId: router.params.id,
       itemListViewEndpoint: sectionConfig.itemListViewEndpoint,
-      publishApi: this.publishApi,
-      onBackButtonClick: this.handleBackButtonClick,
-      onRemoveCampaignItem: this.handleRemoveCampaignItem,
+      publishApi,
+      onBackButtonClick: handleBackButtonClick,
+      onRemoveCampaignItem: handleRemoveCampaignItem,
       loading,
       previewState,
     };
-
     return (
-      <ResizeAware style={{ position: 'relative' }} className="flexbox-area-grow fill-height" onResize={({ width }) => this.props.onResize(width)} >
+      <ResizeAware style={{ position: 'relative' }} className="flexbox-area-grow fill-height" onResize={({ width }) => onResize(width)} >
         <CampaignAdminList {...props} />
       </ResizeAware>
     );
+  };
+  let view = null;
+  switch (router.params.view) {
+    case 'show':
+      view = renderItemListView();
+      break;
+    case 'edit':
+      view = renderDetailEditView();
+      break;
+    case 'create':
+      view = renderCreateView();
+      break;
+    default:
+      view = renderIndexView();
   }
-
-  /**
-   * @returns {object|null}
-   */
-  render() {
-    let view = null;
-
-    switch (this.props.router.params.view) {
-      case 'show':
-        view = this.renderItemListView();
-        break;
-      case 'edit':
-        view = this.renderDetailEditView();
-        break;
-      case 'create':
-        view = this.renderCreateView();
-        break;
-      default:
-        view = this.renderIndexView();
-    }
-
-    return view;
-  }
-}
+  return view;
+};
 
 CampaignAdmin.propTypes = {
   breadcrumbsActions: PropTypes.object.isRequired,
-  campaignId: PropTypes.string,
+  campaignActions: PropTypes.object.isRequired,
+  recordActions: PropTypes.object.isRequired,
   sectionConfig: PropTypes.shape({
     publishEndpoint: PropTypes.shape({
       url: PropTypes.string,
@@ -593,24 +481,14 @@ CampaignAdmin.propTypes = {
     }),
   }),
   securityId: PropTypes.string.isRequired,
-  view: PropTypes.string,
   router: routerPropTypes,
   showMessage: PropTypes.bool,
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
   onResize: PropTypes.func.isRequired,
   FormBuilderLoaderComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   BreadcrumbComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
-};
-
-CampaignAdmin.defaultProps = {
-  sectionConfig: {},
-  router: {
-    params: {}
-  },
-  view: 'show',
-  breadcrumbs: [],
-  FormBuilderLoaderComponent: FormBuilderLoader,
-  BreadcrumbComponent: Breadcrumb,
+  breadcrumbs: PropTypes.array,
+  title: PropTypes.string,
 };
 
 function mapStateToProps(state, ownProps) {
@@ -631,8 +509,6 @@ function mapStateToProps(state, ownProps) {
   return {
     previewState: viewMode.activeState,
     config: state.config,
-    campaignId: state.campaign.campaignId,
-    view: state.campaign.view,
     breadcrumbs: state.breadcrumbs,
     sectionConfig,
     securityId: state.config.SecurityID,
@@ -643,9 +519,9 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
-    campaignActions: bindActionCreators(campaignActions, dispatch),
-    recordActions: bindActionCreators(recordActions, dispatch),
+    breadcrumbsActions: bindActionCreators(breadcrumbsActionsImport, dispatch),
+    campaignActions: bindActionCreators(campaignActionsImport, dispatch),
+    recordActions: bindActionCreators(recordActionsImport, dispatch),
     onResize(panelWidth) {
       dispatch(viewModeActions.enableOrDisableSplitMode(panelWidth));
     }
