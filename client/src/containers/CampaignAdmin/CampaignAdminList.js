@@ -1,11 +1,11 @@
 /* global window */
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators, compose } from 'redux';
 import { connect } from 'react-redux';
-import * as breadcrumbsActions from 'state/breadcrumbs/BreadcrumbsActions';
-import * as recordActions from 'state/records/RecordsActions';
-import * as campaignActions from 'state/campaign/CampaignActions';
+import * as breadcrumbsActionsImport from 'state/breadcrumbs/BreadcrumbsActions';
+import * as recordActionsImport from 'state/records/RecordsActions';
+import * as campaignActionsImport from 'state/campaign/CampaignActions';
 import Accordion from 'components/Accordion/Accordion';
 import AccordionBlock from 'components/Accordion/AccordionBlock';
 import ListGroupItem from 'components/ListGroup/ListGroupItem';
@@ -21,68 +21,33 @@ import CampaignAdminItem from './CampaignAdminItem';
 /**
  * Represents a campaign list view
  */
-class CampaignAdminList extends Component {
-  constructor(props) {
-    super(props);
+const CampaignAdminList = ({
+  breadcrumbsActions,
+  campaign,
+  campaignActions,
+  campaignId,
+  itemListViewEndpoint,
+  newItem,
+  onBackButtonClick,
+  onRemoveCampaignItem,
+  previewState,
+  publishApi,
+  record,
+  recordActions,
+  sectionConfig,
+  treeClass,
+  BreadcrumbComponent = Breadcrumb,
+  DropdownItemComponent = DropdownItem,
+  FormActionComponent,
+  PreviewComponent,
+  ViewModeComponent,
+}) => {
+  const [stateError, setError] = useState(false);
+  const [errorCode, setErrorCode] = useState(0);
 
-    this.handlePublish = this.handlePublish.bind(this);
-    this.handleItemSelected = this.handleItemSelected.bind(this);
-    this.setBreadcrumbs = this.setBreadcrumbs.bind(this);
-    this.handleCloseItem = this.handleCloseItem.bind(this);
-    this.handleRemoveItem = this.handleRemoveItem.bind(this);
-    this.renderCampaignAdminListDetail = this.renderCampaignAdminListDetail.bind(this);
+  const loading = Object.keys(record).length === 0;
 
-    if (!this.isRecordLoaded(props)) {
-      this.state = {
-        loading: true,
-        error: false,
-        errorCode: 0,
-      };
-    } else {
-      this.state = {
-        loading: false,
-        error: false,
-        errorCode: 0,
-      };
-    }
-  }
-
-  componentDidMount() {
-    const { campaignId, itemListViewEndpoint, recordActions: actions, treeClass } = this.props;
-    const fetchURL = itemListViewEndpoint.url.replace(/:id/, campaignId);
-
-    this.setBreadcrumbs();
-
-    // Only load record if not already present
-    if (!this.isRecordLoaded()) {
-      actions
-        .fetchRecord(treeClass, 'get', fetchURL)
-        .then(() => {
-          this.setBreadcrumbs();
-          this.setState({ loading: false });
-        })
-        // Catch error and set Error code
-        .catch((e) => {
-          this.setState({
-            loading: false,
-            error: true,
-            errorCode: e.response.status
-          });
-        });
-    }
-  }
-
-  componentWillUnmount() {
-    // Reset new create flag
-    this.props.campaignActions.setNewItem(null);
-  }
-
-  /**
-   * Update breadcrumbs for this view
-   */
-  setBreadcrumbs() {
-    const { breadcrumbsActions: actions, campaignId, record, sectionConfig: { reactRoutePath } } = this.props;
-
+  const setBreadcrumbs = () => {
     // Setup breadcrumbs if record is loaded
     if (!record) {
       return;
@@ -91,101 +56,25 @@ class CampaignAdminList extends Component {
     // Push breadcrumb
     const breadcrumbs = [{
       text: i18n._t('CampaignAdmin.CAMPAIGN', 'Campaigns'),
-      href: joinUrlPaths('/', reactRoutePath),
+      href: joinUrlPaths('/', sectionConfig.reactRoutePath),
     }];
     breadcrumbs.push({
       text: record.Name,
-      href: joinUrlPaths('/', reactRoutePath, `set/${campaignId}/show`),
+      href: joinUrlPaths('/', sectionConfig.reactRoutePath, `set/${campaignId}/show`),
     });
 
-    actions.setBreadcrumbs(breadcrumbs);
-  }
+    breadcrumbsActions.setBreadcrumbs(breadcrumbs);
+  };
 
-  getSelectedItem() {
-    const { campaign: { changeSetItemId } } = this.props;
-    const items = this.getItems() || [];
-    let selected = null;
-
-    if (changeSetItemId) {
-      selected = items.find(item => changeSetItemId === item.ID);
-    }
-
-    // If there's no user-selected item, select the first item in the first
-    // non-empty display group
-    if (!selected) {
-      const groups = this.groupItemsForSet();
-
-      // Find the first group name that has at least one item
-      const nonEmptyGroupName = Object.keys(groups).find(name =>
-        groups[name] && groups[name].items.length > 0
-      );
-
-      selected = nonEmptyGroupName ? groups[nonEmptyGroupName].items[0] : null;
-    }
-
-    return selected;
-  }
-
-  /**
-   * @return {array}
-   */
-  getMoreActions() {
-    const { DropdownItemComponent } = this.props;
-    const selectedItem = this.getSelectedItem();
-
-    if (!selectedItem) {
-      return null;
-    }
-
-    const referencedBy = selectedItem._links && selectedItem._links.referenced_by;
-    const requiredByNum = (referencedBy && referencedBy.length) || 0;
-    const unremoveableInfoText = i18n._t(
-      'CampaignAdmin.UNREMOVEABLE_INFO',
-      'Required by {number} item(s), and cannot be removed directly.'
-    );
-    const removeAction = selectedItem.Added === 'explicitly'
-      ? (
-        <DropdownItemComponent
-          key="remove_action"
-          className="btn btn-secondary action"
-          onClick={this.handleRemoveItem}
-        >
-          {i18n._t(
-            'CampaignAdmin.REMOVE',
-            'Remove'
-          )}
-        </DropdownItemComponent>
-      )
-      : (
-        <DropdownItemComponent
-          tag="p"
-          key="unremoveable_info"
-          className="alert alert-info campaign-admin__unremoveable-item"
-        >
-          <span className="font-icon-link" aria-hidden="true" />
-          {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
-        </DropdownItemComponent>
-      );
-
-    return [
-      removeAction,
-    ];
-  }
-
-  /**
-   * @return {array|null}
-   */
-  getItems() {
-    const { record } = this.props;
+  const getItems = () => {
     if (record && record._embedded) {
       return record._embedded.items;
     }
     return null;
-  }
+  };
 
-  getPlaceholderGroups() {
+  const getPlaceholderGroups = () => {
     const groups = {};
-    const { record } = this.props;
 
     if (record && record.placeholderGroups) {
       record.placeholderGroups.forEach((group) => {
@@ -195,16 +84,16 @@ class CampaignAdminList extends Component {
     }
 
     return groups;
-  }
+  };
 
   /**
    * Group items for changeset display
    *
    * @return {object}
    */
-  groupItemsForSet() {
-    const groups = this.getPlaceholderGroups();
-    const items = this.getItems();
+  const groupItemsForSet = () => {
+    const groups = getPlaceholderGroups();
+    const items = getItems();
     if (!items) {
       return groups;
     }
@@ -227,22 +116,82 @@ class CampaignAdminList extends Component {
     });
 
     return groups;
-  }
+  };
+
+  const getSelectedItem = () => {
+    const items = getItems() || [];
+    let selected = null;
+
+    if (campaign.changeSetItemId) {
+      selected = items.find(item => campaign.changeSetItemId === item.ID);
+    }
+
+    // If there's no user-selected item, select the first item in the first
+    // non-empty display group
+    if (!selected) {
+      const groups = groupItemsForSet();
+
+      // Find the first group name that has at least one item
+      const nonEmptyGroupName = Object.keys(groups).find(name =>
+        groups[name] && groups[name].items.length > 0
+      );
+
+      selected = nonEmptyGroupName ? groups[nonEmptyGroupName].items[0] : null;
+    }
+
+    return selected;
+  };
+
+  const handleRemoveItem = () => {
+    if (typeof onRemoveCampaignItem === 'function') {
+      onRemoveCampaignItem(campaignId, getSelectedItem().ID);
+    }
+  };
 
   /**
-   * @return {boolean}
+   * @return {array}
    */
-  isRecordLoaded(props = this.props) {
-    return Object.keys(props.record).length !== 0;
-  }
+  const getMoreActions = () => {
+    const selectedItem = getSelectedItem();
 
-  handleRemoveItem() {
-    const { campaignId, onRemoveCampaignItem } = this.props;
-
-    if (typeof onRemoveCampaignItem === 'function') {
-      onRemoveCampaignItem(campaignId, this.getSelectedItem().ID);
+    if (!selectedItem) {
+      return null;
     }
-  }
+
+    const referencedBy = selectedItem._links && selectedItem._links.referenced_by;
+    const requiredByNum = (referencedBy && referencedBy.length) || 0;
+    const unremoveableInfoText = i18n._t(
+      'CampaignAdmin.UNREMOVEABLE_INFO',
+      'Required by {number} item(s), and cannot be removed directly.'
+    );
+    const removeAction = selectedItem.Added === 'explicitly'
+      ? (
+        <DropdownItemComponent
+          key="remove_action"
+          className="btn btn-secondary action"
+          onClick={handleRemoveItem}
+        >
+          {i18n._t(
+            'CampaignAdmin.REMOVE',
+            'Remove'
+          )}
+        </DropdownItemComponent>
+      )
+      : (
+        <DropdownItemComponent
+          tag="p"
+          key="unremoveable_info"
+          className="alert alert-info campaign-admin__unremoveable-item"
+        >
+          <span className="font-icon-link" aria-hidden="true" />
+          {i18n.inject(unremoveableInfoText, { number: requiredByNum })}
+        </DropdownItemComponent>
+      );
+
+    return [
+      removeAction,
+    ];
+  };
 
   /**
    * Callback for items being clicked on
@@ -250,36 +199,27 @@ class CampaignAdminList extends Component {
    * @param {object} event
    * @param {number} itemId
    */
-  handleItemSelected(event, itemId) {
-    this.props.campaignActions.selectChangeSetItem(itemId);
-  }
+  const handleItemSelected = (event, itemId) => {
+    campaignActions.selectChangeSetItem(itemId);
+  };
 
-  handleCloseItem() {
-    this.props.campaignActions.selectChangeSetItem(null);
-  }
+  const handleCloseItem = () => {
+    campaignActions.selectChangeSetItem(null);
+  };
 
-  handlePublish(e) {
-    const { campaignId, campaignActions: { publishCampaign }, publishApi, treeClass } = this.props;
-
+  const handlePublish = (e) => {
     e.preventDefault();
 
     const msg = i18n._t('CampaignAdmin.PUBLISH_CAMPAIGN_CONFIRM', 'Are you sure you want to publish this campaign?');
 
     // eslint-disable-next-line no-alert
     if (window.confirm(msg)) {
-      publishCampaign(publishApi, treeClass, campaignId);
+      campaignActions.publishCampaign(publishApi, treeClass, campaignId);
     }
-  }
+  };
 
-  renderButtonToolbar() {
-    const {
-      ViewModeComponent,
-      FormActionComponent,
-      record,
-      campaign: { isPublishing }
-    } = this.props;
-
-    const items = this.getItems();
+  const renderButtonToolbar = () => {
+    const items = getItems();
     const empty = !items || items.length === 0;
 
     let actionProps = null;
@@ -295,8 +235,8 @@ class CampaignAdminList extends Component {
       actionProps = {
         title: i18n._t('CampaignAdmin.PUBLISHCAMPAIGN', 'Publish campaign'),
         buttonStyle: 'primary',
-        loading: isPublishing,
-        onClick: this.handlePublish,
+        loading: campaign.isPublishing,
+        onClick: handlePublish,
         icon: 'rocket',
       };
     }
@@ -313,9 +253,9 @@ class CampaignAdminList extends Component {
         />}
       </div>
     );
-  }
+  };
 
-  renderErrorMessage(code) {
+  const renderErrorMessage = (code) => {
     switch (code) {
       case 403:
         return (<p>{i18n._t('CampaignAdmin.FORBIDDEN', 'You do not have access to view this campaign.')}</p>);
@@ -324,12 +264,9 @@ class CampaignAdminList extends Component {
       default:
         return (<p>{i18n._t('CampaignAdmin.SOMETHING_WENT_WRONG', 'Something went wrong.')}</p>);
     }
-  }
+  };
 
-  renderPreview(itemLinks, itemId) {
-    const { PreviewComponent, previewState, record: { State } } = this.props;
-    const { loading, error, errorCode } = this.state;
-
+  const renderPreview = (itemLinks, itemId) => {
     let previewClasses = [
       'flexbox-area-grow',
       'fill-height',
@@ -358,17 +295,17 @@ class CampaignAdminList extends Component {
       );
     }
 
-    if (error) {
+    if (stateError) {
       return (
         <div className={previewClasses}>
           {
-            this.renderErrorMessage(errorCode)
+            renderErrorMessage(errorCode)
           }
         </div>
       );
     }
 
-    if (!this.getItems() || this.getItems().length === 0) {
+    if (!getItems() || getItems().length === 0) {
       const message = i18n._t(
         'CampaignAdmin.SELECTFROMSECTIONS',
         'Select "Add to Campaign" from pages, files, and other admin sections with content types'
@@ -387,14 +324,14 @@ class CampaignAdminList extends Component {
     const props = {
       itemLinks,
       itemId,
-      onBack: this.handleCloseItem,
+      onBack: handleCloseItem,
       className: previewClasses,
     };
-    if (State === 'open') {
-      props.moreActions = this.getMoreActions();
+    if (record.State === 'open') {
+      props.moreActions = getMoreActions();
     }
     return <PreviewComponent {...props}/>;
-  }
+  };
 
   /**
    * Renders the details section of the campaign list.
@@ -402,9 +339,7 @@ class CampaignAdminList extends Component {
    * @param body
    * @return object
    */
-  renderCampaignAdminListDetail(body) {
-    const { previewState, onBackButtonClick, newItem, BreadcrumbComponent } = this.props;
-
+  const renderCampaignAdminListDetail = (body) => {
     const bodyClass = classNames(
       'panel', 'panel--padded', 'panel--scrollable', 'flexbox-area-grow',
     );
@@ -444,126 +379,145 @@ class CampaignAdminList extends Component {
           {body}
         </div>
         <div className="toolbar toolbar--south">
-          {this.renderButtonToolbar()}
+          {renderButtonToolbar()}
         </div>
       </div>
     );
-  }
+  };
+
+  useEffect(() => {
+    setBreadcrumbs();
+    // Only load record if not already present
+    if (loading) {
+      const fetchURL = itemListViewEndpoint.url.replace(/:id/, campaignId);
+      recordActions
+        .fetchRecord(treeClass, 'get', fetchURL)
+        .then(() => {
+          setBreadcrumbs();
+        })
+        // Catch error and set Error code
+        .catch((e) => {
+          setError(true);
+          setErrorCode(e.response.status);
+        });
+    }
+    // Return cleanup function to reset new create flag on unmount
+    return () => {
+      campaignActions.setNewItem(null);
+    };
+  }, []);
 
   /**
    * Renders a list of items in a Campaign.
    *
    * @return object
    */
-  render() {
-    const { campaign: { changeSetItemId }, campaignId, record: campaign } = this.props;
-    let itemId = changeSetItemId;
+  let itemId = campaign.changeSetItemId;
 
-    let itemLinks = null;
-    const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
+  let itemLinks = null;
+  const selectedClass = (!itemId) ? 'campaign-admin__campaign--hide-preview' : '';
 
-    // Trigger different layout when preview is enabled
-    const itemGroups = this.groupItemsForSet();
+  // Trigger different layout when preview is enabled
+  const itemGroups = groupItemsForSet();
 
-    // Get items in this set
-    const accordionBlocks = [];
+  // Get items in this set
+  const accordionBlocks = [];
 
-    const selectedItem = this.getSelectedItem();
-    const selectedItemsLinkedTo = (
-      selectedItem && selectedItem._links && selectedItem._links.references
-    ) || [];
-    const selectedItemsLinkedFrom = (
-      selectedItem && selectedItem._links && selectedItem._links.referenced_by
-    ) || [];
+  const selectedItem = getSelectedItem();
+  const selectedItemsLinkedTo = (
+    selectedItem && selectedItem._links && selectedItem._links.references
+  ) || [];
+  const selectedItemsLinkedFrom = (
+    selectedItem && selectedItem._links && selectedItem._links.referenced_by
+  ) || [];
 
-    Object.keys(itemGroups).forEach(className => {
-      const group = itemGroups[className];
-      const groupCount = group.items.length;
+  Object.keys(itemGroups).forEach(className => {
+    const group = itemGroups[className];
+    const groupCount = group.items.length;
 
-      const listGroupItems = [];
-      const title = `
-        ${groupCount === 0 ? '' : groupCount}
-        ${groupCount === 1 ? group.singular : group.plural}
-      `;
-      const groupid = `Set_${campaignId}_Group_${className}`;
+    const listGroupItems = [];
+    const title = `
+      ${groupCount === 0 ? '' : groupCount}
+      ${groupCount === 1 ? group.singular : group.plural}
+    `;
+    const groupid = `Set_${campaignId}_Group_${className}`;
 
-      // Create items for this group
-      group.items.forEach((item, index) => {
-        // Auto-select first item
-        if (!itemId) {
-          itemId = item.ID;
-        }
-        const selected = (itemId === item.ID);
+    // Create items for this group
+    group.items.forEach((item, index) => {
+      // Auto-select first item
+      if (!itemId) {
+        itemId = item.ID;
+      }
+      const selected = (itemId === item.ID);
 
-        // Check links
-        if (selected && item._links) {
-          itemLinks = item._links;
-        }
+      // Check links
+      if (selected && item._links) {
+        itemLinks = item._links;
+      }
 
-        // Add extra css class for published items
-        const itemClassNames = classNames({
-          'list-group-item--inactive': (item.ChangeType === 'none' || campaign.State === 'published'),
-          active: (selected),
-        });
-
-        let isLinked = !!selectedItemsLinkedTo.find(
-          linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
-
-        isLinked = isLinked || selectedItemsLinkedFrom.find(linkFromObj => (
-          linkFromObj.ChangeSetItemID === item.ID
-        ));
-
-        listGroupItems.push(
-          <ListGroupItem
-            key={item.ID || index}
-            className={itemClassNames}
-            onClick={this.handleItemSelected}
-            onClickArg={item.ID}
-          >
-            <CampaignAdminItem
-              item={item}
-              campaign={this.props.record}
-              selected={selected}
-              isLinked={isLinked}
-            />
-          </ListGroupItem>
-        );
+      // Add extra css class for published items
+      const itemClassNames = classNames({
+        'list-group-item--inactive': (item.ChangeType === 'none' || record.State === 'published'),
+        active: (selected),
       });
 
-      const wrapperClassnames = classNames('list-group-wrapper', {
-        'list-group-wrapper--empty': listGroupItems.length === 0,
-      });
+      let isLinked = !!selectedItemsLinkedTo.find(
+        linkToObj => linkToObj.ChangeSetItemID === parseInt(item.ID, 10));
 
-      // Merge into group
-      accordionBlocks.push(
-        <div className={wrapperClassnames} key={groupid}>
-          <AccordionBlock groupid={groupid} title={title}>
-            {
-              listGroupItems.length > 0
-                ? listGroupItems
-                : <p className="list-group-item">{group.noItemsText}</p>
-            }
-          </AccordionBlock>
-        </div>
+      isLinked = isLinked || selectedItemsLinkedFrom.find(linkFromObj => (
+        linkFromObj.ChangeSetItemID === item.ID
+      ));
+
+      listGroupItems.push(
+        <ListGroupItem
+          key={item.ID || index}
+          className={itemClassNames}
+          onClick={handleItemSelected}
+          onClickArg={item.ID}
+        >
+          <CampaignAdminItem
+            item={item}
+            campaign={record}
+            selected={selected}
+            isLinked={isLinked}
+          />
+        </ListGroupItem>
       );
     });
 
-    const body = <Accordion>{accordionBlocks}</Accordion>;
+    const wrapperClassnames = classNames('list-group-wrapper', {
+      'list-group-wrapper--empty': listGroupItems.length === 0,
+    });
 
-    const loading = this.props.loading && [
-      <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light" />,
-      <div key="spinner" className="cms-content-loading-spinner" />,
-    ];
-
-    return (
-      <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
-        {loading}
-        {this.renderCampaignAdminListDetail(body, itemLinks)}
-        {this.renderPreview(itemLinks, itemId)}
+    // Merge into group
+    accordionBlocks.push(
+      <div className={wrapperClassnames} key={groupid}>
+        <AccordionBlock groupid={groupid} title={title}>
+          {
+            listGroupItems.length > 0
+              ? listGroupItems
+              : <p className="list-group-item">{group.noItemsText}</p>
+          }
+        </AccordionBlock>
       </div>
     );
-  }
-}
+  });
+
+  const body = <Accordion>{accordionBlocks}</Accordion>;
+
+  const loadingSpinner = loading && [
+    <div key="overlay" className="cms-content-loading-overlay ui-widget-overlay-light" />,
+    <div key="spinner" className="cms-content-loading-spinner" />,
+  ];
+
+  return (
+    <div className={`fill-width campaign-admin__campaign ${selectedClass}`}>
+      {loadingSpinner}
+      {renderCampaignAdminListDetail(body)}
+      {renderPreview(itemLinks, itemId)}
+    </div>
+  );
+};
 
 CampaignAdminList.propTypes = {
   campaign: PropTypes.shape({
@@ -586,11 +540,6 @@ CampaignAdminList.propTypes = {
   DropdownItemComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 
-CampaignAdminList.defaultProps = {
-  BreadcrumbComponent: Breadcrumb,
-  DropdownItemComponent: DropdownItem,
-};
-
 function mapStateToProps(state, ownProps) {
   const treeClass = ownProps.sectionConfig.treeClass;
   const id = parseInt(ownProps.campaignId, 10);
@@ -609,13 +558,14 @@ function mapStateToProps(state, ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    breadcrumbsActions: bindActionCreators(breadcrumbsActions, dispatch),
-    recordActions: bindActionCreators(recordActions, dispatch),
-    campaignActions: bindActionCreators(campaignActions, dispatch),
+    breadcrumbsActions: bindActionCreators(breadcrumbsActionsImport, dispatch),
+    recordActions: bindActionCreators(recordActionsImport, dispatch),
+    campaignActions: bindActionCreators(campaignActionsImport, dispatch),
   };
 }
 
 export { CampaignAdminList as Component };
+
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   inject(
