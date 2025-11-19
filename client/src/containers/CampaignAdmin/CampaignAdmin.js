@@ -314,7 +314,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
         </Toolbar>
         <FormBuilderLoaderComponent
           fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
-          actionHolder={{ className: 'toolbar--south' }}
+          actionHolder={{ className: 'toolbar--south btn-toolbar' }}
           onSubmit={handleCreateCampaignSubmit}
           onAction={handleFormAction}
           schemaUrl={schemaUrl}
@@ -343,7 +343,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
 
         <FormBuilderLoaderComponent
           fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
-          actionHolder={{ className: 'toolbar--south' }}
+          actionHolder={{ className: 'toolbar--south btn-toolbar' }}
           onAction={handleFormAction}
           schemaUrl={schemaUrl}
           identifier="Campaign.EditView"

@@ -5,7 +5,10 @@ Feature: Manage campaigns
   So that I can control bulk publication of content efficiently
 
   Background:
+  
     Given a "ChangeSet" "Test Campaign" with "Description"="this is a test"
+      # Config will put ~2 second delay until the unsaved changes notice shows
+      And I have a config file "unsaved-changes-indicator-campaign-admin.yml"
       And the "group" "EDITOR" has permissions "Access to 'Pages' section" and "Access to 'Campaigns' section" and "Access to 'Files' section" and "FILE_EDIT_ALL"
       And the "group" "CAMPAIGNS_EDITOR" has permissions "Access to 'Campaigns' section"
 
@@ -14,7 +17,13 @@ Feature: Manage campaigns
       And I go to "/admin/campaigns"
     When I press the "Add new campaign" button
       Then I should see the "Form_campaignCreateForm" form
-    When I fill in "Name" with "newcampaign"
+    When I fill in "Name" with "something"
+      Then I should not see the ".unsaved-changes-indicator" element
+      When I wait for 3 seconds
+      Then I should see the ".unsaved-changes-indicator" element
+      # Not testing reverting the name to "" to see if .unsaved-changes-indicator no longer shows
+      # because `When I fill in "Name" with ""` i.e. a blank value, does not work in react context
+      # We do test the 'no longer shows' functionality below in "I can edit campaign"
       And I fill in "Description" with "awesome campaign"
       And I press the "Create" button
     Then the "p.alert" element should contain "Nice one! You have successfully created a campaign."
@@ -30,6 +39,12 @@ Feature: Manage campaigns
       And the "State" field should contain "open"
       And I should see a "button[name=action_save] .font-icon-tick" element
     When I fill in "Name" with "changed"
+      Then I should not see the ".unsaved-changes-indicator" element
+      When I wait for 3 seconds
+      Then I should see the ".unsaved-changes-indicator" element
+      When I fill in "Name" with "Test Campaign"
+      Then I should not see the ".unsaved-changes-indicator" element
+      And I fill in "Name" with "changed"
     Then I should see a "button[name=action_save] .font-icon-save" element
     When I fill in "Name" with "Test Campaign"
     Then I should see a "button[name=action_save] .font-icon-tick" element

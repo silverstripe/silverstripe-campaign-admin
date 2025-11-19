@@ -3,6 +3,7 @@
 namespace SilverStripe\CampaignAdmin;
 
 use LogicException;
+use SilverStripe\Admin\Forms\UnsavedChangesIndicator;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Admin\LeftAndMainFormRequestHandler;
 use SilverStripe\Control\Controller;
@@ -658,7 +659,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                         ],
                     ]),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
-                    ->setUseButtonTag(true)
+                    ->setUseButtonTag(true),
+                UnsavedChangesIndicator::create('UnsavedChangesIndicator')
             ),
             RequiredFieldsValidator::create('Name')
         );
@@ -722,7 +724,8 @@ class CampaignAdmin extends LeftAndMain implements PermissionProvider
                 FormAction::create('save', _t(__CLASS__.'.CREATE', 'Create'))
                     ->setIcon('plus'),
                 FormAction::create('cancel', _t(__CLASS__.'.CANCEL', 'Cancel'))
-                    ->setUseButtonTag(true)
+                    ->setUseButtonTag(true),
+                UnsavedChangesIndicator::create('UnsavedChangesIndicator')
             ),
             RequiredFieldsValidator::create('Name')
         );
