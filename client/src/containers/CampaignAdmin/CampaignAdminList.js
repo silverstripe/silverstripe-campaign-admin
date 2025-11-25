@@ -378,7 +378,7 @@ const CampaignAdminList = ({
         <div className={bodyClass}>
           {body}
         </div>
-        <div className="toolbar toolbar--south">
+        <div className="toolbar toolbar--south btn-toolbar">
           {renderButtonToolbar()}
         </div>
       </div>
