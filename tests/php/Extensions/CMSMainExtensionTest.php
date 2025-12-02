@@ -19,7 +19,6 @@ class CMSMainExtensionTest extends SapphireTest
     {
         $controller = new CMSMain();
         $reflectionMethod = new ReflectionMethod($controller, 'getArchiveWarningMessage');
-        $reflectionMethod->setAccessible(true);
         $page = new SiteTree(['Title' => 'my page']);
         $page->write();
 

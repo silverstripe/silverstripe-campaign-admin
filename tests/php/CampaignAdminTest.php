@@ -54,7 +54,6 @@ class CampaignAdminTest extends FunctionalTest
     {
         $class = new ReflectionClass(get_class($object));
         $methodObj = $class->getMethod($method);
-        $methodObj->setAccessible(true);
         return $methodObj->invokeArgs($object, $args);
     }
 
