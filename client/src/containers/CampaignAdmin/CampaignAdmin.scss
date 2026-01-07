@@ -64,14 +64,20 @@
 }
 
 .list-group-item {
-
   &:hover {
     .campaign-admin__item-links--is-linked {
       opacity: 1;
     }
   }
 
+  // override default link offset
+  &:focus-visible {
+    --focus-outline-offset: calc(var(--focus-outline-offset-inset) - 1px);
+  }
+
   &.active {
+    --focus-outline-color: var(--focus-outline-color-inverted);
+
     .campaign-admin__item-links--has-links {
       @include media-breakpoint-up(lg) {
         color: $white;
