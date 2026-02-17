@@ -21,7 +21,7 @@ class AddToCampaignValidator extends Validator
 
         // Check field validation
         foreach ($fields as $field) {
-            $valid = ($field->validate($this) && $valid);
+            $valid = $field->validate()->isValid() && $valid;
         }
         if (!$valid) {
             return $valid;
