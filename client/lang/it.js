@@ -7,6 +7,7 @@ if (typeof(ss) === 'undefined' || typeof(ss.i18n) === 'undefined') {
 } else {
   ss.i18n.addDictionary('it', {
     "CampaignAdmin.ADDCAMPAIGN": "Aggiungi campagna",
+    "CampaignAdmin.ADDNEWCAMPAIGN": "Aggiungi nuova campagna",
     "CampaignAdmin.DELETECAMPAIGN": "Sei sicuro di voler eliminare questo record?",
     "CampaignAdmin.DRAFT": "Bozza",
     "CampaignAdmin.FORBIDDEN": "Non hai accesso ai dati di questa campagna.",
