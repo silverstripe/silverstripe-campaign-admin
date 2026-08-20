@@ -1,5 +1,6 @@
 {
     "CampaignAdmin.ADDCAMPAIGN": "Aggiungi campagna",
+    "CampaignAdmin.ADDNEWCAMPAIGN": "Aggiungi nuova campagna",
     "CampaignAdmin.DELETECAMPAIGN": "Sei sicuro di voler eliminare questo record?",
     "CampaignAdmin.DRAFT": "Bozza",
     "CampaignAdmin.FORBIDDEN": "Non hai accesso ai dati di questa campagna.",
