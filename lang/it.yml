@@ -1,4 +1,6 @@
 it:
+  SilverStripe\CMS\Controllers\CMSMain:
+    ACCESS: "Accesso alla sezione '{title}'"
   SilverStripe\CampaignAdmin\AddToCampaignHandler:
     ADD_TO_A_NEW_CAMPAIGN: 'Aggiungi a nuova campagna'
     AddToCampaignAddAction: Aggiungi
@@ -35,4 +37,12 @@ it:
     SAVEDERROR: Errore.
     SAVEDUP: Salvato.
   SilverStripe\CampaignAdmin\Extensions\AddToCampaignExtension:
+    ErrorItemPermissionDenied: 'Non hai i privilegi necessari a modificare {ObjectTitle}'
     ErrorNotFound: '{Type} potrebbe non essere trovato'
+  SilverStripe\CampaignAdmin\Extensions\CMSMainExtension:
+    ArchiveWarningWithCampaigns: 'Attenzione: Questa pagina sarà nascosta e automaticamente rimossa da {NumCampaigns} prima di essere archiviata.\n\nConfermi questa operazione?'
+    ArchiveWarningWithChildrenAndCampaigns: 'Attenzione: Questa pagina con tutti i suoi figli sarà nascosta e automaticamente rimossa da {NumCampaigns} prima di essere archiviata.\n\nConfermi questa operazione?'
+  SilverStripe\CampaignAdmin\Extensions\FileFormFactoryExtension:
+    ADDTOCAMPAIGN: 'Aggiungi alla campagna'
+  SilverStripe\Security\Permission:
+    CMS_ACCESS_CATEGORY: 'Accesso al CMS'
