@@ -379,3 +379,53 @@ test('CampaignAdmin handles no response.state gracefully', async () => {
   await screen.findByTestId('test-breadcrumb');
   expect(navigate).toBeCalledWith('/campaigns/set/1/show');
 });
+
+describe('CampaignAdmin renders the toolbar actions', () => {
+  const cases = [
+    {
+      name: 'next to the search toggle in the index view',
+      params: { view: null },
+      expectedProps: { view: 'index' },
+    },
+    {
+      name: 'in the create view',
+      params: { view: 'create' },
+      expectedProps: { view: 'create' },
+    },
+    {
+      name: 'in the create view when the id is 0 in the edit view',
+      params: { id: '0', view: 'edit' },
+      expectedProps: { view: 'create' },
+    },
+    {
+      name: 'in the edit view',
+      params: { id: '5', view: 'edit' },
+      expectedProps: { view: 'edit', campaignId: 5 },
+    },
+  ];
+  cases.forEach(({ name, params, expectedProps }) => {
+    test(name, () => {
+      const ToolbarActionsComponent = jest.fn(() => <div data-testid="test-toolbar-actions"/>);
+      render(<CampaignAdmin {...makeProps({
+        sectionConfig: {
+          ...makeProps().sectionConfig,
+          form: {
+            ...makeProps().sectionConfig.form,
+            campaignEditForm: {
+              schemaUrl: '/campaigns/schema/edit'
+            }
+          }
+        },
+        router: {
+          params,
+          navigate: jest.fn()
+        },
+        ToolbarActionsComponent,
+      })}
+      />);
+      expect(ToolbarActionsComponent).toHaveBeenLastCalledWith(expectedProps, expect.anything());
+      const toolbarExtra = document.querySelector('.campaign--toolbar__extra');
+      expect(toolbarExtra.contains(screen.getByTestId('test-toolbar-actions'))).toBe(true);
+    });
+  });
+});
