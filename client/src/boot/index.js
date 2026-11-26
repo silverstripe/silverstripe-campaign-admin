@@ -4,6 +4,7 @@ import Injector from 'lib/Injector';
 import reactRouteRegister from 'lib/ReactRouteRegister';
 import CampaignAdmin from 'containers/CampaignAdmin/CampaignAdmin';
 import CampaignReducer from 'state/campaign/CampaignReducer';
+import CampaignAdminToolbarActions from 'components/CampaignAdminToolbarActions/CampaignAdminToolbarActions';
 import applyConditionals from 'boot/applyConditionals';
 import { joinUrlPaths } from 'lib/urls';
 
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   Injector.reducer.register('campaign', CampaignReducer);
+  Injector.component.register('CampaignAdminToolbarActions', CampaignAdminToolbarActions);
 
   // Apply any injector transformations
   applyConditionals();

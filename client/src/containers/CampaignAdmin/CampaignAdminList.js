@@ -16,6 +16,7 @@ import i18n from 'i18n';
 import { inject } from 'lib/Injector';
 import classNames from 'classnames';
 import { joinUrlPaths } from 'lib/urls';
+import CampaignAdminToolbarActions from 'components/CampaignAdminToolbarActions/CampaignAdminToolbarActions';
 import CampaignAdminItem from './CampaignAdminItem';
 
 /**
@@ -41,6 +42,7 @@ const CampaignAdminList = ({
   FormActionComponent,
   PreviewComponent,
   ViewModeComponent,
+  ToolbarActionsComponent = CampaignAdminToolbarActions,
 }) => {
   const [stateError, setError] = useState(false);
   const [errorCode, setErrorCode] = useState(0);
@@ -373,6 +375,9 @@ const CampaignAdminList = ({
       <div className={itemClass} aria-expanded="true">
         <Toolbar showBackButton onBackButtonClick={onBackButtonClick}>
           <BreadcrumbComponent multiline />
+          <div className="campaign--toolbar__extra pull-xs-right fill-width vertical-align-items">
+            <ToolbarActionsComponent view="show" campaignId={Number(campaignId)} />
+          </div>
         </Toolbar>
         {newItemInfo}
         <div className={bodyClass}>
@@ -538,6 +543,7 @@ CampaignAdminList.propTypes = {
   previewState: PropTypes.oneOf(['edit', 'preview', 'split']),
   BreadcrumbComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   DropdownItemComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  ToolbarActionsComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
 };
 
 function mapStateToProps(state, ownProps) {
@@ -569,11 +575,12 @@ export { CampaignAdminList as Component };
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
   inject(
-    ['FormAction', 'ViewModeToggle', 'Preview'],
-    (FormAction, ViewModeToggle, Preview) => ({
+    ['FormAction', 'ViewModeToggle', 'Preview', 'CampaignAdminToolbarActions'],
+    (FormAction, ViewModeToggle, Preview, ToolbarActions) => ({
       FormActionComponent: FormAction,
       ViewModeComponent: ViewModeToggle,
       PreviewComponent: Preview,
+      ToolbarActionsComponent: ToolbarActions,
     }),
     () => 'CampaignAdmin.CampaignAdmin.List'
   )

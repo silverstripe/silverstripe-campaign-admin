@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formValueSelector } from 'redux-form';
-import { bindActionCreators } from 'redux';
+import { bindActionCreators, compose } from 'redux';
 import getFormState from 'lib/getFormState';
 import backend from 'lib/Backend';
 import * as campaignActionsImport from 'state/campaign/CampaignActions';
@@ -20,6 +20,8 @@ import ResizeAware from 'components/ResizeAware/ResizeAware';
 import withRouter, { routerPropTypes } from 'lib/withRouter';
 import * as viewModeActions from 'state/viewMode/ViewModeActions';
 import { joinUrlPaths } from 'lib/urls';
+import { inject } from 'lib/Injector';
+import CampaignAdminToolbarActions from 'components/CampaignAdminToolbarActions/CampaignAdminToolbarActions';
 import CampaignAdminList from './CampaignAdminList';
 
 const sectionConfigKey = 'SilverStripe\\CampaignAdmin\\CampaignAdmin';
@@ -37,6 +39,7 @@ const CampaignAdmin = ({
   onResize,
   FormBuilderLoaderComponent = FormBuilderLoader,
   BreadcrumbComponent = Breadcrumb,
+  ToolbarActionsComponent = CampaignAdminToolbarActions,
   title,
 }) => {
   const [loading, setLoading] = useState(false);
@@ -311,6 +314,9 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       <div className="fill-height">
         <Toolbar showBackButton onBackButtonClick={handleBackButtonClick}>
           <BreadcrumbComponent multiline />
+          <div className="campaign--toolbar__extra pull-xs-right fill-width vertical-align-items">
+            <ToolbarActionsComponent view="create" />
+          </div>
         </Toolbar>
         <FormBuilderLoaderComponent
           fieldHolder={{ className: 'panel panel--padded panel--scrollable flexbox-area-grow form--inline' }}
@@ -339,6 +345,9 @@ By removing this item all linked items will be removed unless used elsewhere.`;
       <div className="fill-height">
         <Toolbar showBackButton onBackButtonClick={handleBackButtonClick}>
           <BreadcrumbComponent multiline />
+          <div className="campaign--toolbar__extra pull-xs-right fill-width vertical-align-items">
+            <ToolbarActionsComponent view="edit" campaignId={Number(router.params.id)} />
+          </div>
         </Toolbar>
 
         <FormBuilderLoaderComponent
@@ -376,6 +385,7 @@ By removing this item all linked items will be removed unless used elsewhere.`;
           <BreadcrumbComponent multiline />
           <div className="campaign--toolbar__extra pull-xs-right fill-width vertical-align-items">
             <SearchToggle toggled={showSearchDisplay} onToggle={toggleSearch} />
+            <ToolbarActionsComponent view="index" />
           </div>
         </Toolbar>
         {showSearchDisplay && <Search
@@ -487,6 +497,7 @@ CampaignAdmin.propTypes = {
   onResize: PropTypes.func.isRequired,
   FormBuilderLoaderComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   BreadcrumbComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
+  ToolbarActionsComponent: PropTypes.oneOfType([PropTypes.object, PropTypes.func]),
   breadcrumbs: PropTypes.array,
   title: PropTypes.string,
 };
@@ -530,4 +541,12 @@ function mapDispatchToProps(dispatch) {
 
 export { CampaignAdmin as Component };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CampaignAdmin));
+export default compose(
+  withRouter,
+  inject(
+    ['CampaignAdminToolbarActions'],
+    (ToolbarActionsComponent) => ({ ToolbarActionsComponent }),
+    () => 'CampaignAdmin',
+  ),
+  connect(mapStateToProps, mapDispatchToProps),
+)(CampaignAdmin);

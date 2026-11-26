@@ -460,3 +460,17 @@ test('CampaignAdminList calls setNewItem with null on unmount', () => {
   unmount();
   expect(setNewItemMock).toHaveBeenCalledWith(null);
 });
+
+test('CampaignAdminList renders the toolbar actions in the toolbar', () => {
+  const ToolbarActionsComponent = jest.fn(() => <div data-testid="test-toolbar-actions"/>);
+  render(
+    <CampaignAdminList {...makeProps({
+      campaignId: '3',
+      ToolbarActionsComponent,
+    })}
+    />
+  );
+  expect(ToolbarActionsComponent).toHaveBeenLastCalledWith({ view: 'show', campaignId: 3 }, expect.anything());
+  const toolbarExtra = document.querySelector('.campaign--toolbar__extra');
+  expect(toolbarExtra.contains(screen.getByTestId('test-toolbar-actions'))).toBe(true);
+});
